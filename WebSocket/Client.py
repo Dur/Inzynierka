@@ -2,6 +2,7 @@ import codecs
 import time
 from Connection import Connection
 import sys
+from TestSender import TestSender
 
 TIME_OUT = 6
 
@@ -15,15 +16,11 @@ class Client(object):
 		print sys.path
 		con = Connection()
 		con.connect()
-		con.send('Read')
-		to_end = 0
-		while to_end < TIME_OUT:
+		test = TestSender(con)
+		test.start()
+		while True:
 			message = con.get_message()
-			if message != None:
-				print "Got %s" %message
-			time.sleep(0.5)
-			to_end += 0.5
-		print "end of waiting"
+			print "Got %s" %message
 		return
 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)

@@ -3,22 +3,20 @@ from mod_pywebsocket._stream_base import ConnectionTerminatedException
 
 __author__ = 'dur'
 
-class ListenSocket( Thread ):
-
+class WriteSocket(Thread):
 	def run(self):
 		try:
 			while True:
-				print("wating for messag from remote")
-				received = self.connection._stream.receive_message()
-				print("got message from remote")
-				self.queue.put(received)
-				print("added message from remote")
+				print("Waiting for message to send")
+				line = self.queue.get(True)
+				self.connection._stream.send_message(line)
+				print("Message sent")
 
 		except ConnectionTerminatedException, a:
 			print "Server closed connection"
 			return
 		except Exception, e:
-			print"exception %s" %e
+			print"exception %s" % e
 			self.connection._do_closing_handshake()
 			self.connection._socket.close()
 			return
@@ -27,4 +25,4 @@ class ListenSocket( Thread ):
 		Thread.__init__(self)
 		self.queue = queue
 		self.connection = connection
-		print "Listen thread created"
+		print "write thread created"

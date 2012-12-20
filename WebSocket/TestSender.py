@@ -1,18 +1,14 @@
 from threading import Thread
 from mod_pywebsocket._stream_base import ConnectionTerminatedException
+import time
 
 __author__ = 'dur'
-
-class ListenSocket( Thread ):
-
+class TestSender(Thread):
 	def run(self):
 		try:
 			while True:
-				print("wating for messag from remote")
-				received = self.connection._stream.receive_message()
-				print("got message from remote")
-				self.queue.put(received)
-				print("added message from remote")
+				self.connection.send("Read")
+				time.sleep(2)
 
 		except ConnectionTerminatedException, a:
 			print "Server closed connection"
@@ -23,8 +19,6 @@ class ListenSocket( Thread ):
 			self.connection._socket.close()
 			return
 
-	def __init__(self, connection, queue):
+	def __init__(self, connection):
 		Thread.__init__(self)
-		self.queue = queue
 		self.connection = connection
-		print "Listen thread created"

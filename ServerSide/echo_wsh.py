@@ -33,16 +33,8 @@ def web_socket_transfer_data(request):
 		else:
 			request.ws_stream.send_message(line, binary=True)
 		logging.error("przd nawiazaniem polaczenia")
-		con = Connection()
-		con.connect()
-		logging.error("po polaczeniu")
-		con.send('Read')
-		logging.error("wyslano tekst")
-		to_end = 0
-		while to_end < TIME_OUT:
-			message = con.get_message()
-			if message != None:
-				logging.error( "Got %s from remote server" %message)
-			time.sleep(0.5)
-			to_end += 0.5
-		logging.error( "end of waiting")
+#		con = Connection()
+#		con.connect()
+#		logging.error("po polaczeniu")
+#		con.send('Read')
+#		logging.error("wyslano tekst")

@@ -1,7 +1,9 @@
+from Queue import Queue
 from mod_pywebsocket.msgutil import MessageReceiver, MessageSender
 from ClientHandshakeProcessor import ClientHandshakeProcessor
 from ClientRequest import ClientRequest
 from ListenSocket import ListenSocket
+from WriteSocket import WriteSocket
 from _TLSSocket import _TLSSocket
 
 import logging
@@ -36,7 +38,8 @@ class Connection(object):
 		print self.dictionary
 		logging.basicConfig(level=logging.getLevelName(self.dictionary.get('log_level').upper()))
 		self._socket = None
-		self.list=[]
+		self.received = Queue()
+		self.toSend = Queue()
 		self._logger = util.get_class_logger(self)
 
 	def connect(self):
@@ -77,21 +80,21 @@ class Connection(object):
 				processor.setup_stream_options(stream_option)
 
 			self._stream = Stream(request, stream_option)
-			thread = ListenSocket("Thread",self, self.list)
-			thread.start()
+			listen = ListenSocket(self, self.received)
+			write = WriteSocket(self, self.toSend)
+			listen.start()
+			write.start()
 		finally:
 			print "po powitaniu, serwer oczekuje na dane"
 
 	def send(self, message):
 		for line in message.split(','):
-			self._stream.send_message(line)
+			self.toSend.put(line)
+#			self._stream.send_message(line)
 			print 'Send: %s' % line
 
 	def get_message(self):
-		if not self.list:
-			return(None)
-		else:
-			return self.list.pop(0)
+			return self.received.get(True)
 
 	def _do_closing_handshake(self):
 		"""Perform closing handshake using the specified closing frame."""
