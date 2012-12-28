@@ -14,7 +14,6 @@ from mod_pywebsocket.stream import StreamOptions
 from mod_pywebsocket import util
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
-_UPGRADE_HEADER_HIXIE75 = 'Upgrade: WebSocket\r\n'
 _CONNECTION_HEADER = 'Connection: Upgrade\r\n'
 
 _GOODBYE_MESSAGE = 'Goodbye'
@@ -23,7 +22,6 @@ _PROTOCOL_VERSION_HYBI13 = 'hybi13'
 
 
 class Connection(object):
-	"""WebSocket echo client."""
 
 	def __init__(self):
 		print "connection init"
@@ -79,6 +77,7 @@ class Connection(object):
 			self._stream = Stream(request, stream_option)
 			thread = ListenSocket("Thread",self, self.list)
 			thread.start()
+			globals()
 		finally:
 			print "po powitaniu, serwer oczekuje na dane"
 

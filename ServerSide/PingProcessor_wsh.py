@@ -19,3 +19,5 @@ def web_socket_transfer_data(request):
 		line = request.ws_stream.receive_message()
 		logging.error("Server apache otrzymal wiadomosc")
 
+#1000100100000000 - Ping frame in binary with no data
+#1000101000000000 - Pong frame in binary with no data
