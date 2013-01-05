@@ -23,10 +23,11 @@ _PROTOCOL_VERSION_HYBI13 = 'hybi13'
 
 class Connection(object):
 
-	def __init__(self):
+	def __init__(self, configFile):
 		print "connection init"
+		self.configFile = configFile
 		self.dictionary=dict()
-		with open("/home/dur/Projects/ServerSide/config.conf", 'r') as f:
+		with open(self.configFile, 'r') as f:
 			for singleLine in f:
 				singleLine = singleLine.replace('\n','')
 				splitedLine = singleLine.split('=')
@@ -77,7 +78,6 @@ class Connection(object):
 			self._stream = Stream(request, stream_option)
 			thread = ListenSocket("Thread",self, self.list)
 			thread.start()
-			globals()
 		finally:
 			print "po powitaniu, serwer oczekuje na dane"
 
