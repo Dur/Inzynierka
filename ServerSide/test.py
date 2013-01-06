@@ -13,6 +13,7 @@ __author__ = 'dur'
 
 from FileProcessor import FileProcessor
 from PingConnection import PingConnection
+from Connection import Connection
 import time
 
 file = FileProcessor("/home/dur/Projects/ServerSide/addresses.conf")
@@ -30,8 +31,7 @@ while True:
 	for key in org:
 		if( connection.connect(key,80) != -1 ):
 			connection.send("Ping")
-			connection.get_message()
-			connection._do_closing_handshake()
+			print connection.get_message()
 			new[key] = 'T'
 		else:
 			new[key] = 'F'

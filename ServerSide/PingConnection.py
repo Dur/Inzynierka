@@ -6,6 +6,7 @@ import socket
 from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
 from mod_pywebsocket.stream import StreamOptions
+import sys
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
 _CONNECTION_HEADER = 'Connection: Upgrade\r\n'
@@ -30,11 +31,12 @@ class PingConnection(object):
 		self._socket = None
 
 	def connect(self, host, port):
-
+		self.dictionary['server_port'] = port
+		self.dictionary['server_host'] = host
 		self._socket = socket.socket()
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
-			self._socket.connect(host,port)
+			self._socket.connect((host,int(port)))
 			if self.dictionary.get('use_tls') == 'True':
 				self._socket = _TLSSocket(self._socket)
 
@@ -56,11 +58,11 @@ class PingConnection(object):
 			stream_option.unmask_receive = False
 
 			self._stream = Stream(request, stream_option)
-			logging.error("connection to " + host + ":" + port + " established")
+			logging.error("connection ok")
 			return CONNECTION_OK_FLAG
 		except:
 			self._socket.close()
-			logging.error("unable to connect to " + host + ":" + port)
+			logging.error("unable to connect")
 			return CONNECTION_PROBLEM_FLAG
 
 	def send(self, message):
@@ -71,12 +73,4 @@ class PingConnection(object):
 
 	def _do_closing_handshake(self):
 		"""Perform closing handshake using the specified closing frame."""
-
-		if self.dictionary.get('message').split(',')[-1] == _GOODBYE_MESSAGE:
-			# requested server initiated closing handshake, so
-			# expecting closing handshake message from server.
-			self._logger.info('Wait for server-initiated closing handshake')
-			message = self._stream.receive_message()
-			if message is None:
-				return
 		self._stream.close_connection()

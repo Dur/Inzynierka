@@ -50,7 +50,6 @@ class Connection(object):
 		try:
 			self._socket.connect((self.dictionary.get('server_host'),
 			                      int(self.dictionary.get('server_port'))))
-			print "Conneting to %s" %self.dictionary.get('server_host')
 			if self.dictionary.get('use_tls') == 'True':
 				self._socket = _TLSSocket(self._socket)
 

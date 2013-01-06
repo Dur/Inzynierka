@@ -8,11 +8,12 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 	request.ws_stream.send_message("Pong")
-	logging.error("Server otrzymal ping")
+	logging.error("Server otrzymal ping od " + request.hostname)
 	file = FileProcessor("/home/dur/Projects/ServerSide/addresses.conf")
-	addresses = file.lockFile()
+	file.lockFile()
+	addresses = file.readFile()
 	for key in addresses:
-		if key == request.host:
+		if key == request.hostname:
 			addresses[key] = 'T'
 			break
 	file.writeToFile(addresses)
