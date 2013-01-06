@@ -8,8 +8,7 @@ class TestSender(Thread):
 		try:
 			while True:
 				self.connection.send("Read")
-				print(globals().get("test"))
-				time.sleep(2)
+				time.sleep(5)
 
 		except ConnectionTerminatedException, a:
 			print "Server closed connection"

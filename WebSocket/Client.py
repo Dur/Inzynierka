@@ -14,7 +14,7 @@ class Client(object):
 	def ballRolling(self):
 		print 'ball rolling'
 		print sys.path
-		con = Connection()
+		con = Connection("/home/dur/Projects/WebSocket/config.conf")
 		con.connect()
 		test = TestSender(con)
 		test.start()

@@ -2,3 +2,5 @@
 
 /usr/lib/python2.7/dist-packages - dodanie wlasnego pliku cos.pth w ktorym nalezy umiescic sciezke do katalogu w ktorym znajduja sie biblioteki pythna stworzone przez uzytkownika (na przyklad /home/dur/Projects/ServerSide) z tych biblitek bedzie korzystal apache przy probie odwolania sie do jakiegos pliku
 
+Aby serwer mogl zablowac jakis plik przy uzyciu fileLock musi miec dostep do tego pliku i wszystkich katalogow powyzej
+

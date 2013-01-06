@@ -12,20 +12,18 @@ class FileProcessor:
 
 	def readFile(self):
 		pairs={}
-		with FileLock(self.fileName):
-			with open(self.fileName, 'r') as f:
-				for singleLine in f:
-					singleLine = singleLine.replace('\n','')
-					splitedLine = singleLine.split(';')
-					pairs[splitedLine[0]] = splitedLine[1]
+		with open(self.fileName, 'r') as f:
+			for singleLine in f:
+				singleLine = singleLine.replace('\n','')
+				splitedLine = singleLine.split(';')
+				pairs[splitedLine[0]] = splitedLine[1]
 		return pairs
 
 	def writeToFile(self, pairs):
-		with FileLock(self.fileName):
-			with open(self.fileName, 'w') as f:
-				for key in pairs:
-					line = key + ";" + pairs[key]+'\n'
-					f.write(line)
+		with open(self.fileName, 'w') as f:
+			for key in pairs:
+				line = key + ";" + pairs[key]+'\n'
+				f.write(line)
 		return
 
 	def lockFile(self):
@@ -34,23 +32,6 @@ class FileProcessor:
 	def unlockFile(self):
 		self.lock.release()
 
-	def lockFileAndWrite(self, pairs):
-		self.lockFile()
-		with open(self.fileName, 'w') as f:
-			for key in pairs:
-				line = key + ";" + pairs[key]+'\n'
-				f.write(line)
-		return
-
-	def lockFileAndRead(self):
-		self.lockFile()
-		pairs={}
-		with open(self.fileName, 'r') as f:
-			for singleLine in f:
-				singleLine = singleLine.replace('\n','')
-				splitedLine = singleLine.split(';')
-				pairs[splitedLine[0]] = splitedLine[1]
-		return pairs
 
 # Merges file. params are two doctionaries
 #org={"aaa":'T', "bbb":'T', "ccc":'T', "ddd":'F',"eee":'T',"fff":'F', "ggg":'F', "hhh":'F'}
@@ -60,17 +41,16 @@ class FileProcessor:
 
 	def mergeFile(self, org, new):
 		curr={}
-		with FileLock(self.fileName):
-			with open(self.fileName, 'r') as f:
-				for singleLine in f:
-					singleLine = singleLine.replace('\n','')
-					splitedLine = singleLine.split(';')
-					curr[splitedLine[0]] = splitedLine[1]
-			with open(self.fileName, 'w') as f:
-				for key in new:
-					if curr[key] != new[key]:
-						if  org[key] != curr[key]:
-							new[key] = curr[key]
-					line = key + ";" + new[key]+'\n'
-					f.write(line)
+		with open(self.fileName, 'r') as f:
+			for singleLine in f:
+				singleLine = singleLine.replace('\n','')
+				splitedLine = singleLine.split(';')
+				curr[splitedLine[0]] = splitedLine[1]
+		with open(self.fileName, 'w') as f:
+			for key in new:
+				if curr[key] != new[key]:
+					if  org[key] != curr[key]:
+						new[key] = curr[key]
+				line = key + ";" + new[key]+'\n'
+				f.write(line)
 		return
