@@ -37,4 +37,4 @@ while True:
 			new[key] = 'F'
 	file.mergeFile(org, new)
 	file.unlockFile()
-	time.sleep(2)
+	time.sleep(4)
