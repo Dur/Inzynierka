@@ -23,9 +23,12 @@ def web_socket_transfer_data(request):
 	addresses = file.readFile()
 	for key in addresses:
 		if key == remoteAddress:
+			logging.error("znalazl dopasowanie")
 			if( addresses[key] != 'T' ):
+				logging.error("proba nawiazania polaczenia z nowododanym serwerem")
 				connection = PingConnection("/home/dur/Projects/ServerSide/ping_config.conf")
 				connection.connect(remoteAddress, 80)
+				logging.error("nawiazywanie polaczenia z nowododanym serwerem")
 				listener = ListenSocket(connection, Dispatcher())
 				listener.setDaemon(True)
 				listener.run()
@@ -35,12 +38,15 @@ def web_socket_transfer_data(request):
 			break
 	file.unlockFile()
 
+	logging.error("server starting pinging")
 	while(True):
 		try:
 			if( connectMode ):
 				connection.send("Ping")
+				logging.error("sending ping to connection")
 			else:
 				request.ws_stream.send_message("Ping")
+				logging.error("sending ping to request")
 			time.sleep(2)
 
 		except ConnectionTerminatedException, a:

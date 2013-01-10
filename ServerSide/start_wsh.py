@@ -25,7 +25,9 @@ def web_socket_transfer_data(request):
 			file.unlockFile()
 			logging.error("connection with %s established", key)
 			connection.send("Ping")
+			logging.error("sending ping from start method")
 			connection.get_message()
+			logging.error("start method received answer, closing connection")
 			connection._do_closing_handshake()
 		else:
 			logging.error("unable to connect to %s", key)
