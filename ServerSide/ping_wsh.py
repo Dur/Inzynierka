@@ -22,6 +22,8 @@ def web_socket_transfer_data(request):
 	file.lockFile()
 	addresses = file.readFile()
 	for key in addresses:
+		logging.log("key %s", key)
+		logging.log("remote address %s", remoteAddress)
 		if key == remoteAddress:
 			logging.error("znalazl dopasowanie")
 			if( addresses[key] != 'T' ):
@@ -32,6 +34,7 @@ def web_socket_transfer_data(request):
 				listener = ListenSocket(connection, Dispatcher())
 				listener.setDaemon(True)
 				listener.run()
+				logging.error("watek wystartowal")
 				addresses[key] = 'T'
 				file.writeToFile(addresses)
 				connectMode = True
@@ -50,7 +53,7 @@ def web_socket_transfer_data(request):
 			time.sleep(2)
 
 		except ConnectionTerminatedException, a:
-			logging.error( "Server closed connection")
+			logging.error( "Server closed connection in ping_wsh")
 			connection._socket.close()
 			file.lockFile()
 			addresses = file.readFile()
@@ -59,6 +62,8 @@ def web_socket_transfer_data(request):
 					addresses[key] != 'F'
 					file.writeToFile(addresses)
 					file.unlockFile()
+			if file.lock.is_locked:
+				file.unlockFile()
 			return
 		except Exception, e:
 			connection._socket.close()
@@ -69,6 +74,9 @@ def web_socket_transfer_data(request):
 					addresses[key] != 'F'
 					file.writeToFile(addresses)
 					file.unlockFile()
+			logging.error("error occurred in ping_wsh")
+			if file.lock.is_locked:
+				file.unlockFile()
 			return
 
 	#1000100100000000 - Ping frame in binary with no data
