@@ -10,31 +10,36 @@
 
 
 __author__ = 'dur'
+from ListenSocket import ListenSocket
 
 from FileProcessor import FileProcessor
 from PingConnection import PingConnection
-from Connection import Connection
 import time
+#
+#file = FileProcessor("/home/dur/Projects/ServerSide/addresses.conf")
+#file.lockFile()
+#addresses = file.readFile()
+#for key in addresses:
+#	addresses[key] = 'T'
+#file.writeToFile(addresses)
+#file.unlockFile()
+#new = {}
+#connection = PingConnection("/home/dur/Projects/ServerSide/ping_config.conf")
+#while True:
+#	file.lockFile()
+#	org = file.readFile()
+#	for key in org:
+#		if( connection.connect(key,80) != -1 ):
+#			connection.send("Ping")
+#			print connection.get_message()
+#			new[key] = 'T'
+#		else:
+#			new[key] = 'F'
+#	file.mergeFile(org, new)
+#	file.unlockFile()
+#	time.sleep(4)
 
-file = FileProcessor("/home/dur/Projects/ServerSide/addresses.conf")
-file.lockFile()
-addresses = file.readFile()
-for key in addresses:
-	addresses[key] = 'T'
-file.writeToFile(addresses)
-file.unlockFile()
-new = {}
-connection = PingConnection("/home/dur/Projects/ServerSide/ping_config.conf")
-while True:
-	file.lockFile()
-	org = file.readFile()
-	for key in org:
-		if( connection.connect(key,80) != -1 ):
-			connection.send("Ping")
-			print connection.get_message()
-			new[key] = 'T'
-		else:
-			new[key] = 'F'
-	file.mergeFile(org, new)
-	file.unlockFile()
-	time.sleep(4)
+thread = ListenSocket(None, None)
+thread.start()
+time.sleep(2)
+thread._Thread__stop()

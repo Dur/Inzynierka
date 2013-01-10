@@ -72,5 +72,4 @@ class PingConnection(object):
 		return self._stream.receive_message()
 
 	def _do_closing_handshake(self):
-		"""Perform closing handshake using the specified closing frame."""
 		self._stream.close_connection()

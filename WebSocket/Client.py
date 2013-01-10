@@ -16,12 +16,12 @@ class Client(object):
 		print sys.path
 		con = Connection("/home/dur/Projects/WebSocket/config.conf")
 		con.connect()
-		test = TestSender(con)
-		test.start()
-		while True:
-			message = con.get_message()
-			print "Got %s" %message
-		return
+#		test = TestSender(con)
+#		test.start()
+#		while True:
+#			message = con.get_message()
+#			print "Got %s" %message
+#		return
 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 cl = Client()
