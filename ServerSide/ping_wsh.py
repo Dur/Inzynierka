@@ -5,6 +5,7 @@ import logging
 from FileProcessor import FileProcessor
 from PingConnection import PingConnection
 from ListenSocket import ListenSocket
+from Dispatcher import Dispatcher
 import time
 
 def web_socket_do_extra_handshake(request):
