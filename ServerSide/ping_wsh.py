@@ -22,19 +22,17 @@ def web_socket_transfer_data(request):
 	file.lockFile()
 	addresses = file.readFile()
 	for key in addresses:
-		logging.log("key %s", key)
-		logging.log("remote address %s", remoteAddress)
+		logging.error("key %s", key)
+		logging.error("remote address %s", remoteAddress)
+		logging.error("addresses[key] %s", addresses[key])
 		if key == remoteAddress:
 			logging.error("znalazl dopasowanie")
 			if( addresses[key] != 'T' ):
 				logging.error("proba nawiazania polaczenia z nowododanym serwerem")
 				connection = PingConnection("/home/dur/Projects/ServerSide/ping_config.conf")
 				connection.connect(remoteAddress, 80)
+				connection.send("Ping")
 				logging.error("nawiazywanie polaczenia z nowododanym serwerem")
-				listener = ListenSocket(connection, Dispatcher())
-				listener.setDaemon(True)
-				listener.run()
-				logging.error("watek wystartowal")
 				addresses[key] = 'T'
 				file.writeToFile(addresses)
 				connectMode = True
@@ -42,6 +40,13 @@ def web_socket_transfer_data(request):
 	file.unlockFile()
 
 	logging.error("server starting pinging")
+	if( connectMode ):
+		listener = ListenSocket(connection._stream, Dispatcher())
+	else:
+		listener = ListenSocket(request.ws_stream, Dispatcher())
+
+	listener.setDaemon(True)
+	listener.start()
 	while(True):
 		try:
 			if( connectMode ):
@@ -54,27 +59,34 @@ def web_socket_transfer_data(request):
 
 		except ConnectionTerminatedException, a:
 			logging.error( "Server closed connection in ping_wsh")
+			logging.error(a.message)
 			connection._socket.close()
+			logging.error("trying to write to file F")
 			file.lockFile()
 			addresses = file.readFile()
 			for key in addresses:
 				if key == remoteAddress:
-					addresses[key] != 'F'
+					addresses[key] = 'F'
 					file.writeToFile(addresses)
 					file.unlockFile()
+					logging.error("wrote to file F")
 			if file.lock.is_locked:
 				file.unlockFile()
 			return
 		except Exception, e:
+			logging.error( "error in ping_wsh closing connection")
 			connection._socket.close()
+			logging.error("trying to write to file F")
 			file.lockFile()
 			addresses = file.readFile()
 			for key in addresses:
 				if key == remoteAddress:
-					addresses[key] != 'F'
+					addresses[key] = 'F'
 					file.writeToFile(addresses)
 					file.unlockFile()
+					logging.error("wrote to file F")
 			logging.error("error occurred in ping_wsh")
+			logging.error(e.message)
 			if file.lock.is_locked:
 				file.unlockFile()
 			return

@@ -19,7 +19,7 @@ def web_socket_transfer_data(request):
 	file.unlockFile()
 	for key in addresses:
 		if( connection.connect(key,80) != -1 ):
-			addresses[key] = 'T'
+#			addresses[key] = 'T'
 			file.lockFile()
 			file.writeToFile(addresses)
 			file.unlockFile()

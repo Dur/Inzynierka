@@ -10,20 +10,22 @@ class ListenSocket( Thread ):
 		try:
 			logging.error("wewnatrz watku")
 			while( True ):
-				received = self.connection._stream.receive_message()
-				self.dispatcher.dispatch(received)
+				received = self.stream.receive_message()
 				logging.error("received %s", received)
+				if( received == "Ping"):
+					self.stream.send_message("Pong")
+#				self.dispatcher.dispatch(received)
 
 		except ConnectionTerminatedException, a:
 			logging.error( "Server closed connection in listenSocket")
-			self.connection._socket.close()
+			logging.error(a.message)
 			return
 		except Exception, e:
 			logging.error( "Error occurred in listenSocket")
-			self.connection._socket.close()
+			logging.error(e.message)
 			return
 
-	def __init__(self, connection, dispatcher):
+	def __init__(self, stream, dispatcher):
 		Thread.__init__(self)
 		self.dispatcher = dispatcher
-		self.connection = connection
+		self.stream = stream

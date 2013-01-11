@@ -21,7 +21,7 @@ class Client(object):
 #		while True:
 #			message = con.get_message()
 #			print "Got %s" %message
-#		return
+		return
 
 sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 cl = Client()
