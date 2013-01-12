@@ -1,3 +1,4 @@
+from Queue import Queue
 from mod_pywebsocket._stream_base import ConnectionTerminatedException
 
 __author__ = 'dur'
@@ -39,11 +40,12 @@ def web_socket_transfer_data(request):
 			break
 	file.unlockFile()
 
+	queue = Queue(0)
 	logging.error("server starting pinging")
 	if( connectMode ):
-		listener = ListenSocket(connection._stream, Dispatcher())
+		listener = ListenSocket(connection._stream, Dispatcher(), queue)
 	else:
-		listener = ListenSocket(request.ws_stream, Dispatcher())
+		listener = ListenSocket(request.ws_stream, Dispatcher(), queue)
 
 	listener.setDaemon(True)
 	listener.start()
@@ -55,6 +57,9 @@ def web_socket_transfer_data(request):
 			else:
 				request.ws_stream.send_message("Ping")
 				logging.error("sending ping to request")
+			message = queue.get(True, 2)
+			if message == None:
+				raise ConnectionTerminatedException("Server closed connection")
 			time.sleep(2)
 
 		except ConnectionTerminatedException, a:

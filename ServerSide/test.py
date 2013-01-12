@@ -7,6 +7,7 @@
 #processor = FileProcessor("/home/dur/Pulpit/aa.txt")
 #processor.mergeFile(org, new)
 #processor.writeToFile(org)
+from threading import Thread
 
 
 __author__ = 'dur'
@@ -39,7 +40,21 @@ import time
 #	file.unlockFile()
 #	time.sleep(4)
 
-thread = ListenSocket(None, None)
-thread.start()
-time.sleep(2)
-thread._Thread__stop()
+class testThread(Thread):
+
+	def run(self):
+		time.sleep(5)
+		print "raising"
+		raise Exception("pyk pyk")
+		return
+
+
+try:
+
+	thread = testThread()
+	thread.start()
+	while(True):
+		time.sleep(2)
+except Exception, a:
+	print a.message
+	exit
