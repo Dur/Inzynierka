@@ -3,17 +3,19 @@ from mod_pywebsocket._stream_base import ConnectionTerminatedException
 import logging
 
 __author__ = 'dur'
-
+NAME = "ListenSocket: "
 class ListenSocket( Thread ):
+
 
 	def run(self):
 #		try:
-		logging.error("wewnatrz watku")
+		logging.error(NAME+"wewnatrz watku")
 		while( True ):
 			received = self.stream.receive_message()
-			logging.error("received %s", received)
+			logging.error(NAME+"received %s", received)
 			if( received == "Ping"):
 				self.stream.send_message("Pong")
+				logging.error(NAME+"received Ping")
 #				self.dispatcher.dispatch(received)
 
 #		except ConnectionTerminatedException, a:

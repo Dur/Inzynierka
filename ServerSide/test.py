@@ -8,14 +8,15 @@
 #processor.mergeFile(org, new)
 #processor.writeToFile(org)
 from threading import Thread
-
+from AppRunner import AppRunner
+import time
 
 __author__ = 'dur'
 from ListenSocket import ListenSocket
 
 from FileProcessor import FileProcessor
 from PingConnection import PingConnection
-import time
+
 #
 #file = FileProcessor("/home/dur/Projects/ServerSide/addresses.conf")
 #file.lockFile()
@@ -40,21 +41,24 @@ import time
 #	file.unlockFile()
 #	time.sleep(4)
 
-class testThread(Thread):
+runner = AppRunner("/home/dur/Projects/ServerSide/startConfig.conf")
+runner.connect()
 
-	def run(self):
-		time.sleep(5)
-		print "raising"
-		raise Exception("pyk pyk")
-		return
-
-
-try:
-
-	thread = testThread()
-	thread.start()
-	while(True):
-		time.sleep(2)
-except Exception, a:
-	print a.message
-	exit
+#class testThread(Thread):
+#
+#	def run(self):
+#		time.sleep(5)
+#		print "raising"
+#		raise Exception("pyk pyk")
+#		return
+#
+#
+#try:
+#
+#	thread = testThread()
+#	thread.start()
+#	while(True):
+#		time.sleep(2)
+#except Exception, a:
+#	print a.message
+#	exit

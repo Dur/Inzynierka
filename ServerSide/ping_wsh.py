@@ -8,7 +8,7 @@ from PingConnection import PingConnection
 from ListenSocket import ListenSocket
 from Dispatcher import Dispatcher
 import time
-
+NAME = "ping_wsh: "
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
 
@@ -17,23 +17,23 @@ def web_socket_transfer_data(request):
 	request.ws_stream.receive_message()
 	remoteAddress = request.connection.remote_ip
 	request.ws_stream.send_message("Pong")
-	logging.error("Server otrzymal ping od " + remoteAddress)
+	logging.error(NAME+ "Server otrzymal ping od " + remoteAddress)
 	file = FileProcessor("/home/dur/Projects/ServerSide/addresses.conf")
 	connectMode = False
 	file.lockFile()
 	addresses = file.readFile()
 	for key in addresses:
-		logging.error("key %s", key)
-		logging.error("remote address %s", remoteAddress)
-		logging.error("addresses[key] %s", addresses[key])
+		logging.error(NAME+ "key %s", key)
+		logging.error(NAME+ "remote address %s", remoteAddress)
+		logging.error(NAME+ "addresses[key] %s", addresses[key])
 		if key == remoteAddress:
-			logging.error("znalazl dopasowanie")
+			logging.error(NAME+ "znalazl dopasowanie")
 			if( addresses[key] != 'T' ):
-				logging.error("proba nawiazania polaczenia z nowododanym serwerem")
+				logging.error(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
 				connection = PingConnection("/home/dur/Projects/ServerSide/ping_config.conf")
 				connection.connect(remoteAddress, 80)
 				connection.send("Ping")
-				logging.error("nawiazywanie polaczenia z nowododanym serwerem")
+				logging.error(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
 				addresses[key] = 'T'
 				file.writeToFile(addresses)
 				connectMode = True
@@ -41,7 +41,7 @@ def web_socket_transfer_data(request):
 	file.unlockFile()
 
 	queue = Queue(0)
-	logging.error("server starting pinging")
+	logging.error(NAME+ "server starting pinging")
 	if( connectMode ):
 		listener = ListenSocket(connection._stream, Dispatcher(), queue)
 	else:
@@ -52,21 +52,22 @@ def web_socket_transfer_data(request):
 	while(True):
 		try:
 			if( connectMode ):
-				connection.send("Ping")
-				logging.error("sending ping to connection")
+				connection.send("Pingus")
+				logging.error(NAME+ "sending ping to connection")
 			else:
 				request.ws_stream.send_message("Ping")
-				logging.error("sending ping to request")
+				logging.error(NAME+ "sending ping to request")
 			message = queue.get(True, 2)
 			if message == None:
 				raise ConnectionTerminatedException("Server closed connection")
 			time.sleep(2)
 
 		except ConnectionTerminatedException, a:
-			logging.error( "Server closed connection in ping_wsh")
+			logging.error(NAME+ "Server closed connection in ping_wsh")
 			logging.error(a.message)
-			connection._socket.close()
-			logging.error("trying to write to file F")
+			if( connectMode ):
+				connection._socket.close()
+			logging.error(NAME+ "trying to write to file F")
 			file.lockFile()
 			addresses = file.readFile()
 			for key in addresses:
@@ -74,14 +75,15 @@ def web_socket_transfer_data(request):
 					addresses[key] = 'F'
 					file.writeToFile(addresses)
 					file.unlockFile()
-					logging.error("wrote to file F")
+					logging.error(NAME+ "wrote to file F")
 			if file.lock.is_locked:
 				file.unlockFile()
 			return
 		except Exception, e:
-			logging.error( "error in ping_wsh closing connection")
-			connection._socket.close()
-			logging.error("trying to write to file F")
+			logging.error(NAME+ "error in ping_wsh closing connection")
+			if( connectMode ):
+				connection._socket.close()
+			logging.error(NAME+ "trying to write to file F")
 			file.lockFile()
 			addresses = file.readFile()
 			for key in addresses:
@@ -89,8 +91,7 @@ def web_socket_transfer_data(request):
 					addresses[key] = 'F'
 					file.writeToFile(addresses)
 					file.unlockFile()
-					logging.error("wrote to file F")
-			logging.error("error occurred in ping_wsh")
+					logging.error(NAME+ "wrote to file F")
 			logging.error(e.message)
 			if file.lock.is_locked:
 				file.unlockFile()

@@ -1,24 +1,26 @@
+__author__ = 'dur'
 from ClientHandshakeProcessor import ClientHandshakeProcessor
 from ClientRequest import ClientRequest
 from _TLSSocket import _TLSSocket
+
 import logging
 import socket
+
+
 from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
 from mod_pywebsocket.stream import StreamOptions
-import sys
-NAME = "PingConnection: "
+from mod_pywebsocket import util
+
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
 _CONNECTION_HEADER = 'Connection: Upgrade\r\n'
 
 _GOODBYE_MESSAGE = 'Goodbye'
 
 _PROTOCOL_VERSION_HYBI13 = 'hybi13'
-CONNECTION_PROBLEM_FLAG = -1
-CONNECTION_OK_FLAG = 0
 
 
-class PingConnection(object):
+class AppRunner(object):
 
 	def __init__(self, configFile):
 		self.configFile = configFile
@@ -28,15 +30,19 @@ class PingConnection(object):
 				singleLine = singleLine.replace('\n','')
 				splitedLine = singleLine.split('=')
 				self.dictionary[splitedLine[0]] = splitedLine[1]
+		print self.dictionary
+		logging.basicConfig(level=logging.getLevelName(self.dictionary.get('log_level').upper()))
 		self._socket = None
+		self.list=[]
+		self._logger = util.get_class_logger(self)
 
-	def connect(self, host, port):
-		self.dictionary['server_port'] = port
-		self.dictionary['server_host'] = host
+	def connect(self):
+
 		self._socket = socket.socket()
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
-			self._socket.connect((host,int(port)))
+			self._socket.connect((self.dictionary.get('server_host'),
+			                      int(self.dictionary.get('server_port'))))
 			if self.dictionary.get('use_tls') == 'True':
 				self._socket = _TLSSocket(self._socket)
 
@@ -57,21 +63,25 @@ class PingConnection(object):
 			stream_option.mask_send = True
 			stream_option.unmask_receive = False
 
+			if self.dictionary.get('deflate_stream') == 'True':
+				stream_option.deflate_stream = True
+
+			if self.dictionary.get('deflate_frame') == 'True':
+				processor = True
+				processor.setup_stream_options(stream_option)
+
 			self._stream = Stream(request, stream_option)
-			logging.error(NAME+ "connection ok")
-			return CONNECTION_OK_FLAG
-		except:
-			self._socket.close()
-			logging.error(NAME+ "unable to connect")
-			return CONNECTION_PROBLEM_FLAG
+		finally:
+			logging.error("AppRunner: " + "po powitaniu, serwer oczekuje na dane")
 
 	def send(self, message):
-		logging.error(NAME+ "Message to be send from ping connection %s ", message)
 		self._stream.send_message(message)
-		logging.error(NAME+ "Message send from ping connection %s ", message)
 
 	def get_message(self):
-		return self._stream.receive_message()
+		if not self.list:
+			return(None)
+		else:
+			return self.list.pop(0)
 
 	def _do_closing_handshake(self):
-		self._socket.close()
+		self._stream.close_connection()

@@ -84,7 +84,7 @@ class Connection(object):
 	def send(self, message):
 		for line in message.split(','):
 			self._stream.send_message(line)
-			print 'Send: %s' % line
+			logging.error("From connection message send %s", line)
 
 	def get_message(self):
 		if not self.list:
