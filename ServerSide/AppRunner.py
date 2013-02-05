@@ -18,6 +18,7 @@ _CONNECTION_HEADER = 'Connection: Upgrade\r\n'
 _GOODBYE_MESSAGE = 'Goodbye'
 
 _PROTOCOL_VERSION_HYBI13 = 'hybi13'
+NAME = "AppRunner: "
 
 
 class AppRunner(object):
@@ -72,7 +73,7 @@ class AppRunner(object):
 
 			self._stream = Stream(request, stream_option)
 		finally:
-			logging.error("AppRunner: " + "po powitaniu, serwer oczekuje na dane")
+			logging.error(NAME + "po powitaniu, serwer oczekuje na dane")
 
 	def send(self, message):
 		self._stream.send_message(message)
