@@ -2,11 +2,8 @@ __author__ = 'dur'
 from ClientHandshakeProcessor import ClientHandshakeProcessor
 from ClientRequest import ClientRequest
 from _TLSSocket import _TLSSocket
-
 import logging
 import socket
-
-
 from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
 from mod_pywebsocket.stream import StreamOptions
@@ -14,12 +11,9 @@ from mod_pywebsocket import util
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
 _CONNECTION_HEADER = 'Connection: Upgrade\r\n'
-
 _GOODBYE_MESSAGE = 'Goodbye'
-
 _PROTOCOL_VERSION_HYBI13 = 'hybi13'
 NAME = "AppRunner: "
-
 
 class AppRunner(object):
 
@@ -63,13 +57,6 @@ class AppRunner(object):
 			stream_option = StreamOptions()
 			stream_option.mask_send = True
 			stream_option.unmask_receive = False
-
-			if self.dictionary.get('deflate_stream') == 'True':
-				stream_option.deflate_stream = True
-
-			if self.dictionary.get('deflate_frame') == 'True':
-				processor = True
-				processor.setup_stream_options(stream_option)
 
 			self._stream = Stream(request, stream_option)
 		finally:

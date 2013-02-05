@@ -41,32 +41,8 @@ from PingConnection import PingConnection
 #	file.unlockFile()
 #	time.sleep(4)
 
-runner = AppRunner("/home/dur/Projects/ServerSide/startConfig.conf")
-runner.connect()
+#runner = AppRunner("/home/dur/Projects/ServerSide/startConfig.conf")
+#runner.connect()
 
-#queue = Queue.Queue(0)
-#try:
-#	queue.put("moto")
-#	print (queue.get(True, 2))
-#except Queue.Empty:
-#	print("pusto")
-
-
-#class testThread(Thread):
-#
-#	def run(self):
-#		time.sleep(5)
-#		print "raising"
-#		raise Exception("pyk pyk")
-#		return
-#
-#
-#try:
-#
-#	thread = testThread()
-#	thread.start()
-#	while(True):
-#		time.sleep(2)
-#except Exception, a:
-#	print a.message
-#	exit
+module = __import__("TestClass")
+module.printMe("hello")

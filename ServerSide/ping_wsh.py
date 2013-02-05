@@ -43,10 +43,9 @@ def web_socket_transfer_data(request):
 	queue = Queue.Queue(0)
 	logging.error(NAME+ "server starting pinging")
 	if( connectMode ):
-		listener = ListenSocket(connection._stream, Dispatcher(), queue)
+		listener = ListenSocket(connection._stream, queue)
 	else:
-		listener = ListenSocket(request.ws_stream, Dispatcher(), queue)
-
+		listener = ListenSocket(request.ws_stream, queue)
 	listener.setDaemon(True)
 	listener.start()
 	while(True):
@@ -61,6 +60,12 @@ def web_socket_transfer_data(request):
 			time.sleep(2)
 		except Queue.Empty:
 			logging.error(NAME + "serwer nie otrzymal odpowiedzi na Ping zamykanie polaczenia")
+		except ConnectionTerminatedException, a:
+			logging.error(NAME+ "Server closed connection in ping_wsh")
+		except Exception, e:
+			logging.error(NAME+ "error in ping_wsh closing connection")
+			logging.error(NAME + e.message)
+		finally:
 			if( connectMode ):
 				connection._socket.close()
 			logging.error(NAME+ "trying to write to file F")
@@ -76,40 +81,6 @@ def web_socket_transfer_data(request):
 				file.unlockFile()
 			return
 
-		except ConnectionTerminatedException, a:
-			logging.error(NAME+ "Server closed connection in ping_wsh")
-			logging.error(a.message)
-			if( connectMode ):
-				connection._socket.close()
-			logging.error(NAME+ "trying to write to file F")
-			file.lockFile()
-			addresses = file.readFile()
-			for key in addresses:
-				if key == remoteAddress:
-					addresses[key] = 'F'
-					file.writeToFile(addresses)
-					file.unlockFile()
-					logging.error(NAME+ "wrote to file F")
-			if file.lock.is_locked:
-				file.unlockFile()
-			return
-		except Exception, e:
-			logging.error(NAME+ "error in ping_wsh closing connection")
-			if( connectMode ):
-				connection._socket.close()
-			logging.error(NAME+ "trying to write to file F")
-			file.lockFile()
-			addresses = file.readFile()
-			for key in addresses:
-				if key == remoteAddress:
-					addresses[key] = 'F'
-					file.writeToFile(addresses)
-					file.unlockFile()
-					logging.error(NAME+ "wrote to file F")
-			logging.error(e.message)
-			if file.lock.is_locked:
-				file.unlockFile()
-			return
 
 	#1000100100000000 - Ping frame in binary with no data
 	#1000101000000000 - Pong frame in binary with no data
