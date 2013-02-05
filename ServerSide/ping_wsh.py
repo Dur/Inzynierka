@@ -52,14 +52,14 @@ def web_socket_transfer_data(request):
 	while(True):
 		try:
 			if( connectMode ):
-				connection.send("Pingus")
+				connection.send("Ping")
 				logging.error(NAME+ "sending ping to connection")
 			else:
 				request.ws_stream.send_message("Ping")
 				logging.error(NAME+ "sending ping to request")
-			message = queue.get(True, 2)
-			if message == None:
-				raise ConnectionTerminatedException("Server closed connection")
+#			message = queue.get(True, 2)
+#			if message == None:
+#				raise ConnectionTerminatedException("Server closed connection")
 			time.sleep(2)
 
 		except ConnectionTerminatedException, a:
