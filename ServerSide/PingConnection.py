@@ -66,9 +66,8 @@ class PingConnection(object):
 			return CONNECTION_PROBLEM_FLAG
 
 	def send(self, message):
-		logging.error(NAME+ "Message to be send from ping connection %s ", message)
 		self._stream.send_message(message)
-		logging.error(NAME+ "Message send from ping connection %s ", message)
+		logging.error(NAME+ "Wyslano wiadomosc %s ", message)
 
 	def get_message(self):
 		return self._stream.receive_message()

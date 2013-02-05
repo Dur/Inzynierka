@@ -12,10 +12,10 @@ class ListenSocket( Thread ):
 			logging.error(NAME+"wewnatrz watku")
 			while( True ):
 				received = self.stream.receive_message()
-				logging.error(NAME+"received %s", received)
+				logging.error(NAME+"odebrano %s", received)
 				if( received == "Ping"):
 					self.stream.send_message("Pong")
-					logging.error(NAME+"received Ping")
+					logging.error(NAME+"wyslano Pong")
 	#				self.dispatcher.dispatch(received)
 		except Exception, e:
 			logging.error(NAME+"Error occurred in listenSocket")
