@@ -1,4 +1,4 @@
-from Queue import Queue
+import Queue
 from mod_pywebsocket._stream_base import ConnectionTerminatedException
 
 __author__ = 'dur'
@@ -40,7 +40,7 @@ def web_socket_transfer_data(request):
 			break
 	file.unlockFile()
 
-	queue = Queue(0)
+	queue = Queue.Queue(0)
 	logging.error(NAME+ "server starting pinging")
 	if( connectMode ):
 		listener = ListenSocket(connection._stream, Dispatcher(), queue)
@@ -57,10 +57,24 @@ def web_socket_transfer_data(request):
 			else:
 				request.ws_stream.send_message("Ping")
 				logging.error(NAME+ "sending ping to request")
-#			message = queue.get(True, 2)
-#			if message == None:
-#				raise ConnectionTerminatedException("Server closed connection")
+			queue.get(True, 2)
 			time.sleep(2)
+		except Queue.Empty:
+			logging.error(NAME + "serwer nie otrzymal odpowiedzi na Ping zamykanie polaczenia")
+			if( connectMode ):
+				connection._socket.close()
+			logging.error(NAME+ "trying to write to file F")
+			file.lockFile()
+			addresses = file.readFile()
+			for key in addresses:
+				if key == remoteAddress:
+					addresses[key] = 'F'
+					file.writeToFile(addresses)
+					file.unlockFile()
+					logging.error(NAME+ "wrote to file F")
+			if file.lock.is_locked:
+				file.unlockFile()
+			return
 
 		except ConnectionTerminatedException, a:
 			logging.error(NAME+ "Server closed connection in ping_wsh")

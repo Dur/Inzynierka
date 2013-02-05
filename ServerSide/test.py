@@ -10,7 +10,7 @@
 from threading import Thread
 from AppRunner import AppRunner
 import time
-
+import Queue
 __author__ = 'dur'
 from ListenSocket import ListenSocket
 
@@ -43,6 +43,14 @@ from PingConnection import PingConnection
 
 runner = AppRunner("/home/dur/Projects/ServerSide/startConfig.conf")
 runner.connect()
+
+#queue = Queue.Queue(0)
+#try:
+#	queue.put("moto")
+#	print (queue.get(True, 2))
+#except Queue.Empty:
+#	print("pusto")
+
 
 #class testThread(Thread):
 #

@@ -17,6 +17,8 @@ class ListenSocket( Thread ):
 					self.stream.send_message("Pong")
 					logging.error(NAME+"wyslano Pong")
 	#				self.dispatcher.dispatch(received)
+				if (received == "Pong" ):
+					self.queue.put(received)
 		except Exception, e:
 			logging.error(NAME+"Error occurred in listenSocket")
 			logging.error(e.message)
