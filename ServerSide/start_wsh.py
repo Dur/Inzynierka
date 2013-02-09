@@ -18,7 +18,6 @@ def web_socket_transfer_data(request):
 		addresses[key] = 'F'
 	file.writeToFile(addresses)
 	file.unlockFile()
-	print addresses
 	for key in addresses:
 		connection = PingConnection("/home/dur/Projects/ServerSide/config/ping_config.conf")
 		if( connection.connect(key,80) != -1 ):
