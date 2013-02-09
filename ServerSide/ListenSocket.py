@@ -19,7 +19,7 @@ class ListenSocket( Thread ):
 			while( True ):
 				received = self.stream.receive_message()
 				logging.error(NAME+"odebrano %s", received)
-				self.dispatch(self, received)
+				self.dispatch(received)
 		except Exception, e:
 			logging.error(NAME+"Wystapil nieznany problem")
 			logging.error(e.message)
