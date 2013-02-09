@@ -21,7 +21,6 @@ def web_socket_transfer_data(request):
 	loader = ModulesLoader()
 	modules = loader.loadModules("/home/dur/Projects/ServerSide/config/modules.ext")
 	logging.error(NAME+ "server loaded modules")
-	
 	request.ws_stream.receive_message()
 	remoteAddress = request.connection.remote_ip
 	request.ws_stream.send_message(PONG)
