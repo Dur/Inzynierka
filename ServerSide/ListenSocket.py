@@ -30,4 +30,4 @@ class ListenSocket( Thread ):
 		if( self.modules[message] != None ):
 			logging.error(NAME+"znaleziono modul odpowiadajacy za obsluge")
 			for singleModule in self.modules[message]:
-				singleModule.execute(self.stream, self.queue)
+				singleModule.execute(self.stream, self.queue, None)
