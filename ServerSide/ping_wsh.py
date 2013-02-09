@@ -57,6 +57,7 @@ def web_socket_transfer_data(request):
 		listener = ListenSocket(request.ws_stream, queue, modules)
 	listener.setDaemon(True)
 	listener.start()
+	wasError = False
 	while(True):
 		try:
 			if( connectMode ):
@@ -68,27 +69,31 @@ def web_socket_transfer_data(request):
 			queue.get(True, 2)
 			time.sleep(2)
 		except Queue.Empty:
+			wasError = True
 			logging.error(NAME + "serwer nie otrzymal odpowiedzi na Ping zamykanie polaczenia")
 		except ConnectionTerminatedException, a:
+			wasError = True
 			logging.error(NAME+ "Server closed connection in ping_wsh")
 		except Exception, e:
+			wasError = True
 			logging.error(NAME+ "error in ping_wsh closing connection")
 			logging.error(NAME + e.message)
 		finally:
-			if( connectMode ):
-				connection._socket.close()
-			logging.error(NAME+ "trying to write to file F")
-			file.lockFile()
-			addresses = file.readFile()
-			for key in addresses:
-				if key == remoteAddress:
-					addresses[key] = 'F'
-					file.writeToFile(addresses)
+			if wasError:
+				if( connectMode ):
+					connection._socket.close()
+				logging.error(NAME+ "trying to write to file F")
+				file.lockFile()
+				addresses = file.readFile()
+				for key in addresses:
+					if key == remoteAddress:
+						addresses[key] = 'F'
+						file.writeToFile(addresses)
+						file.unlockFile()
+						logging.error(NAME+ "wrote to file F")
+				if file.lock.is_locked:
 					file.unlockFile()
-					logging.error(NAME+ "wrote to file F")
-			if file.lock.is_locked:
-				file.unlockFile()
-			return
+				return
 
 
 	#1000100100000000 - Ping frame in binary with no data
