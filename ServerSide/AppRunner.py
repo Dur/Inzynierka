@@ -59,8 +59,10 @@ class AppRunner(object):
 			stream_option.unmask_receive = False
 
 			self._stream = Stream(request, stream_option)
+		except e:
+			logging.error(Name + e.message)
 		finally:
-			logging.error(NAME + "Nieoczekiwany problem sie pojawil")
+			logging.error(NAME + "Po polaczeniu")
 
 	def send(self, message):
 		self._stream.send_message(message)
