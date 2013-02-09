@@ -26,7 +26,7 @@ def web_socket_transfer_data(request):
 	global address
 	address = request.connection.remote_ip
 	for singleModule in modules["NEW_CONN"]:
-		singleModule.execute(None, None)
+		singleModule.execute(None, None, None)
 
 
 	request.ws_stream.receive_message()
