@@ -12,7 +12,6 @@ import time
 NAME = "ping_wsh: "
 PING = "PING"
 PONG = "PONG"
-address = "yo mama"
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
 
