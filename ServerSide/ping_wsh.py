@@ -18,6 +18,10 @@ def web_socket_do_extra_handshake(request):
 
 
 def web_socket_transfer_data(request):
+	loader = ModulesLoader()
+	modules = loader.loadModules("/home/dur/Projects/ServerSide/config/modules.ext")
+	logging.error(NAME+ "server loaded modules")
+	
 	request.ws_stream.receive_message()
 	remoteAddress = request.connection.remote_ip
 	request.ws_stream.send_message(PONG)
@@ -45,10 +49,6 @@ def web_socket_transfer_data(request):
 	file.unlockFile()
 
 	queue = Queue.Queue(0)
-
-	loader = ModulesLoader()
-	modules = loader.loadModules("/home/dur/Projects/ServerSide/config/modules.ext")
-	logging.error(NAME+ "server loaded modules")
 
 	logging.error(NAME+ "server starting pinging")
 	if( connectMode ):

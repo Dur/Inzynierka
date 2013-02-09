@@ -1,4 +1,8 @@
+import logging
+
 __author__ = 'dur'
 
-def printMe():
-	print "From new Conn"
+NAME = "StandardNewConn: "
+
+def execute(socket, queue, remoteAddress):
+	logging.error(NAME+ "Wlaczam dodatkowe opcje przy podlaczaniuserwera")
