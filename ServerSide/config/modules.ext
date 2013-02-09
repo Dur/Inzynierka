@@ -1,0 +1,7 @@
+PING:StandardPing
+
+NEW_CONN:StandardNewConn
+
+HOST_DC:StandardHostDC
+
+PONG:StandardPong

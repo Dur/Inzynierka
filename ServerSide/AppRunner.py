@@ -60,7 +60,7 @@ class AppRunner(object):
 
 			self._stream = Stream(request, stream_option)
 		finally:
-			logging.error(NAME + "po powitaniu, serwer oczekuje na dane")
+			logging.error(NAME + "Nieoczekiwany problem sie pojawil")
 
 	def send(self, message):
 		self._stream.send_message(message)

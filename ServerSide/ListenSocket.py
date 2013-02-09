@@ -1,10 +1,17 @@
 from threading import Thread
-from mod_pywebsocket._stream_base import ConnectionTerminatedException
 import logging
 
 __author__ = 'dur'
+
 NAME = "ListenSocket: "
+
 class ListenSocket( Thread ):
+
+	def __init__(self, stream, queue, modules):
+		Thread.__init__(self)
+		self.stream = stream
+		self.queue = queue
+		self.modules = modules
 
 	def run(self):
 		try:
@@ -18,14 +25,9 @@ class ListenSocket( Thread ):
 			logging.error(e.message)
 			return
 
-	def __init__(self, stream, queue):
-		Thread.__init__(self)
-		self.stream = stream
-		self.queue = queue
 
 	def dispatch(self, message):
-		if( message == "Ping"):
-			self.stream.send_message("Pong")
-			logging.error(NAME+"wyslano Pong")
-		if (message == "Pong" ):
-			self.queue.put(message)
+		if( self.modules[message] != None ):
+			logging.error(NAME+"znaleziono modul odpowiadajacy za obsluge")
+			for singleModule in self.modules[message]:
+				singleModule.execute(self.stream, self.queue)
