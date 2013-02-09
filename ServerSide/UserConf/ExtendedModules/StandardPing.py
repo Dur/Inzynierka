@@ -7,6 +7,6 @@ import logging
 def printMe():
 	print "From Ping"
 
-def execute(socket, queue):
+def execute(socket, queue, dummy):
 	socket.send_message(PONG)
 	logging.error(NAME+"wyslano Pong")
