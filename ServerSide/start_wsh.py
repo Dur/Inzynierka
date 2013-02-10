@@ -28,9 +28,11 @@ def web_socket_transfer_data(request):
 			logging.error(NAME+ "connection with %s established", key)
 			connection.send_message(PING)
 			logging.error(NAME+ "sending ping from start method")
-			connection.get_message()
-			logging.error(NAME+ "start method received answer, closing connection")
-			connection._do_closing_handshake()
+			if connection.get_message() != None:
+				logging.error(NAME+ "start method received answer, closing connection")
+				connection._do_closing_handshake()
+			else:
+				logging.error(NAME+ "Serwer nie odpowiedzial na PING")
 		else:
 			logging.error(NAME+ "unable to connect to %s", key)
 	return

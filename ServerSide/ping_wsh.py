@@ -14,14 +14,16 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
+	logging.error(NAME+ "Server dostal zgloszenie")
 	paramsDictionary = {}
 	paramsDictionary["REQUEST"] = request
 	paramsDictionary["CLIENT_ADDRESS"]= request.connection.remote_ip
 	paramsDictionary["SOCKET"] = request.ws_stream
 
 	paramsDictionary["SOCKET"].receive_message()
-	paramsDictionary["SOCKET"].send_message(PONG)
 	logging.error(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
+	paramsDictionary["SOCKET"].send_message(PONG)
+	logging.error(NAME+ "Server odpowiedzial do " + paramsDictionary["CLIENT_ADDRESS"])
 
 	loader = ModulesLoader()
 	modules = loader.loadModules("/home/dur/Projects/ServerSide/config/modules.ext")
