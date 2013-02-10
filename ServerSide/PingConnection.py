@@ -65,7 +65,7 @@ class PingConnection(object):
 			logging.error(NAME+ "unable to connect")
 			return CONNECTION_PROBLEM_FLAG
 
-	def send(self, message):
+	def send_message(self, message):
 		self._stream.send_message(message)
 		logging.error(NAME+ "Wyslano wiadomosc %s ", message)
 
