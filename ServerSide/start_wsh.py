@@ -11,7 +11,7 @@ def web_socket_do_extra_handshake(request):
 
 
 def web_socket_transfer_data(request):
-	file = FileProcessor("/home/dur/Projects/ServerSide/config/addresses.conf")
+	file = FileProcessor(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/addresses.conf")
 	file.lockFile()
 	addresses = file.readFile()
 	for key in addresses:
@@ -19,7 +19,7 @@ def web_socket_transfer_data(request):
 	file.writeToFile(addresses)
 	file.unlockFile()
 	for key in addresses:
-		connection = PingConnection("/home/dur/Projects/ServerSide/config/ping_config.conf")
+		connection = PingConnection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/ping_config.conf")
 		if( connection.connect(key,80) != -1 ):
 			addresses[key] = 'T'
 			file.lockFile()

@@ -4,6 +4,8 @@ from ModulesLoader import ModulesLoader
 import logging
 from ListenSocket import ListenSocket
 import time
+from mod_python import apache
+
 
 NAME = "ping_wsh: "
 PING = "PING"
@@ -19,6 +21,7 @@ def web_socket_transfer_data(request):
 	paramsDictionary["REQUEST"] = request
 	paramsDictionary["CLIENT_ADDRESS"]= request.connection.remote_ip
 	paramsDictionary["SOCKET"] = request.ws_stream
+	paramsDictionary["HOME_PATH"] = request.get_options()["PROJECT_LOCATION"]
 
 	paramsDictionary["SOCKET"].receive_message()
 	logging.error(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
@@ -26,7 +29,7 @@ def web_socket_transfer_data(request):
 	logging.error(NAME+ "Server odpowiedzial do " + paramsDictionary["CLIENT_ADDRESS"])
 
 	loader = ModulesLoader()
-	modules = loader.loadModules("/home/dur/Projects/ServerSide/config/modules.ext")
+	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")
 	logging.error(NAME+ "server loaded modules")
 
 	for singleModule in modules["NEW_CONN"]:

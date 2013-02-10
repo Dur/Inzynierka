@@ -11,7 +11,7 @@ def execute(paramsDictionary):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 
 	logging.error(NAME+ "Wlaczam dodatkowe opcje przy podlaczaniuserwera")
-	file = FileProcessor("/home/dur/Projects/ServerSide/config/addresses.conf")
+	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	paramsDictionary["CONNECTION_MODE"] = False
 	file.lockFile()
 	addresses = file.readFile()
@@ -23,7 +23,7 @@ def execute(paramsDictionary):
 			logging.error(NAME+ "znalazl dopasowanie")
 			if( addresses[key] != 'T' ):
 				logging.error(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
-				paramsDictionary["CONNECTION"] = PingConnection("/home/dur/Projects/ServerSide/config/ping_config.conf")
+				paramsDictionary["CONNECTION"] = PingConnection(paramsDictionary["HOME_PATH"]+"ServerSide/config/ping_config.conf")
 				paramsDictionary["CONNECTION"].connect(remoteAddress, 80)
 				paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
 				paramsDictionary["SOCKET"].send_message(PING)

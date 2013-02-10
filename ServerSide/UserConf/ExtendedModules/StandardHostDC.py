@@ -7,7 +7,7 @@ NAME = "StandardHostDC: "
 
 def execute(paramsDictionary):
 	logging.error(NAME+ "Wlaczam dodatkowe opcje przy odlaczaniu serwera")
-	file = FileProcessor("/home/dur/Projects/ServerSide/config/addresses.conf")
+	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	if( paramsDictionary["CONNECTION_MODE"] == True ):
 		paramsDictionary["CONNECTION"]._socket.close()
 	logging.error(NAME+ "trying to write to addresses file")
