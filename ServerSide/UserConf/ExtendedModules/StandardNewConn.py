@@ -25,8 +25,8 @@ def execute(paramsDictionary):
 				logging.error(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
 				paramsDictionary["CONNECTION"] = PingConnection("/home/dur/Projects/ServerSide/config/ping_config.conf")
 				paramsDictionary["CONNECTION"].connect(remoteAddress, 80)
-				paramsDictionary["CONNECTION"].send(PING)
 				paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
+				paramsDictionary["SOCKET"].send_message(PING)
 				logging.error(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
 				addresses[key] = 'T'
 				file.writeToFile(addresses)

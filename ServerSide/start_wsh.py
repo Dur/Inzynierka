@@ -26,7 +26,7 @@ def web_socket_transfer_data(request):
 			file.writeToFile(addresses)
 			file.unlockFile()
 			logging.error(NAME+ "connection with %s established", key)
-			connection.send(PING)
+			connection.send_message(PING)
 			logging.error(NAME+ "sending ping from start method")
 			connection.get_message()
 			logging.error(NAME+ "start method received answer, closing connection")

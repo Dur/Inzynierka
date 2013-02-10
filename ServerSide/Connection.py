@@ -81,7 +81,7 @@ class Connection(object):
 		finally:
 			print "po powitaniu, serwer oczekuje na dane"
 
-	def send(self, message):
+	def send_message(self, message):
 		for line in message.split(','):
 			self._stream.send_message(line)
 			logging.error("From connection message send %s", line)
