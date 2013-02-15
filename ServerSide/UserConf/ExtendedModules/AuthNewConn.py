@@ -28,6 +28,7 @@ def authConnectionMode(paramsDictionary):
 	logging.error(NAME + "Otrzymano haslo z serwera")
 	processor = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 	passwords = processor.readFile()
+	logging.error(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + password )
 	if(passwords[remoteAddress] == password ):
 		logging.error(NAME + "Haslo zgodne")
 
@@ -60,7 +61,6 @@ def authConnectionMode(paramsDictionary):
 
 def authRequestMode(paramsDictionary):
 	logging.error(NAME + "Autoryzacja dla zadania")
-	logging.error(NAME + "autoryzacja dla polaczenia")
 	socket = paramsDictionary["SOCKET"]
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
@@ -84,6 +84,7 @@ def authRequestMode(paramsDictionary):
 		logging.error(NAME + "Otrzymano haslo z serwera")
 		processor = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 		passwords = processor.readFile()
+		logging.error(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + password )
 		if(passwords[remoteAddress] == password ):
 			logging.error(NAME + "Haslo zgodne")
 
