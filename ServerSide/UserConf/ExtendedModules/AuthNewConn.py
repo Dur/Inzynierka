@@ -51,11 +51,11 @@ def authConnectionMode(paramsDictionary):
 			pass
 		else:
 			logging.error(NAME + "Haslo niezgodne zamykanie polaczenia")
-			paramsDictionary["SOCKET"].close()
+			paramsDictionary["CONNECTION"]._socket.close()
 	else:
 		logging.error(NAME + "Haslo pzeslane przez serwer niezgodne zamykanie polaczenia")
 		socket.send_message(WRONG_PASSWORD)
-		paramsDictionary["SOCKET"].close()
+		paramsDictionary["CONNECTION"]._socket.close()
 
 
 

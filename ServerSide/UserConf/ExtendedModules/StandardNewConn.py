@@ -27,6 +27,7 @@ def execute(paramsDictionary):
 				paramsDictionary["CONNECTION"].connect(remoteAddress, 80)
 				paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
 				paramsDictionary["SOCKET"].send_message(PING)
+				paramsDictionary["SOCKET"].receive_message()
 				logging.error(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
 				addresses[key] = 'T'
 				file.writeToFile(addresses)
