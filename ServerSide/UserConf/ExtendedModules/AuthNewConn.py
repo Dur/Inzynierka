@@ -2,6 +2,7 @@ import logging
 from FileProcessor import FileProcessor
 __author__ = 'dur'
 
+'''Modul sluzacy do uwierzytelniania serwerow przy uzyciu hasle krotkotrwalych'''
 
 GET_PASSWORD = "PASSWORD?"
 PASSWORD_OK = "PASS_OK"
