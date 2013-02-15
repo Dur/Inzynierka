@@ -3,3 +3,5 @@
 .idea/
 WebSocket/.idea/
 ServerSide/.idea/
+ServerSide/config/pass
+ServerSide/config/addresses.conf
