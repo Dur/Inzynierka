@@ -8,3 +8,9 @@ HOST_DC:StandardHostDC
 
 PONG:StandardPong
 
+PASS_EXCH_REQ:PasswordExchangeRequest
+
+PASS_EXCH_RES:PasswordExchangeResponse
+
+PERIODIC:PeriodicPing
+PERIODIC:PeriodicPassExchange

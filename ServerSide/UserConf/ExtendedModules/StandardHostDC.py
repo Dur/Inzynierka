@@ -13,11 +13,9 @@ def execute(paramsDictionary, message):
 	logging.error(NAME+ "trying to write to addresses file")
 	file.lockFile()
 	addresses = file.readFile()
-	for key in addresses:
-		if key == paramsDictionary["CLIENT_ADDRESS"]:
-			addresses[key] = 'F'
-			file.writeToFile(addresses)
-			file.unlockFile()
-			logging.error(NAME+ "wrote to addresses file")
+	addresses[paramsDictionary["CLIENT_ADDRESS"]] = 'F'
+	file.writeToFile(addresses)
+	file.unlockFile()
+	logging.error(NAME+ "wrote to addresses file")
 	if file.lock.is_locked:
 		file.unlockFile()

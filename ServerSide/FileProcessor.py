@@ -18,7 +18,9 @@ class FileProcessor:
 				splitedLine = singleLine.split(':')
 				pairs[splitedLine[0]] = splitedLine[1]
 		return pairs
-
+	socket = paramsDictionary["SOCKET"]
+	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
+	homePath = paramsDictionary["HOME_PATH"]
 	def writeToFile(self, pairs):
 		with open(self.fileName, 'w') as f:
 			for key in pairs:

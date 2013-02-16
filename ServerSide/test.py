@@ -10,4 +10,3 @@ file.writeToFile(addresses)
 file.unlockFile()
 runner = AppRunner("/home/dur/Projects/ServerSide/config/startConfig.conf")
 runner.connect()
-
