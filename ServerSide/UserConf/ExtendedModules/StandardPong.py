@@ -1,11 +1,10 @@
 __author__ = 'dur'
 
 NAME = "StandardPong: "
+PONG = "PONG:PONG"
 import logging
 
-def printMe():
-	print "From Pong"
-
-def execute(paramsDictionary):
-	paramsDictionary["QUEUE"].put("PONG")
-	logging.error(NAME+"Pong wrzucony do kolejki")
+def execute(paramsDictionary, message):
+	if message == PONG:
+		paramsDictionary["QUEUE"].put(PONG)
+		logging.error(NAME+"Pong wrzucony do kolejki")

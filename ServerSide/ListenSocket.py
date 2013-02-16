@@ -26,7 +26,14 @@ class ListenSocket( Thread ):
 
 
 	def dispatch(self, message):
-		if( self.modules[message] != None ):
+		splited = message.split(':')
+		logging.error(NAME + "Otrzymyalem " + splited)
+		module = splited[0]
+		if len(splited) > 1:
+			message = splited[1]
+		else:
+			message = None
+		if( self.modules[module] != None ):
 			logging.error(NAME+"znaleziono modul odpowiadajacy za obsluge")
-			for singleModule in self.modules[message]:
-				singleModule.execute(self.paramsDictionary)
+			for singleModule in self.modules[module]:
+				singleModule.execute(self.paramsDictionary, message)

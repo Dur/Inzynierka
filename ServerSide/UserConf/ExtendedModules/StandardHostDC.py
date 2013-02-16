@@ -5,7 +5,7 @@ __author__ = 'dur'
 
 NAME = "StandardHostDC: "
 
-def execute(paramsDictionary):
+def execute(paramsDictionary, message):
 	logging.error(NAME+ "Wlaczam dodatkowe opcje przy odlaczaniu serwera")
 	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	if( paramsDictionary["CONNECTION_MODE"] == True ):

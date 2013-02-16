@@ -9,7 +9,7 @@ PASSWORD_OK = "PASS_OK"
 WRONG_PASSWORD = "AUTH_FAILD"
 NAME = "AuthNewConn: "
 
-def execute(paramsDictionary):
+def execute(paramsDictionary, message):
 	logging.error(NAME + "Wewnatrz modulu autoryzacji")
 	if paramsDictionary["CONNECTION_MODE"] == True:
 		authConnectionMode(paramsDictionary)

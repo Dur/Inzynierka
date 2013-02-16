@@ -4,10 +4,10 @@ from PingConnection import PingConnection
 
 __author__ = 'dur'
 
-PING = "PING"
+PING = "PING:PING"
 NAME = "StandardNewConn: "
 
-def execute(paramsDictionary):
+def execute(paramsDictionary, message):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 
 	logging.error(NAME+ "Wlaczam dodatkowe opcje przy podlaczaniuserwera")

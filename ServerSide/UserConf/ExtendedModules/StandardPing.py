@@ -1,9 +1,11 @@
 __author__ = 'dur'
 
 NAME = "StandardPing: "
-PONG = "PONG"
+PING = "PING:PING"
+PONG = "PONG:PONG"
 import logging
 
-def execute(paramsDictionary):
-	paramsDictionary["SOCKET"].send_message(PONG)
-	logging.error(NAME+"wyslano Pong")
+def execute(paramsDictionary, message):
+	if message == PING:
+		paramsDictionary["SOCKET"].send_message(PONG)
+		logging.error(NAME+"wyslano Pong")

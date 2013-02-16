@@ -8,8 +8,8 @@ from mod_python import apache
 
 
 NAME = "ping_wsh: "
-PING = "PING"
-PONG = "PONG"
+PING = "PING:PING"
+PONG = "PONG:PONG"
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
 
