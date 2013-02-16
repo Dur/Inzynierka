@@ -1,7 +1,7 @@
 __author__ = 'dur'
 
 NAME = "StandardPong: "
-PONG = "PONG:PONG"
+PONG = "PONG"
 import logging
 
 def execute(paramsDictionary, message):

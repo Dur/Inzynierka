@@ -1,7 +1,7 @@
 __author__ = 'dur'
 
 NAME = "StandardPing: "
-PING = "PING:PING"
+PING = "PING"
 PONG = "PONG:PONG"
 import logging
 
