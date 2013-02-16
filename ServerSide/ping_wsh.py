@@ -33,7 +33,7 @@ def web_socket_transfer_data(request):
 	logging.error(NAME+ "server loaded modules")
 
 	for singleModule in modules["NEW_CONN"]:
-		singleModule.execute(paramsDictionary)
+		singleModule.execute(paramsDictionary, None)
 
 	paramsDictionary["QUEUE"] = Queue.Queue(0)
 
@@ -65,7 +65,7 @@ def web_socket_transfer_data(request):
 		finally:
 			if wasError:
 				for singleModule in modules["HOST_DC"]:
-					singleModule.execute(paramsDictionary)
+					singleModule.execute(paramsDictionary, None)
 				return
 
 
