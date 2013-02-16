@@ -27,7 +27,6 @@ class ListenSocket( Thread ):
 
 	def dispatch(self, message):
 		splited = message.split(':')
-		logging.error(NAME + "Otrzymyalem " + splited)
 		module = splited[0]
 		if len(splited) > 1:
 			message = splited[1]
