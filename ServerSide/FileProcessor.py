@@ -15,14 +15,14 @@ class FileProcessor:
 		with open(self.fileName, 'r') as f:
 			for singleLine in f:
 				singleLine = singleLine.replace('\n','')
-				splitedLine = singleLine.split(';')
+				splitedLine = singleLine.split(':')
 				pairs[splitedLine[0]] = splitedLine[1]
 		return pairs
 
 	def writeToFile(self, pairs):
 		with open(self.fileName, 'w') as f:
 			for key in pairs:
-				line = key + ";" + pairs[key]+'\n'
+				line = key + ":" + pairs[key]+'\n'
 				f.write(line)
 		return
 
@@ -44,13 +44,13 @@ class FileProcessor:
 		with open(self.fileName, 'r') as f:
 			for singleLine in f:
 				singleLine = singleLine.replace('\n','')
-				splitedLine = singleLine.split(';')
+				splitedLine = singleLine.split(':')
 				curr[splitedLine[0]] = splitedLine[1]
 		with open(self.fileName, 'w') as f:
 			for key in new:
 				if curr[key] != new[key]:
 					if  org[key] != curr[key]:
 						new[key] = curr[key]
-				line = key + ";" + new[key]+'\n'
+				line = key + ":" + new[key]+'\n'
 				f.write(line)
 		return
