@@ -48,8 +48,9 @@ def web_socket_transfer_data(request):
 			for singleModule in modules["PERIODIC"]:
 				singleModule.execute(paramsDictionary, None)
 			time.sleep(int(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"]))
-		except:
+		except Exception, e:
 			logging.error(NAME+ "error in periodic modules. closing connecion")
+			logging.error(NAME + e.message)
 			for singleModule in modules["HOST_DC"]:
 				singleModule.execute(paramsDictionary, None)
 			return
