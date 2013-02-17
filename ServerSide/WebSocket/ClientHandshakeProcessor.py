@@ -5,7 +5,8 @@ from mod_pywebsocket.extensions import DeflateFrameExtensionProcessor
 from WebSocket.ClientHandshakeError import  _build_method_line, _format_host_header, _origin_header, _receive_bytes, _validate_mandatory_header, _get_mandatory_header
 from mod_pywebsocket import common
 from mod_pywebsocket import util
-from WebSocket import ClientHandshakeError, ClientHandshakeBase
+from WebSocket.ClientHandshakeError import ClientHandshakeError
+from WebSocket.ClientHandshakeBase import ClientHandshakeBase
 
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
@@ -125,7 +126,7 @@ class ClientHandshakeProcessor(ClientHandshakeBase):
         if ch != '\n':  # 0x0A
             raise ClientHandshakeError(
                 'Expected LF but found %r while reading value %r for header '
-                'name %r' % (ch, value, name))
+                'name %r' % (ch, "test", "test"))
 
         self._logger.debug('Received an empty line')
         self._logger.debug('Server\'s opening handshake headers: %r', fields)

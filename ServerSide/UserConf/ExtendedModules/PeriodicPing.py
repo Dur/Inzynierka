@@ -34,4 +34,3 @@ def execute(paramsDictionary, message):
 	finally:
 		if wasError:
 			raise
-			return

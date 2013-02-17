@@ -1,6 +1,6 @@
 from WebSocket.ClientHandshakeError import _receive_bytes
 from mod_pywebsocket import util
-from WebSocket import ClientHandshakeError
+from WebSocket.ClientHandshakeError import ClientHandshakeError
 
 __author__ = 'dur'
 class ClientHandshakeBase(object):

@@ -1,4 +1,6 @@
-from WebSocket import _TLSSocket, ClientRequest, ClientHandshakeProcessor
+from WebSocket.ClientHandshakeProcessor import ClientHandshakeProcessor
+from WebSocket._TLSSocket import _TLSSocket
+from WebSocket.ClientRequest import ClientRequest
 
 __author__ = 'dur'
 import logging

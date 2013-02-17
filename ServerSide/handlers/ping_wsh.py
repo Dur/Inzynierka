@@ -1,8 +1,9 @@
 import Queue
 import logging
 import time
-from connections import ListenSocket
-from utils import ModulesLoader, ConfigurationReader
+from connections.ListenSocket import ListenSocket
+from utils.ModulesLoader import ModulesLoader
+from utils.ConfigurationReader import ConfigurationReader
 
 NAME = "ping_wsh: "
 PONG = "PONG:PONG"

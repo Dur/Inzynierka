@@ -3,7 +3,9 @@ import socket
 from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
 from mod_pywebsocket.stream import StreamOptions
-from WebSocket import _TLSSocket, ClientRequest, ClientHandshakeProcessor
+from WebSocket._TLSSocket import _TLSSocket
+from WebSocket.ClientRequest import ClientRequest
+from WebSocket.ClientHandshakeProcessor import ClientHandshakeProcessor
 
 NAME = "PingConnection: "
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'

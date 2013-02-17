@@ -1,5 +1,5 @@
-from connections import PingConnection
-from utils import FileProcessor
+from connections.PingConnection import PingConnection
+from utils.FileProcessor import FileProcessor
 
 __author__ = 'dur'
 
