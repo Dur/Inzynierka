@@ -1,5 +1,5 @@
-from ClientConnection import ClientConnection
 from mod_pywebsocket import util
+from WebSocket import ClientConnection
 
 __author__ = 'dur'
 class ClientRequest(object):

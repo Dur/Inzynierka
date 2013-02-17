@@ -2,10 +2,10 @@ import base64
 import os
 import re
 from mod_pywebsocket.extensions import DeflateFrameExtensionProcessor
-from ClientHandshakeBase import ClientHandshakeBase
-from ClientHandshakeError import ClientHandshakeError, _build_method_line, _format_host_header, _origin_header, _receive_bytes, _validate_mandatory_header, _get_mandatory_header
+from WebSocket.ClientHandshakeError import  _build_method_line, _format_host_header, _origin_header, _receive_bytes, _validate_mandatory_header, _get_mandatory_header
 from mod_pywebsocket import common
 from mod_pywebsocket import util
+from WebSocket import ClientHandshakeError, ClientHandshakeBase
 
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'

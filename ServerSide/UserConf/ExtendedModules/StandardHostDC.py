@@ -1,5 +1,5 @@
 import logging
-from FileProcessor import FileProcessor
+from utils import FileProcessor
 
 __author__ = 'dur'
 

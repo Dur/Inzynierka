@@ -18,7 +18,10 @@ class ListenSocket( Thread ):
 			while( True ):
 				received = self.paramsDictionary["SOCKET"].receive_message()
 				logging.error(NAME+"odebrano %s", received)
-				self.dispatch(received)
+				if received != None:
+					self.dispatch(received)
+				else:
+					logging.error(NAME+"odebrano pusta wiadomosc")
 		except Exception, e:
 			logging.error(NAME+"Wystapil nieznany problem")
 			logging.error(e.message)

@@ -1,6 +1,7 @@
+from utils import FileProcessor
+
 __author__ = 'dur'
 import logging
-from FileProcessor import FileProcessor
 import string
 import random
 

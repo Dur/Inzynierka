@@ -1,6 +1,4 @@
 import logging
-from Connection import Connection
-import time
 
 _GOODBYE_MESSAGE = u'Goodbye'
 _READ_FILE = u"Read"

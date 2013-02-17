@@ -1,11 +1,8 @@
 import Queue
-from mod_pywebsocket._stream_base import ConnectionTerminatedException
-from ModulesLoader import ModulesLoader
 import logging
-from ListenSocket import ListenSocket
 import time
-from mod_python import apache
-from ConfigurationReader import ConfigurationReader
+from connections import ListenSocket
+from utils import ModulesLoader, ConfigurationReader
 
 NAME = "ping_wsh: "
 PONG = "PONG:PONG"
@@ -51,7 +48,9 @@ def web_socket_transfer_data(request):
 				singleModule.execute(paramsDictionary, None)
 			time.sleep(int(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"]))
 		except:
-			logging.error(NAME+ "Cos sie posypalo w cyklicznych modulach zabijam watek")
+			logging.error(NAME+ "error in periodic modules. closing connecion")
+			for singleModule in modules["HOST_DC"]:
+				singleModule.execute(paramsDictionary, None)
 			return
 
 

@@ -33,7 +33,5 @@ def execute(paramsDictionary, message):
 
 	finally:
 		if wasError:
-			for singleModule in paramsDictionary["MODULES"]["HOST_DC"]:
-				singleModule.execute(paramsDictionary, None)
 			raise
 			return

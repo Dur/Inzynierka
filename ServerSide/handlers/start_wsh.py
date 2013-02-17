@@ -1,7 +1,8 @@
+from connections import PingConnection
+from utils import FileProcessor
+
 __author__ = 'dur'
 
-from FileProcessor import FileProcessor
-from PingConnection import PingConnection
 import logging
 
 NAME = "start_wsh: "

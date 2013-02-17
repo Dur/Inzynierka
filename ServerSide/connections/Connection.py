@@ -1,9 +1,3 @@
-from mod_pywebsocket.msgutil import MessageReceiver, MessageSender
-from ClientHandshakeProcessor import ClientHandshakeProcessor
-from ClientRequest import ClientRequest
-from ListenSocket import ListenSocket
-from _TLSSocket import _TLSSocket
-
 import logging
 import socket
 
@@ -12,7 +6,9 @@ from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
 from mod_pywebsocket.stream import StreamOptions
 from mod_pywebsocket import util
-from ConfigurationReader import ConfigurationReader
+from WebSocket import _TLSSocket, ClientRequest, ClientHandshakeProcessor
+from connections import ListenSocket
+from utils import ConfigurationReader
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
 _CONNECTION_HEADER = 'Connection: Upgrade\r\n'

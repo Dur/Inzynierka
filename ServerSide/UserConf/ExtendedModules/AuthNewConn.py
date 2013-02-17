@@ -1,5 +1,6 @@
 import logging
-from FileProcessor import FileProcessor
+from utils import FileProcessor
+
 __author__ = 'dur'
 
 '''Modul sluzacy do uwierzytelniania serwerow przy uzyciu hasle krotkotrwalych'''

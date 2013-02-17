@@ -1,5 +1,5 @@
 __author__ = 'dur'
-from filelock import FileLock
+from utils.filelock import FileLock
 
 class FileProcessor:
 

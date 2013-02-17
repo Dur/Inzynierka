@@ -1,7 +1,6 @@
+from WebSocket import _TLSSocket, ClientRequest, ClientHandshakeProcessor
+
 __author__ = 'dur'
-from ClientHandshakeProcessor import ClientHandshakeProcessor
-from ClientRequest import ClientRequest
-from _TLSSocket import _TLSSocket
 import logging
 import socket
 from mod_pywebsocket import common
@@ -59,8 +58,8 @@ class AppRunner(object):
 			stream_option.unmask_receive = False
 
 			self._stream = Stream(request, stream_option)
-		except e:
-			logging.error(Name + e.message)
+		except Exception, e:
+			logging.error(NAME + e.message)
 		finally:
 			logging.error(NAME + "Po polaczeniu")
 
