@@ -8,7 +8,6 @@ from mod_python import apache
 from ConfigurationReader import ConfigurationReader
 
 NAME = "ping_wsh: "
-PING = "PING:PING"
 PONG = "PONG:PONG"
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.

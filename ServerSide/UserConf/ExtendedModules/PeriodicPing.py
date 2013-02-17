@@ -5,13 +5,12 @@ import logging
 import Queue
 import time
 
-PING = "PING"
+PING = "PING:PING"
 NAME = "PeriodicPing: "
 
 def execute(paramsDictionary, message):
 	socket = paramsDictionary["SOCKET"]
 	queue = paramsDictionary["QUEUE"]
-	pingPeriod = paramsDictionary["CONFIG_PARAMS"]["pingPeriod"]
 	pingWaitResponseTime = paramsDictionary["CONFIG_PARAMS"]["pingWaitResponseTime"]
 	wasError = False
 	try:
