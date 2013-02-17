@@ -11,7 +11,7 @@ NAME = "PeriodicPing: "
 def execute(paramsDictionary, message):
 	socket = paramsDictionary["SOCKET"]
 	queue = paramsDictionary["QUEUE"]
-	pingWaitResponseTime = paramsDictionary["CONFIG_PARAMS"]["pingWaitResponseTime"]
+	pingWaitResponseTime = int(paramsDictionary["CONFIG_PARAMS"]["pingWaitResponseTime"])
 	wasError = False
 	try:
 		socket.send_message(PING)
