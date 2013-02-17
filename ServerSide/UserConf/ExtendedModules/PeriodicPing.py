@@ -17,8 +17,7 @@ def execute(paramsDictionary, message):
 	try:
 		socket.send_message(PING)
 		logging.error(NAME+ "sending ping")
-		queue.get(True, pingWaitResponseTime)
-		time.sleep(pingPeriod)
+		queue.get(True, int(pingWaitResponseTime))
 
 	except Queue.Empty:
 		wasError = True

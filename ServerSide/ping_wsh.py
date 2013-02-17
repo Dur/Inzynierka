@@ -49,7 +49,7 @@ def web_socket_transfer_data(request):
 	while(True):
 		for singleModule in modules["PERIODIC"]:
 			singleModule.execute(paramsDictionary, None)
-		time.sleep(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"])
+		time.sleep(int(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"]))
 
 
 
