@@ -1,5 +1,5 @@
-from connections import AppRunner
-from utils import FileProcessor
+from connections.AppRunner import AppRunner
+from utils.FileProcessor import FileProcessor
 
 file = FileProcessor("/home/dur/Projects/ServerSide/config/addresses.conf")
 file.lockFile()
