@@ -5,9 +5,8 @@ import logging
 import string
 import random
 
-expectedMessage = "NEW_PASS"
+expectedMessage = "OLD"
 generatedPass = None
-NEW_PASS = "NEW_PASS"
 OLD = "OLD"
 NEW = "NEW"
 ACK = "ACK"
@@ -33,13 +32,6 @@ def checkOldPassword(paramsDictionary, oldPass):
 		global expectedMessage
 		expectedMessage = ACK
 
-def passwordExchange(paramsDictionary, argument):
-	socket = paramsDictionary["SOCKET"]
-
-	logging.error(NAME + "Wysylam zapytanie o stare haslo")
-	socket.send_message(RES_MODULE+NEW_PASS)
-	global expectedMessage
-	expectedMessage = OLD
 
 def acknowlage(paramsDictionary, argument):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
@@ -54,12 +46,11 @@ def acknowlage(paramsDictionary, argument):
 	file.unlockFile()
 	logging.error(NAME + "Haslo zostalo zmienione" )
 	global expectedMessage
-	expectedMessage = NEW_PASS
+	expectedMessage = OLD
 	global generatedPass
 	generatedPass = None
 
 functions = {OLD: checkOldPassword,
-             NEW_PASS: passwordExchange,
              ACK: acknowlage
 			}
 
