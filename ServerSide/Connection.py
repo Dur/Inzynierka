@@ -12,6 +12,7 @@ from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
 from mod_pywebsocket.stream import StreamOptions
 from mod_pywebsocket import util
+from ConfigurationReader import ConfigurationReader
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
 _CONNECTION_HEADER = 'Connection: Upgrade\r\n'
@@ -26,12 +27,8 @@ class Connection(object):
 	def __init__(self, configFile):
 		print "connection init"
 		self.configFile = configFile
-		self.dictionary=dict()
-		with open(self.configFile, 'r') as f:
-			for singleLine in f:
-				singleLine = singleLine.replace('\n','')
-				splitedLine = singleLine.split('=')
-				self.dictionary[splitedLine[0]] = splitedLine[1]
+		configReader = ConfigurationReader(self.configFile)
+		self.dictionary=configReader.readConfigFile()
 		print self.dictionary
 		logging.basicConfig(level=logging.getLevelName(self.dictionary.get('log_level').upper()))
 		self._socket = None

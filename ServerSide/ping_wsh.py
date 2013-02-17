@@ -5,7 +5,7 @@ import logging
 from ListenSocket import ListenSocket
 import time
 from mod_python import apache
-
+from ConfigurationReader import ConfigurationReader
 
 NAME = "ping_wsh: "
 PING = "PING:PING"
@@ -17,11 +17,15 @@ def web_socket_do_extra_handshake(request):
 def web_socket_transfer_data(request):
 
 	logging.error(NAME+ "Server dostal zgloszenie")
+
 	paramsDictionary = {}
 	paramsDictionary["REQUEST"] = request
 	paramsDictionary["CLIENT_ADDRESS"]= request.connection.remote_ip
 	paramsDictionary["SOCKET"] = request.ws_stream
 	paramsDictionary["HOME_PATH"] = request.get_options()["PROJECT_LOCATION"]
+
+	configReader = ConfigurationReader(paramsDictionary["HOME_PATH"]+"ServerSide/config/runParams.conf")
+	paramsDictionary["CONFIG_PARAMS"] = configReader.readConfigFile()
 
 	paramsDictionary["SOCKET"].receive_message()
 	logging.error(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
@@ -30,6 +34,7 @@ def web_socket_transfer_data(request):
 
 	loader = ModulesLoader()
 	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")
+	paramsDictionary["MODULES"] = modules
 	logging.error(NAME+ "server loaded modules")
 
 	for singleModule in modules["NEW_CONN"]:
@@ -41,32 +46,11 @@ def web_socket_transfer_data(request):
 	listener = ListenSocket(paramsDictionary, modules)
 	listener.setDaemon(True)
 	listener.start()
-	wasError = False
 	while(True):
-		try:
-			paramsDictionary["SOCKET"].send_message(PING)
-			logging.error(NAME+ "sending ping")
-			paramsDictionary["QUEUE"].get(True, 2)
-			time.sleep(2)
+		for singleModule in modules["PERIODIC"]:
+			singleModule.execute(paramsDictionary, None)
+		time.sleep(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"])
 
-		except Queue.Empty:
-			wasError = True
-			logging.error(NAME + "serwer nie otrzymal odpowiedzi na Ping zamykanie polaczenia")
-
-		except ConnectionTerminatedException, a:
-			wasError = True
-			logging.error(NAME+ "Server closed connection in ping_wsh")
-
-		except Exception, e:
-			wasError = True
-			logging.error(NAME+ "error in ping_wsh closing connection")
-			logging.error(NAME + e.message)
-
-		finally:
-			if wasError:
-				for singleModule in modules["HOST_DC"]:
-					singleModule.execute(paramsDictionary, None)
-				return
 
 
 	#1000100100000000 - Ping frame in binary with no data
