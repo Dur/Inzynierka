@@ -47,9 +47,13 @@ def web_socket_transfer_data(request):
 	listener.setDaemon(True)
 	listener.start()
 	while(True):
-		for singleModule in modules["PERIODIC"]:
-			singleModule.execute(paramsDictionary, None)
-		time.sleep(int(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"]))
+		try:
+			for singleModule in modules["PERIODIC"]:
+				singleModule.execute(paramsDictionary, None)
+			time.sleep(int(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"]))
+		except:
+			logging.error(NAME+ "Cos sie posypalo w cyklicznych modulach zabijam watek")
+			return
 
 
 
