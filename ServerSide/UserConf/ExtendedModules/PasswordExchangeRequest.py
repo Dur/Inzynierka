@@ -74,5 +74,5 @@ def execute(paramsDictionary, message):
 	function(paramsDictionary, argument)
 
 
-def generatePassword(size=24, chars=string.ascii + string.digits):
+def generatePassword(size=24, chars=string.ascii_letters + string.digits):
 	return ''.join(random.choice(chars) for x in range(size))
