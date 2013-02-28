@@ -12,6 +12,7 @@ NEW = "NEW"
 ACK = "ACK"
 RES_MODULE = "PASS_EXCH_RES:"
 NAME = "PasswordExchangeRequest: "
+PASSWORD_LENGTH = 24
 
 
 def checkOldPassword(paramsDictionary, oldPass):
@@ -26,7 +27,7 @@ def checkOldPassword(paramsDictionary, oldPass):
 	if(passwords[remoteAddress] == oldPass ):
 		logging.error(NAME + "Haslo zgodne")
 		global generatedPass
-		generatedPass = generatePassword()
+		generatedPass = generatePassword(PASSWORD_LENGTH)
 		socket.send_message(RES_MODULE+NEW+"%"+generatedPass)
 		logging.error(NAME + "Wyslalem nowe haslo")
 		global expectedMessage
@@ -44,7 +45,7 @@ def acknowlage(paramsDictionary, argument):
 	passwords[remoteAddress] = generatedPass
 	file.writeToFile(passwords)
 	file.unlockFile()
-	logging.error(NAME + "Haslo zostalo zmienione" )
+	logging.error(NAME + "Haslo zostalo zmienione")
 	global expectedMessage
 	expectedMessage = OLD
 	global generatedPass
@@ -66,5 +67,6 @@ def execute(paramsDictionary, message):
 	function(paramsDictionary, argument)
 
 
-def generatePassword(size=24, chars=string.ascii_letters + string.digits):
-	return ''.join(random.choice(chars) for x in range(size))
+def generatePassword(passwordLength):
+	chars=string.ascii_letters + string.digits
+	return ''.join(random.choice(chars) for x in range(passwordLength))
