@@ -1,5 +1,6 @@
 from connections.PingConnection import PingConnection
 from utils.FileProcessor import FileProcessor
+import time
 
 __author__ = 'dur'
 
@@ -18,22 +19,27 @@ def web_socket_transfer_data(request):
 	for key in addresses:
 		addresses[key] = 'F'
 	file.writeToFile(addresses)
-	file.unlockFile()
-	for key in addresses:
-		connection = PingConnection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/ping_config.conf")
-		if( connection.connect(key,80) != -1 ):
-			addresses[key] = 'T'
-			file.lockFile()
-			file.writeToFile(addresses)
-			file.unlockFile()
-			logging.error(NAME+ "connection with %s established", key)
-			connection.send_message(PING)
-			logging.error(NAME+ "sending ping from start method")
-			if connection.get_message() != None:
-				logging.error(NAME+ "start method received answer, closing connection")
-				connection._do_closing_handshake()
-			else:
-				logging.error(NAME+ "Serwer nie odpowiedzial na PING")
-		else:
-			logging.error(NAME+ "unable to connect to %s", key)
-	return
+	while True:
+		for key in addresses:
+			if( addresses[key] == 'F' ):
+				connection = PingConnection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/ping_config.conf")
+				if( connection.connect(key,80) != -1 ):
+					logging.error(NAME+ "connection with %s established", key)
+					connection.send_message(PING)
+					logging.error(NAME+ "sending ping from start method")
+					if connection.get_message() != None:
+						logging.error(NAME+ "start method received answer, closing connection")
+						connection._do_closing_handshake()
+						addresses[key] = 'T'
+					else:
+						logging.error(NAME+ "Serwer nie odpowiedzial na PING, zrywanie polaczenia")
+				else:
+					logging.error(NAME+ "unable to connect to %s", key)
+		file.writeToFile(addresses)
+		file.unlockFile()
+		logging.error(NAME+ "Serwer rozpoczyna czeanie na kolejna ture sprawdzania")
+		time.sleep(60)
+		logging.error(NAME+ "Serwer wznawia sprawdzanie")
+		file.lockFile()
+		addresses = file.readFile()
+		file.unlockFile()
