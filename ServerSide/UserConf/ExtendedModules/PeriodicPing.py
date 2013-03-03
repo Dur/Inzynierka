@@ -12,6 +12,7 @@ def execute(paramsDictionary, message):
 	socket = paramsDictionary["SOCKET"]
 	queue = paramsDictionary["QUEUE"]
 	pingWaitResponseTime = int(paramsDictionary["CONFIG_PARAMS"]["pingWaitResponseTime"])
+	logging.error(NAME + "Ping wait response time = " + str(pingWaitResponseTime))
 	wasError = False
 	try:
 		socket.send_message(PING)

@@ -20,6 +20,8 @@ CONNECTION_OK_FLAG = 0
 
 class PingConnection(object):
 
+	_stream = None
+
 	def __init__(self, configFile):
 		self.configFile = configFile
 		self.dictionary=dict()
