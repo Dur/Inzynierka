@@ -1,16 +1,16 @@
 PING:StandardPing
 
-#NEW_CONN:StandardNewConn
+NEW_CONN:StandardNewConn
 
-#NEW_CONN:AuthNewConn
+NEW_CONN:AuthNewConn
 
 HOST_DC:StandardHostDC
 
 PONG:StandardPong
 
-#PASS_EXCH_REQ:PasswordExchangeRequest
+PASS_EXCH_REQ:PasswordExchangeRequest
 
-#PASS_EXCH_RES:PasswordExchangeResponse
+PASS_EXCH_RES:PasswordExchangeResponse
 
 PERIODIC:PeriodicPing
-#PERIODIC:PeriodicPassExchange
+PERIODIC:PeriodicPassExchange
