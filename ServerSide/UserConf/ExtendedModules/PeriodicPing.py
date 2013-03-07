@@ -13,7 +13,7 @@ def execute(paramsDictionary, message):
 	pingWaitResponseTime = int(paramsDictionary["CONFIG_PARAMS"]["pingWaitResponseTime"])
 	logging.error(NAME + "Ping wait response time = " + str(pingWaitResponseTime))
 	wasError = False
-	
+
 	try:
 		socket.send_message(PING)
 		logging.error(NAME+ "sending ping")

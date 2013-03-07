@@ -73,8 +73,9 @@ def web_socket_transfer_data(request):
 	paramsDictionary["MODULES"] = modules
 	logging.error(NAME+ "server loaded modules")
 
-	for singleModule in modules["NEW_CONN"]:
-		singleModule.execute(paramsDictionary, None)
+	if modules["NEW_CONN"] != None:
+		for singleModule in modules["NEW_CONN"]:
+			singleModule.execute(paramsDictionary, None)
 
 	paramsDictionary["QUEUE"] = Queue.Queue(0)
 
