@@ -7,7 +7,7 @@ class ModulesLoader:
 		self.modules={}
 		with open(filePath, 'r') as f:
 			for singleLine in f:
-				if( singleLine == '\n'):
+				if( singleLine == '\n' or singleLine.startswith("#")):
 					continue
 				singleLine = singleLine.replace('\n','')
 				splitedLine = singleLine.split(':')
