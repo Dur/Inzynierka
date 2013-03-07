@@ -5,7 +5,7 @@ from connections.ListenSocket import ListenSocket
 from utils.ModulesLoader import ModulesLoader
 from utils.ConfigurationReader import ConfigurationReader
 
-NAME = "newHost_wsh: "
+NAME = "newPing_wsh: "
 PONG = "PONG:PONG"
 PING = "PING:PING"
 
