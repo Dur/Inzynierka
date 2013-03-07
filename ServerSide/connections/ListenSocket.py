@@ -16,6 +16,7 @@ class ListenSocket( Thread ):
 		try:
 			logging.error(NAME+"wewnatrz watku")
 			while( True ):
+				logging.error(NAME+"Oczekiwanie na wiadomosc")
 				received = self.paramsDictionary["SOCKET"].receive_message()
 				logging.error(NAME+"odebrano %s", received)
 				if received != None:
