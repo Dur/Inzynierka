@@ -8,4 +8,4 @@ import logging
 def execute(paramsDictionary, message):
 	if message == PING:
 		paramsDictionary["SOCKET"].send_message(PONG)
-		logging.error(NAME+"wyslano Pong")
+		logging.error(NAME+"wyslano " + PONG )
