@@ -43,27 +43,28 @@ def web_socket_transfer_data(request):
 		logging.error(NAME+ "key %s", key)
 		logging.error(NAME+ "remote address %s", remoteAddress)
 		logging.error(NAME+ "addresses[key] %s", addresses[key])
-		if key == remoteAddress and addresses[key] == 'F':
-			logging.error(NAME+ "znalazl dopasowanie")
-			logging.error(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
-			paramsDictionary["CONNECTION"] = PingConnection(paramsDictionary["HOME_PATH"]+"ServerSide/config/ping_config.conf")
-			paramsDictionary["CONNECTION"].connect(remoteAddress, 80)
-			paramsDictionary["SOCKET"].send_message(PONG)
-			logging.error(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
+		if key == remoteAddress:
+			if addresses[key] == 'F':
+				logging.error(NAME+ "znalazl dopasowanie")
+				logging.error(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
+				paramsDictionary["CONNECTION"] = PingConnection(paramsDictionary["HOME_PATH"]+"ServerSide/config/ping_config.conf")
+				paramsDictionary["CONNECTION"].connect(remoteAddress, 80)
+				paramsDictionary["SOCKET"].send_message(PONG)
+				logging.error(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
 
-			paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
-			paramsDictionary["SOCKET"].send_message(PING)
-			paramsDictionary["SOCKET"].receive_message()
+				paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
+				paramsDictionary["SOCKET"].send_message(PING)
+				paramsDictionary["SOCKET"].receive_message()
 
-			logging.error(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
-			addresses[key] = 'T'
-			file.writeToFile(addresses)
-			break
-		else:
-			paramsDictionary["SOCKET"].send_message(EXIT)
-			logging.error(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
-			file.unlockFile()
-			return
+				logging.error(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
+				addresses[key] = 'T'
+				file.writeToFile(addresses)
+				break
+			else:
+				paramsDictionary["SOCKET"].send_message(EXIT)
+				logging.error(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
+				file.unlockFile()
+				return
 	file.unlockFile()
 
 

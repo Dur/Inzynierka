@@ -69,7 +69,6 @@ class PingConnection(object):
 
 	def send_message(self, message):
 		self._stream.send_message(message)
-		logging.error(NAME+ "Wyslano wiadomosc %s ", message)
 
 	def get_message(self):
 		return self._stream.receive_message()
