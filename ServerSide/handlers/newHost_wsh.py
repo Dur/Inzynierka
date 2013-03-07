@@ -73,7 +73,7 @@ def web_socket_transfer_data(request):
 	paramsDictionary["MODULES"] = modules
 	logging.error(NAME+ "server loaded modules")
 
-	if modules["NEW_CONN"] != None:
+	if modules.has_key("NEW_CONN"):
 		for singleModule in modules["NEW_CONN"]:
 			singleModule.execute(paramsDictionary, None)
 
