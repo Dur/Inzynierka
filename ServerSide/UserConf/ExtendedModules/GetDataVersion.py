@@ -27,7 +27,7 @@ def dataVersionConnectionMode(paramsDictionary):
 	socket.send_message(GET_DATA_VERSION)
 
 	clientVersion = int(socket.receive_message())
-	logging.error(NAME + "Otrzymano wersje danych klienta " + clientVersion)
+	logging.error(NAME + "Otrzymano wersje danych klienta " + str(clientVersion))
 
 	processor = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
 	dataVersions = processor.readFile()
@@ -60,7 +60,7 @@ def dataVersionRequestMode(paramsDictionary):
 
 		clientVersion = int(socket.receive_message())
 		dataVersions[remoteAddress] = clientVersion
-		logging.error(NAME + "Otrzymano wersje danych klienta " + clientVersion)
+		logging.error(NAME + "Otrzymano wersje danych klienta " + str(clientVersion))
 
 		processor.lockFile()
 		temp = processor.readFile()
