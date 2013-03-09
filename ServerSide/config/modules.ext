@@ -3,6 +3,7 @@ PING:StandardPing
 #NEW_CONN:StandardNewConn
 
 NEW_CONN:AuthNewConn
+NEW_CONN:GetDataVersion
 
 HOST_DC:StandardHostDC
 

@@ -5,3 +5,4 @@ WebSocket/.idea/
 ServerSide/.idea/
 ServerSide/config/pass/
 ServerSide/config/addresses.*
+ServerSide/config/database_config/data_version.*

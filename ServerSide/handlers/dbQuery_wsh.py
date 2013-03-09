@@ -4,7 +4,7 @@ from utils.ConfigurationReader import ConfigurationReader
 
 ERROR = -1
 NAME = "dbQuery_wsh: "
-CLOSING_MESSAGE = "QUIT"
+CLOSING_MESSAGE = "EXIT"
 
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
