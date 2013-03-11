@@ -43,7 +43,7 @@ def web_socket_transfer_data(request):
 				db.closeConnection()
 				return
 			else:
-				output = db.executeSQL(query)
+				output = db.executeSQL(query, paramsDictionary)
 				logging.error(NAME + "wynik zapytania " + str(output))
 				request.ws_stream.send_message(str(output))
 
