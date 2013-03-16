@@ -38,6 +38,8 @@ class DatabaseConnector:
 			logging.error("Trying to connect with credentials: " + self.host + " " + self.login + " " + self.password + " " + self.databaseName)
 			self.connection = MySQLdb.connect(self.host, self.login, self.password, self.databaseName)
 			self.cursor = self.connection.cursor()
+			self.readTransaction = None
+			self.writeTransaction = None
 			return OK
 
 		except Exception, e:
@@ -54,8 +56,9 @@ class DatabaseConnector:
 				return OK_MESSAGE
 			else:
 				logging.error(NAME + "Client executes read operation" )
-				transaction = ReadTransaction(paramsDictionary)
-				if transaction.checkDataVersions() == True:
+				if self.readTransaction == None:
+					self.readTransaction = ReadTransaction(paramsDictionary)
+				if self.readTransaction.checkDataVersions() == True:
 					self.cursor.execute(command)
 					return self.cursor.fetchall()
 				else:
