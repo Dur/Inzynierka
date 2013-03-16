@@ -1,6 +1,5 @@
-from threading import Event
+list = []
 
-event = Event()
-event.set()
-event.wait(5)
-print "mama"
+list.append("ll")
+list.append("hh")
+print len(list)

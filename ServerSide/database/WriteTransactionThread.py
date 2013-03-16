@@ -20,22 +20,21 @@ class WriteTransactionThread(Thread):
 	clientAddress = None
 	commands = []
 
-	def __init__(self, outputQueue, inputQueue, eventVariable, commands, paramsDictionary):
+	def __init__(self, outputQueue, inputQueue, eventVariable, paramsDictionary):
 		Thread.__init__(self)
 		self.clientAddress = paramsDictionary["CLIENT_ADDRESS"]
 		self.inputQueue = inputQueue
 		self.eventVariable = eventVariable
 		self.outputQueue = outputQueue
-		self.commands = commands
 		self.paramsDictionary = paramsDictionary
 		self.connection = None
 
 	def run(self):
 		methodMapping = {PREPARE : self.prepare, GLOBAL_COMMIT : self.globalCommit, GLOBAL_ABORT : self.globalAbort}
-		command = self.inputQueue.get(True, None)
 		self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/transaction_config.conf")
 		if self.connection.connect(self.clientAddress, 80) == OK_FLAG:
 			logging.error(NAME + "Polaczenie dla transakcji zapisu nawiazane")
+			command = self.inputQueue.get(True, None)
 			while command != STOP_THREAD:
 				methodMapping[command]()
 				command = self.inputQueue.get(True, None)
@@ -47,8 +46,16 @@ class WriteTransactionThread(Thread):
 
 	def prepare(self):
 		logging.error(NAME + "PrepareMethod")
+		command = self.inputQueue.get(True, None)
+		logging.error(NAME + "got command to execute on remote " + command)
 		self.connection.send_message(PREPARE)
-		self.outputQueue.put(self.connection.get_message())
+		self.connection.send_message(command)
+		answer = self.connection.get_message()
+		self.outputQueue.put(answer)
+		logging.error(NAME + "remote machine answered with " + answer)
+		if self.outputQueue.full():
+			self.eventVariable.set()
+			logging.error(NAME + "Waking up transation")
 
 	def globalCommit(self):
 		logging.error(NAME + "GlobalCommitMethod")

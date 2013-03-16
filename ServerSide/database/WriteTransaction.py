@@ -2,6 +2,7 @@ from Queue import Queue
 from threading import Event
 import threading.Event
 import math
+from database.WriteTransactionThread import WriteTransactionThread
 from utils.FileProcessors import FileProcessor
 import logging
 
@@ -9,7 +10,7 @@ __author__ = 'dur'
 
 NAME = "WriteTransaction: "
 LOCALHOST_NAME = "localhost"
-PREPARE = "PREPARE"
+PREPARE_MESSAGE = "PREPARE"
 GLOBAL_COMMIT = "GLOBAL_COMMIT"
 ABORT = "ABORT"
 GLOBAL_ABORT = "GLOBAL_ABORT"
@@ -18,25 +19,42 @@ OK = "OK"
 class WriteTransaction:
 
 	responseQueue = None
-	requestQueue = None
 	eventVariable = Event()
 	paramsDictionary = None
 	versionProcessor = None
 	addressesProcessor = None
 	serversCount = 0
 	activeServers = []
-
+	initialised = False
+	connectionsQueues = {}
+	threads = {}
+	waitForRemoteTime = 0
 
 	def __init__(self, paramsDictionary):
 		homePath = paramsDictionary["HOME_PATH"]
 		self.paramsDictionary = paramsDictionary
 		self.versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
 		self.addressesProcessor = FileProcessor(homePath + "ServerSide/config/addresses.conf")
+		self.waitForRemoteTime = paramsDictionary["DB_PARAMS"]["waitForRemoteTime"]
 
 
 	def executeTransaction(self, cursor, command):
 		if self.chceckTransactionPossibility() == True:
-			pass
+			if self.initialised == False:
+				self.initialise()
+				for address in self.activeServers:
+					self.connectionsQueues[address].put(PREPARE_MESSAGE)
+					self.connectionsQueues[address].put(command)
+				self.eventVariable.wait(self.waitForRemoteTime)
+
+
+	def initialise(self):
+		self.responseQueue = Queue(len(self.activeServers))
+		for address in self.activeServers:
+			requestQueue = Queue()
+			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary)
+			self.connectionsQueues[address] = requestQueue
+			self.threads[address] = thread
 
 	def chceckTransactionPossibility(self):
 		if self.checkActiveServersCount() and self.chceckDataVersions():
