@@ -3,11 +3,9 @@ import socket
 from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
 from mod_pywebsocket.stream import StreamOptions
-from mod_pywebsocket import util
 from WebSocket._TLSSocket import _TLSSocket
 from WebSocket.ClientRequest import ClientRequest
 from WebSocket.ClientHandshakeProcessor import ClientHandshakeProcessor
-from connections.ListenSocket import ListenSocket
 from utils.ConfigurationReader import ConfigurationReader
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
@@ -17,28 +15,24 @@ _GOODBYE_MESSAGE = 'Goodbye'
 
 _PROTOCOL_VERSION_HYBI13 = 'hybi13'
 
+NAME = "Connection: "
+
 
 class Connection(object):
 
 	def __init__(self, configFile):
-		print "connection init"
 		self.configFile = configFile
 		configReader = ConfigurationReader(self.configFile)
 		self.dictionary=configReader.readConfigFile()
-		print self.dictionary
 		logging.basicConfig(level=logging.getLevelName(self.dictionary.get('log_level').upper()))
 		self._socket = None
 		self.list=[]
-		self._logger = util.get_class_logger(self)
 
-	def connect(self):
-
+	def connect(self, host, port):
 		self._socket = socket.socket()
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
-			self._socket.connect((self.dictionary.get('server_host'),
-			                      int(self.dictionary.get('server_port'))))
-			print "Conneting to %s" %self.dictionary.get('server_host')
+			self._socket.connect((host, int(port)))
 			if self.dictionary.get('use_tls') == 'True':
 				self._socket = _TLSSocket(self._socket)
 
@@ -49,7 +43,7 @@ class Connection(object):
 
 			self._handshake.handshake()
 
-			self._logger.info('Connection established')
+			logging.error(NAME + 'Connection established with ' + host+":"+str(port))
 
 			request = ClientRequest(self._socket)
 
@@ -69,30 +63,19 @@ class Connection(object):
 				processor.setup_stream_options(stream_option)
 
 			self._stream = Stream(request, stream_option)
-			thread = ListenSocket("Thread",self, self.list)
-			thread.start()
-		finally:
-			print "po powitaniu, serwer oczekuje na dane"
+		except Exception, e:
+			logging.error(NAME+"Wystapil nieznany problem")
+			logging.error(e.message)
+			return
 
 	def send_message(self, message):
-		for line in message.split(','):
-			self._stream.send_message(line)
-			logging.error("From connection message send %s", line)
+		self._stream.send_message(message)
+		logging.error(NAME + "Message send " + message)
 
 	def get_message(self):
-		if not self.list:
-			return(None)
-		else:
-			return self.list.pop(0)
+		message = self._stream.receive_message()
+		logging.error(NAME + "Message recived " + message)
+		return message
 
 	def _do_closing_handshake(self):
-		"""Perform closing handshake using the specified closing frame."""
-
-		if self.dictionary.get('message').split(',')[-1] == _GOODBYE_MESSAGE:
-			# requested server initiated closing handshake, so
-			# expecting closing handshake message from server.
-			self._logger.info('Wait for server-initiated closing handshake')
-			message = self._stream.receive_message()
-			if message is None:
-				return
 		self._stream.close_connection()

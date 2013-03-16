@@ -1,4 +1,4 @@
-from database.utils.ReadTransaction import ReadTransaction
+from database import ReadTransaction
 
 __author__ = 'dur'
 
@@ -6,6 +6,7 @@ import MySQLdb
 import logging
 
 # tabela to datastore
+#baza danych distributed
 
 OK = 0
 ERROR = -1
