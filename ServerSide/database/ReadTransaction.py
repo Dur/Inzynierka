@@ -1,23 +1,35 @@
-import logging
+import MySQLdb
 import math
+import logging
 from utils.FileProcessors import FileProcessor
 
 __author__ = 'dur'
 
 NAME = "ReadTransaction: "
 LOCALHOST_NAME = "localhost"
+ERROR_MESSAGE = "Sorry but database is not consistent, please try again later"
 
 class ReadTransaction:
-
 	paramsDictionary = {}
 
 	def __init__(self, paramsDictionary):
 		self.paramsDictionary = paramsDictionary
 		homePath = self.paramsDictionary["HOME_PATH"]
-		self.processor = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
+		self.processor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
+
+	def executeTransaction(self, cursor, command):
+		try:
+			if self.checkDataVersions() == True:
+				cursor.execute(command)
+				return cursor.fetchall()
+			else:
+				return ERROR_MESSAGE
+		except MySQLdb.Error, e:
+			logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
+			return "%d %s" % (e.args[0], e.args[1])
 
 	def checkDataVersions(self):
-		logging.error(NAME+ "Rozpoczynanie transakcji odczytu")
+		logging.error(NAME + "Rozpoczynanie transakcji odczytu")
 		self.processor.lockFile()
 		dataVersions = self.processor.readFile()
 		myDataVersion = dataVersions[LOCALHOST_NAME]
@@ -32,7 +44,7 @@ class ReadTransaction:
 		logging.error(NAME + "Zgodnych wersji: " + str(myVersion))
 		logging.error(NAME + "Wszystkich wersji: " + str(count))
 		self.processor.unlockFile()
-		min = int(math.floor(count/2) + 1)
+		min = int(math.floor(count / 2) + 1)
 		if myVersion >= min:
 			logging.error(NAME + "Mozna czytac")
 			return True
