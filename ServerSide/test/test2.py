@@ -1,8 +1,6 @@
-from connections.Connection import Connection
+from threading import Event
 
-__author__ = 'dur'
-
-conn = Connection("/home/dur/Projects/ServerSide/config/config.conf")
-conn.connect("localhost", 80)
-conn.send_message("hello")
-print conn.get_message()
+event = Event()
+event.set()
+event.wait(5)
+print "mama"

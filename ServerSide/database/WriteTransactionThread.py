@@ -20,9 +20,9 @@ class WriteTransactionThread(Thread):
 	clientAddress = None
 	commands = []
 
-	def __init__(self, outputQueue, inputQueue, eventVariable, clientAddress, commands, paramsDictionary):
+	def __init__(self, outputQueue, inputQueue, eventVariable, commands, paramsDictionary):
 		Thread.__init__(self)
-		self.clientAddress = clientAddress
+		self.clientAddress = paramsDictionary["CLIENT_ADDRESS"]
 		self.inputQueue = inputQueue
 		self.eventVariable = eventVariable
 		self.outputQueue = outputQueue
