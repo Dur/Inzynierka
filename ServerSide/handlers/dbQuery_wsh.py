@@ -1,5 +1,5 @@
 import logging
-from database.utils.DatabaseConnector import DatabaseConnector
+from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
 
 ERROR = -1

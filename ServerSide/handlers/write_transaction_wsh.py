@@ -9,6 +9,9 @@ ABORT = "ABORT"
 GLOBAL_ABORT = "GLOBAL_ABORT"
 OK = "OK"
 
+def web_socket_do_extra_handshake(request):
+	pass  # Always accept.
+
 def web_socket_transfer_data(request):
 
 	logging.error(NAME+ "Server dostal zgloszenie")

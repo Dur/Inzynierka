@@ -3,7 +3,7 @@ import logging
 import time
 from connections.ListenSocket import ListenSocket
 from connections.PingConnection import PingConnection
-from utils.FileProcessor import FileProcessor
+from utils.FileProcessors import FileProcessor
 from utils.ModulesLoader import ModulesLoader
 from utils.ConfigurationReader import ConfigurationReader
 

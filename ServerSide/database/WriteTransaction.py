@@ -1,7 +1,3 @@
-from utils.FileProcessor import FileProcessor
-import logging
-import math
-
 __author__ = 'dur'
 
 NAME = "WriteTransaction: "

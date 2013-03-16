@@ -1,6 +1,6 @@
-from utils.FileProcessor import FileProcessor
 import logging
 import math
+from utils.FileProcessors import FileProcessor
 
 __author__ = 'dur'
 

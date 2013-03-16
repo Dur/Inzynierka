@@ -1,4 +1,4 @@
-from utils.FileProcessor import FileProcessor
+from utils.FileProcessors import FileProcessor
 
 __author__ = 'dur'
 import logging

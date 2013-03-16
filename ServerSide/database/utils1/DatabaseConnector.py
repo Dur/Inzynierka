@@ -1,4 +1,4 @@
-from database import ReadTransaction
+from database.ReadTransaction import ReadTransaction
 
 __author__ = 'dur'
 
@@ -11,9 +11,7 @@ import logging
 OK = 0
 ERROR = -1
 
-INSERT_OPERATION = "INSERT"
-UPDATE_OPERATION = "UPDATE"
-DELETE_OPERATION = "DELETE"
+SELECT_OPERATION = "SELECT"
 ERROR_MESSAGE = "Sorry but database is not consistent, please try again later"
 OK_MESSAGE = "Command executed successfully"
 
@@ -34,10 +32,6 @@ class DatabaseConnector:
 		self.password = password
 		self.databaseName = databaseName
 		self.host = host
-		self.writeOperations = {}
-		self.writeOperations[DELETE_OPERATION] = DELETE_OPERATION
-		self.writeOperations[UPDATE_OPERATION] = UPDATE_OPERATION
-		self.writeOperations[INSERT_OPERATION] = INSERT_OPERATION
 
 	def initConnection(self):
 		try:
@@ -54,7 +48,7 @@ class DatabaseConnector:
 		try:
 			splitedLine = command.split(' ')
 			operation = splitedLine[0]
-			if operation.upper() in self.writeOperations:
+			if operation.upper() != SELECT_OPERATION:
 				logging.error(NAME + "Client executes write operation" )
 				self.cursor.execute(command)
 				return OK_MESSAGE
@@ -66,7 +60,9 @@ class DatabaseConnector:
 					return self.cursor.fetchall()
 				else:
 					return ERROR_MESSAGE
-
+		except MySQLdb.Error, e:
+			logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
+			return "%d %s" % (e.args[0], e.args[1])
 		except Exception, e:
 			logging.error(NAME + "Exception while executing SQL command " + e.message )
 			return ERROR

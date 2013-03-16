@@ -16,6 +16,8 @@ _GOODBYE_MESSAGE = 'Goodbye'
 _PROTOCOL_VERSION_HYBI13 = 'hybi13'
 
 NAME = "Connection: "
+OK_FLAG = 0
+ERROR_FLAG = -1
 
 
 class Connection(object):
@@ -24,12 +26,13 @@ class Connection(object):
 		self.configFile = configFile
 		configReader = ConfigurationReader(self.configFile)
 		self.dictionary=configReader.readConfigFile()
-		logging.basicConfig(level=logging.getLevelName(self.dictionary.get('log_level').upper()))
 		self._socket = None
 		self.list=[]
 
 	def connect(self, host, port):
 		self._socket = socket.socket()
+		self.dictionary['server_port'] = port
+		self.dictionary['server_host'] = host
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
 			self._socket.connect((host, int(port)))
@@ -55,18 +58,12 @@ class Connection(object):
 			stream_option.mask_send = True
 			stream_option.unmask_receive = False
 
-			if self.dictionary.get('deflate_stream') == 'True':
-				stream_option.deflate_stream = True
-
-			if self.dictionary.get('deflate_frame') == 'True':
-				processor = True
-				processor.setup_stream_options(stream_option)
-
 			self._stream = Stream(request, stream_option)
+			return OK_FLAG
 		except Exception, e:
 			logging.error(NAME+"Wystapil nieznany problem")
 			logging.error(e.message)
-			return
+			return ERROR_FLAG
 
 	def send_message(self, message):
 		self._stream.send_message(message)

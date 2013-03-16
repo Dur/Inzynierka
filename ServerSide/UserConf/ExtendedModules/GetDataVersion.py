@@ -1,6 +1,7 @@
+from utils.FileProcessors import FileProcessor
+
 __author__ = 'dur'
 import logging
-from utils.FileProcessor import FileProcessor
 
 
 # modul sluzacy do wymiany informacji o wersji danych na kazdym serwerze

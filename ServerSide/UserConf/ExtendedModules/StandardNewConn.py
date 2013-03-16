@@ -1,6 +1,6 @@
 import logging
 from connections.PingConnection import PingConnection
-from utils.FileProcessor import FileProcessor
+from utils.FileProcessors import FileProcessor
 
 __author__ = 'dur'
 
