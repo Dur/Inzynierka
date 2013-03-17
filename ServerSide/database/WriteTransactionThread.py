@@ -28,12 +28,17 @@ class WriteTransactionThread(Thread):
 		self.outputQueue = outputQueue
 		self.paramsDictionary = paramsDictionary
 		self.connection = None
+		self.dbLogin = paramsDictionary["LOGIN"]
+		self.dbPassword = paramsDictionary["PASSWORD"]
 
 	def run(self):
 		methodMapping = {PREPARE : self.prepare, GLOBAL_COMMIT : self.globalCommit, GLOBAL_ABORT : self.globalAbort}
 		self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/transaction_config.conf")
 		if self.connection.connect(self.clientAddress, 80) == OK_FLAG:
 			logging.error(NAME + "Polaczenie dla transakcji zapisu nawiazane")
+			self.connection.send_message(self.dbLogin)
+			self.connection.send_message(self.dbPassword)
+
 			command = self.inputQueue.get(True, None)
 			while command != STOP_THREAD:
 				methodMapping[command]()
@@ -60,10 +65,20 @@ class WriteTransactionThread(Thread):
 	def globalCommit(self):
 		logging.error(NAME + "GlobalCommitMethod")
 		self.connection.send_message(GLOBAL_COMMIT)
-		self.outputQueue.put(self.connection.get_message())
+		answer = self.connection.get_message()
+		self.outputQueue.put(answer)
+		logging.error(NAME + "remote machine answered with " + answer)
+		if self.outputQueue.full():
+			self.eventVariable.set()
+			logging.error(NAME + "Waking up transation")
 
 	def globalAbort(self):
 		logging.error(NAME + "GlobalAbortMethod")
 		self.connection.send_message(GLOBAL_ABORT)
-		self.outputQueue.put(self.connection.get_message())
+		answer = self.connection.get_message()
+		self.outputQueue.put(answer)
+		logging.error(NAME + "remote machine answered with " + answer)
+		if self.outputQueue.full():
+			self.eventVariable.set()
+			logging.error(NAME + "Waking up transation")
 

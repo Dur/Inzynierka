@@ -1,3 +1,4 @@
+import MySQLdb
 from Queue import Queue
 from threading import Event
 import threading.Event
@@ -15,6 +16,8 @@ GLOBAL_COMMIT = "GLOBAL_COMMIT"
 ABORT = "ABORT"
 GLOBAL_ABORT = "GLOBAL_ABORT"
 OK = "OK"
+OK_MESSAGE = "Query executed successfully"
+CONNECTION_PROBLEM_ERROR = "Sorry, but server is temporary unavailable, please try again later"
 
 class WriteTransaction:
 
@@ -40,12 +43,41 @@ class WriteTransaction:
 
 	def executeTransaction(self, cursor, command):
 		if self.chceckTransactionPossibility() == True:
+			try:
+				cursor.execute(command)
+			except MySQLdb.Error, e:
+				cursor.execute("rollback")
+				logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
+				return "%d %s" % (e.args[0], e.args[1])
+
 			if self.initialised == False:
 				self.initialise()
+			for address in self.activeServers:
+				self.connectionsQueues[address].put(PREPARE_MESSAGE)
+				self.connectionsQueues[address].put(command)
+			self.eventVariable.wait(self.waitForRemoteTime)
+			self.eventVariable.clear()
+
+			if self.responseQueue.full() != True:
+				logging.error(NAME + "sending global abort, not all of servers responsed")
 				for address in self.activeServers:
-					self.connectionsQueues[address].put(PREPARE_MESSAGE)
-					self.connectionsQueues[address].put(command)
-				self.eventVariable.wait(self.waitForRemoteTime)
+					self.connectionsQueues[address].put(GLOBAL_ABORT)
+				cursor.execute("rollback")
+				return CONNECTION_PROBLEM_ERROR
+
+			while self.responseQueue.empty() != True:
+				response = self.responseQueue.get_nowait()
+				if response == ABORT:
+					logging.error(NAME + "sending global abort, not all servers ready for commit")
+					for address in self.activeServers:
+						self.connectionsQueues[address].put(GLOBAL_ABORT)
+					cursor.execute("rollback")
+					return CONNECTION_PROBLEM_ERROR
+
+			for address in self.activeServers:
+				self.connectionsQueues[address].put(GLOBAL_COMMIT)
+			cursor.execute("commit")
+			return OK_MESSAGE
 
 
 	def initialise(self):
@@ -55,6 +87,7 @@ class WriteTransaction:
 			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary)
 			self.connectionsQueues[address] = requestQueue
 			self.threads[address] = thread
+			thread.start()
 
 	def chceckTransactionPossibility(self):
 		if self.checkActiveServersCount() and self.chceckDataVersions():
