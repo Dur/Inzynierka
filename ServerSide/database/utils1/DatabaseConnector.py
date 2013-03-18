@@ -66,6 +66,15 @@ class DatabaseConnector:
 			logging.error(NAME + "Exception while executing SQL command " + e.message )
 			return ERROR
 
+	def executeQueryWithoutTransaction(self, command):
+		try:
+			self.cursor.execute(command)
+			return OK
+		except MySQLdb.Error, e:
+			self.cursor.execute("rollback")
+			logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
+			return "%d %s" % (e.args[0], e.args[1])
+
 	def closeConnection(self):
 		if self.connection != None:
 			self.connection.close()
