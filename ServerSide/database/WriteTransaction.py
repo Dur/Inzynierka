@@ -114,13 +114,13 @@ class WriteTransaction:
 			logging.error(NAME + "mniej niz polowa serwerow aktywna")
 			return False
 
-	def chceckDataVersions(self, activeServerList):
+	def chceckDataVersions(self):
 		self.versionProcessor.lockFile()
 		dataVersions = self.versionProcessor.readFile()
 		myDataVersion = dataVersions[LOCALHOST_NAME]
 		logging.error("Lokalna wersja danych = " + myDataVersion)
 		myVersion = 0
-		for key in activeServerList:
+		for key in self.availableServers:
 			version = dataVersions[key]
 			if version == myDataVersion:
 				myVersion = myVersion + 1
