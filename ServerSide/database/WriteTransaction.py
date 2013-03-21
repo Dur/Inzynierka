@@ -89,7 +89,7 @@ class WriteTransaction:
 			thread.start()
 
 	def chceckTransactionPossibility(self):
-		if self.checkActiveServersCount() and self.chceckDataVersions():
+		if self.checkActiveServersCount() and self.checkDataVersions():
 			return True
 		else:
 			return False
@@ -102,7 +102,7 @@ class WriteTransaction:
 		for key in addresses:
 			all = all + 1
 			if addresses[key] == 'T':
-				self.availableServers.append(key)
+				self.activeServers.append(key)
 				available = available + 1
 		self.addressesProcessor.unlockFile()
 		self.serversCount = all + 1
@@ -114,13 +114,13 @@ class WriteTransaction:
 			logging.error(NAME + "mniej niz polowa serwerow aktywna")
 			return False
 
-	def chceckDataVersions(self):
+	def checkDataVersions(self):
 		self.versionProcessor.lockFile()
 		dataVersions = self.versionProcessor.readFile()
 		myDataVersion = dataVersions[LOCALHOST_NAME]
 		logging.error("Lokalna wersja danych = " + myDataVersion)
 		myVersion = 0
-		for key in self.availableServers:
+		for key in self.activeServers:
 			version = dataVersions[key]
 			if version == myDataVersion:
 				myVersion = myVersion + 1
