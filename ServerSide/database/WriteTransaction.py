@@ -99,7 +99,7 @@ class WriteTransaction:
 		self.addressesProcessor.lockFile()
 		addresses = self.addressesProcessor.readFile()
 		all = 0
-		available = 0
+		available = 1
 		for key in addresses:
 			all = all + 1
 			if addresses[key] == 'T':
