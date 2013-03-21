@@ -1,7 +1,6 @@
 import MySQLdb
 from Queue import Queue
 from threading import Event
-import threading.Event
 import math
 from database.WriteTransactionThread import WriteTransactionThread
 from utils.FileProcessors import FileProcessor
