@@ -38,12 +38,12 @@ def web_socket_transfer_data(request):
 
 	db = DatabaseConnector(login, password, dbParamsDict["DATABASE"], dbParamsDict["HOST"])
 
-	command = request.ws_stream.get_message()
+	command = request.ws_stream.receive_message()
 	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/executedCommands.dat"
 	lock = FileLock(lockFilePath,5,.05)
 	while command != EXIT:
 		methodMapping[command](paramsDictionary, db, lock)
-		command = request.ws_stream.get_message()
+		command = request.ws_stream.receive_message()
 	if lock.is_locked:
 		lock.release()
 	return
@@ -51,7 +51,7 @@ def web_socket_transfer_data(request):
 def prepare(paramsDictionary, db, lock):
 	logging.error(NAME + "Prepare method")
 	socket = paramsDictionary["SOCKET"]
-	command = socket.get_message()
+	command = socket.receive_message()
 	logging.error(NAME + "received command to execute " + command)
 	if db.initConnection() == ERROR:
 		logging.error(NAME + "Cant connect to database")
