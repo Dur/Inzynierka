@@ -57,7 +57,12 @@ class WriteTransaction:
 				self.connectionsQueues[address].put(PREPARE_MESSAGE)
 				self.connectionsQueues[address].put(command)
 			logging.error(NAME + "Serwer rozpoczyna czekanie na zmiennej warunkowej")
-			self.eventVariable.wait(self.waitForRemoteTime)
+			logging.error(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
+			if self.eventVariable.is_set:
+				logging.error(NAME + "Zmienna warunkowa ustawiona")
+			else:
+				logging.error(NAME + "Zmienna warunkowa NIE ustawiona")
+			self.eventVariable.wait(int(self.waitForRemoteTime))
 			self.eventVariable.clear()
 			logging.error(NAME + "Serwer minal zmienna warunkowa")
 			if self.responseQueue.full() != True:

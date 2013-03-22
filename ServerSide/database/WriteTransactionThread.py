@@ -44,6 +44,7 @@ class WriteTransactionThread(Thread):
 				while command != STOP_THREAD:
 					methodMapping[command]()
 					command = self.inputQueue.get(True, None)
+					logging.error(NAME + "Odebrano komende " + command)
 			else:
 				logging.error(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
 				self.outputQueue.put(ABORT)
@@ -72,7 +73,6 @@ class WriteTransactionThread(Thread):
 		self.outputQueue.put(answer)
 		logging.error(NAME + "remote machine answered with " + answer)
 		if self.outputQueue.full():
-			self.eventVariable.set()
 			logging.error(NAME + "Waking up transation")
 
 	def globalAbort(self):
@@ -82,6 +82,5 @@ class WriteTransactionThread(Thread):
 		self.outputQueue.put(answer)
 		logging.error(NAME + "remote machine answered with " + answer)
 		if self.outputQueue.full():
-			self.eventVariable.set()
 			logging.error(NAME + "Waking up transation")
 
