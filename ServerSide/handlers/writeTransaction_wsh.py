@@ -4,7 +4,7 @@ from utils.filelock import FileLock
 
 import logging
 
-NAME = "write_transaction_wsh: "
+NAME = "writeTransaction_wsh: "
 PREPARE = "PREPARE"
 GLOBAL_COMMIT = "GLOBAL_COMMIT"
 ABORT = "ABORT"

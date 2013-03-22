@@ -1,11 +1,5 @@
 from Queue import Queue
+from connections.Connection import Connection
 
-que = Queue(5)
-que.put("ll")
-que.put("ll1")
-que.put("ll2")
-que.put("ll3")
-que.put("ll4")
-
-while que.empty() != True:
-	print que.get_nowait()
+connection = Connection("/home/dur/Projects/ServerSide/config/database_config/transaction_config.conf")
+connection.connect("192.168.56.102", 80)
