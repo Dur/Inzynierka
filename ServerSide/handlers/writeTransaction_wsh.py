@@ -56,7 +56,8 @@ def prepare(paramsDictionary, db, lock):
 	if db.initConnection() == ERROR:
 		logging.error(NAME + "Cant connect to database")
 		socket.send_message(ABORT)
-		lock.release()
+		if lock.is_locked:
+			lock.release()
 		return
 	lock.acquire()
 	if lock.is_locked == False:
@@ -69,6 +70,7 @@ def prepare(paramsDictionary, db, lock):
 		logging.error(NAME + "Cant execute query")
 		lock.release()
 		return
+	logging.error(NAME + "Sending ready commit")
 	socket.send_message(READY_COMMIT)
 	return
 
@@ -77,7 +79,8 @@ def globalCommit(paramsDictionary, db, lock):
 	logging.error(NAME + "Received global commit message")
 	db.executeQueryWithoutTransaction(COMMIT)
 	socket.send_message(OK)
-	lock.release()
+	if lock.is_locked:
+		lock.release()
 
 
 def globalAbort(paramsDictionary, db, lock):
@@ -85,5 +88,6 @@ def globalAbort(paramsDictionary, db, lock):
 	logging.error(NAME + "Received global abort message")
 	db.executeQueryWithoutTransaction(ROLLBACK)
 	socket.send_message(OK)
-	lock.release()
+	if lock.is_locked:
+		lock.release()
 

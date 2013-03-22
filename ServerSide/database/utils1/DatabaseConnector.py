@@ -40,6 +40,7 @@ class DatabaseConnector:
 			self.cursor = self.connection.cursor()
 			self.readTransaction = None
 			self.writeTransaction = None
+			logging.error(NAME + "Connection with database established")
 			return OK
 
 		except Exception, e:

@@ -38,6 +38,7 @@ class WriteTransaction:
 		self.versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
 		self.addressesProcessor = FileProcessor(homePath + "ServerSide/config/addresses.conf")
 		self.waitForRemoteTime = int(paramsDictionary["DB_PARAMS"]["waitForRemoteTime"])
+		self.eventVariable.clear()
 
 
 	def executeTransaction(self, cursor, command):
@@ -55,8 +56,10 @@ class WriteTransaction:
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(PREPARE_MESSAGE)
 				self.connectionsQueues[address].put(command)
+			logging.error(NAME + "Serwer rozpoczyna czekanie na zmiennej warunkowej")
 			self.eventVariable.wait(self.waitForRemoteTime)
 			self.eventVariable.clear()
+			logging.error(NAME + "Serwer minal zmienna warunkowa")
 			if self.responseQueue.full() != True:
 				logging.error(NAME + "sending global abort, not all of servers responsed")
 				for address in self.activeServers:
