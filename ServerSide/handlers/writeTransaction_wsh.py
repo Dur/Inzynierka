@@ -58,7 +58,7 @@ def prepare(paramsDictionary, db, lock):
 		socket.send_message(ABORT)
 		lock.release()
 		return
-	lock.aquire()
+	lock.acquire()
 	if lock.is_locked == False:
 		logging.error(NAME + "Cant aquire lock")
 		socket.send_message(ABORT)
