@@ -74,6 +74,8 @@ class DatabaseConnector:
 			self.cursor.execute("rollback")
 			logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
 			return "%d %s" % (e.args[0], e.args[1])
+		except Exception, e:
+			logging.error(NAME + e.message)
 
 	def closeConnection(self):
 		if self.connection != None:

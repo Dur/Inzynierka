@@ -95,6 +95,7 @@ class WriteTransaction:
 			return False
 
 	def checkActiveServersCount(self):
+		self.activeServers = []
 		self.addressesProcessor.lockFile()
 		addresses = self.addressesProcessor.readFile()
 		all = 0
@@ -107,6 +108,7 @@ class WriteTransaction:
 		self.addressesProcessor.unlockFile()
 		self.serversCount = all + 1
 		min = int(math.floor(all / 2) + 1)
+		logging.error(NAME + "Active servers " + str(self.activeServers))
 		if available >= min:
 			logging.error(NAME + "Wicej niz polowa serwerow aktywna")
 			return True
