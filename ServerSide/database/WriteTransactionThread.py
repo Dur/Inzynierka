@@ -20,9 +20,9 @@ class WriteTransactionThread(Thread):
 	clientAddress = None
 	commands = []
 
-	def __init__(self, outputQueue, inputQueue, eventVariable, paramsDictionary):
+	def __init__(self, outputQueue, inputQueue, eventVariable, paramsDictionary, address):
 		Thread.__init__(self)
-		self.clientAddress = paramsDictionary["CLIENT_ADDRESS"]
+		self.clientAddress = address
 		self.inputQueue = inputQueue
 		self.eventVariable = eventVariable
 		self.outputQueue = outputQueue
@@ -32,22 +32,25 @@ class WriteTransactionThread(Thread):
 		self.dbPassword = paramsDictionary["PASSWORD"]
 
 	def run(self):
-		methodMapping = {PREPARE : self.prepare, GLOBAL_COMMIT : self.globalCommit, GLOBAL_ABORT : self.globalAbort}
-		self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/transaction_config.conf")
-		if self.connection.connect(self.clientAddress, 80) == OK_FLAG:
-			logging.error(NAME + "Polaczenie dla transakcji zapisu nawiazane")
-			self.connection.send_message(self.dbLogin)
-			self.connection.send_message(self.dbPassword)
+		try:
+			methodMapping = {PREPARE : self.prepare, GLOBAL_COMMIT : self.globalCommit, GLOBAL_ABORT : self.globalAbort}
+			self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/transaction_config.conf")
+			if self.connection.connect(self.clientAddress, 80) == OK_FLAG:
+				logging.error(NAME + "Polaczenie dla transakcji zapisu nawiazane")
+				self.connection.send_message(self.dbLogin)
+				self.connection.send_message(self.dbPassword)
 
-			command = self.inputQueue.get(True, None)
-			while command != STOP_THREAD:
-				methodMapping[command]()
 				command = self.inputQueue.get(True, None)
-		else:
-			logging.error(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
-			self.outputQueue.put(ABORT)
-			self.connection._do_closing_handshake()
-		logging.error(NAME + "Konice watku transakcji zapisu")
+				while command != STOP_THREAD:
+					methodMapping[command]()
+					command = self.inputQueue.get(True, None)
+			else:
+				logging.error(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
+				self.outputQueue.put(ABORT)
+				self.connection._do_closing_handshake()
+			logging.error(NAME + "Konice watku transakcji zapisu")
+		except Exception, e:
+			logging.error(NAME + e.message )
 
 	def prepare(self):
 		logging.error(NAME + "PrepareMethod")

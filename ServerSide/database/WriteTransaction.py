@@ -37,7 +37,7 @@ class WriteTransaction:
 		self.paramsDictionary = paramsDictionary
 		self.versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
 		self.addressesProcessor = FileProcessor(homePath + "ServerSide/config/addresses.conf")
-		self.waitForRemoteTime = paramsDictionary["DB_PARAMS"]["waitForRemoteTime"]
+		self.waitForRemoteTime = int(paramsDictionary["DB_PARAMS"]["waitForRemoteTime"])
 
 
 	def executeTransaction(self, cursor, command):
@@ -46,6 +46,7 @@ class WriteTransaction:
 				cursor.execute(command)
 			except MySQLdb.Error, e:
 				cursor.execute("rollback")
+				logging.error(NAME + "Rzucilo wyjatkiem SQL")
 				logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
 				return "%d %s" % (e.args[0], e.args[1])
 
@@ -56,7 +57,6 @@ class WriteTransaction:
 				self.connectionsQueues[address].put(command)
 			self.eventVariable.wait(self.waitForRemoteTime)
 			self.eventVariable.clear()
-
 			if self.responseQueue.full() != True:
 				logging.error(NAME + "sending global abort, not all of servers responsed")
 				for address in self.activeServers:
@@ -78,12 +78,12 @@ class WriteTransaction:
 			cursor.execute("commit")
 			return OK_MESSAGE
 
-
 	def initialise(self):
 		self.responseQueue = Queue(len(self.activeServers))
 		for address in self.activeServers:
 			requestQueue = Queue()
-			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary)
+			logging.error(NAME + "Address passed to thread " + address)
+			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary, address)
 			self.connectionsQueues[address] = requestQueue
 			self.threads[address] = thread
 			thread.start()
@@ -119,14 +119,14 @@ class WriteTransaction:
 		dataVersions = self.versionProcessor.readFile()
 		myDataVersion = dataVersions[LOCALHOST_NAME]
 		logging.error("Lokalna wersja danych = " + myDataVersion)
-		myVersion = 0
+		myVersion = 1
 		for key in self.activeServers:
 			version = dataVersions[key]
 			if version == myDataVersion:
 				myVersion = myVersion + 1
 		logging.error(NAME + "Zgodnych wersji: " + str(myVersion))
 		logging.error(NAME + "Wszystkich wersji: " + str(self.serversCount))
-		self.processor.unlockFile()
+		self.versionProcessor.unlockFile()
 		min = int(math.floor(self.serversCount / 2) + 1)
 		if myVersion >= min:
 			logging.error(NAME + "Mozna wykonac transakcje zapisu")
