@@ -74,6 +74,7 @@ class WriteTransactionThread(Thread):
 		logging.error(NAME + "remote machine answered with " + answer)
 		if self.outputQueue.full():
 			logging.error(NAME + "Waking up transation")
+		logging.info("###########################################################")
 
 	def globalAbort(self):
 		logging.error(NAME + "GlobalAbortMethod")

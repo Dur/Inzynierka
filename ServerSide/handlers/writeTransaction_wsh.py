@@ -1,5 +1,6 @@
 from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
+from utils.FileProcessors import FileProcessor
 from utils.filelock import FileLock
 
 import logging
@@ -16,6 +17,7 @@ OK_CODE = 0
 READY_COMMIT = "READY_COMMIT"
 COMMIT = "commit"
 ROLLBACK = "rollback"
+LOCALHOST_NAME = "localhost"
 
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
@@ -39,7 +41,7 @@ def web_socket_transfer_data(request):
 	db = DatabaseConnector(login, password, dbParamsDict["DATABASE"], dbParamsDict["HOST"])
 
 	command = request.ws_stream.receive_message()
-	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/executedCommands.dat"
+	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/data_version.dat"
 	lock = FileLock(lockFilePath,5,.05)
 	while command != EXIT:
 		methodMapping[command](paramsDictionary, db, lock)
@@ -91,3 +93,9 @@ def globalAbort(paramsDictionary, db, lock):
 	if lock.is_locked:
 		lock.release()
 
+def generateInsertToDataVersions(command, paramsDictionary):
+	versionProcessor = FileProcessor(paramsDictionary["HOME_PATH"] + "ServerSide/config/database_config/data_version.dat")
+	dataVersions = versionProcessor.readFile()
+	myDataVersion = dataVersions[LOCALHOST_NAME]
+	insert = "INSERT INTO " +  paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + (int(myDataVersion)+1) + ",\'" + command + "\')"
+	return insert

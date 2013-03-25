@@ -16,6 +16,7 @@ ABORT = "ABORT"
 GLOBAL_ABORT = "GLOBAL_ABORT"
 OK = "OK"
 OK_MESSAGE = "Query executed successfully"
+COMMMIT = "commit"
 CONNECTION_PROBLEM_ERROR = "Sorry, but server is temporary unavailable, please try again later"
 
 class WriteTransaction:
@@ -31,6 +32,7 @@ class WriteTransaction:
 	connectionsQueues = {}
 	threads = {}
 	waitForRemoteTime = 0
+	myDataVersion = 0
 
 	def __init__(self, paramsDictionary):
 		homePath = paramsDictionary["HOME_PATH"]
@@ -83,7 +85,9 @@ class WriteTransaction:
 
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_COMMIT)
-			cursor.execute("commit")
+			#cursor.execute(self.generateInsertToDataVersions(command))
+			cursor.execute(COMMMIT)
+
 			return OK_MESSAGE
 
 	def initialise(self):
@@ -127,20 +131,24 @@ class WriteTransaction:
 	def checkDataVersions(self):
 		self.versionProcessor.lockFile()
 		dataVersions = self.versionProcessor.readFile()
-		myDataVersion = dataVersions[LOCALHOST_NAME]
-		logging.error("Lokalna wersja danych = " + myDataVersion)
-		myVersion = 1
+		self.myDataVersion = dataVersions[LOCALHOST_NAME]
+		logging.error("Lokalna wersja danych = " + self.myDataVersion)
+		myVersionCount = 1
 		for key in self.activeServers:
 			version = dataVersions[key]
-			if version == myDataVersion:
-				myVersion = myVersion + 1
-		logging.error(NAME + "Zgodnych wersji: " + str(myVersion))
+			if version == self.myDataVersion:
+				myVersionCount = myVersionCount + 1
+		logging.error(NAME + "Zgodnych wersji: " + str(myVersionCount))
 		logging.error(NAME + "Wszystkich wersji: " + str(self.serversCount))
 		self.versionProcessor.unlockFile()
 		min = int(math.floor(self.serversCount / 2) + 1)
-		if myVersion >= min:
+		if myVersionCount >= min:
 			logging.error(NAME + "Mozna wykonac transakcje zapisu")
 			return True
 		else:
 			logging.error(NAME + "Nie mozna wykonac transakcji zapisu")
 			return False
+
+	def generateInsertToDataVersions(self, command):
+		insert = "INSERT INTO " +  self.paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + (int(self.myDataVersion)+1) + ",\'" + command + "\')"
+		return insert
