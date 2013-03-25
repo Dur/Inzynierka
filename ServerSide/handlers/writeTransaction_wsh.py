@@ -99,6 +99,7 @@ def generateInsertToDataVersions(paramsDictionary):
 	versionProcessor = FileProcessor(paramsDictionary["HOME_PATH"] + "ServerSide/config/database_config/data_version.dat")
 	dataVersions = versionProcessor.readFile()
 	command = paramsDictionary["COMMAND"]
+	command = command.replace('\'', '\\\'')
 	myDataVersion = dataVersions[LOCALHOST_NAME]
 	insert = "INSERT INTO " +  paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(myDataVersion)+1)) + ",\'" + command + "\')"
 	return insert

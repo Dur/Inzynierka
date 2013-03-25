@@ -76,6 +76,7 @@ class WriteTransaction:
 
 			while self.responseQueue.empty() != True:
 				response = self.responseQueue.get_nowait()
+				logging.error(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
 				if response == ABORT:
 					logging.error(NAME + "sending global abort, not all servers ready for commit")
 					for address in self.activeServers:
@@ -85,6 +86,7 @@ class WriteTransaction:
 
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_COMMIT)
+			logging.error(NAME + "########## przygotowanie insertu do tabeli z wersjami")
 			cursor.execute(self.generateInsertToDataVersions(command))
 			cursor.execute(COMMMIT)
 			logging.info(NAME + "Transakcja zakonczona powodzeniem")
@@ -151,5 +153,6 @@ class WriteTransaction:
 			return False
 
 	def generateInsertToDataVersions(self, command):
+		command = command.replace('\'', '\\\'')
 		insert = "INSERT INTO " +  self.paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(self.myDataVersion)+1)) + ",\'" + command + "\')"
 		return insert
