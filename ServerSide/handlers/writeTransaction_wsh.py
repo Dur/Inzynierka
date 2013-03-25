@@ -100,5 +100,5 @@ def generateInsertToDataVersions(paramsDictionary):
 	dataVersions = versionProcessor.readFile()
 	command = paramsDictionary["COMMAND"]
 	myDataVersion = dataVersions[LOCALHOST_NAME]
-	insert = "INSERT INTO " +  paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + (int(myDataVersion)+1) + ",\'" + command + "\')"
+	insert = "INSERT INTO " +  paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(myDataVersion)+1)) + ",\'" + command + "\')"
 	return insert

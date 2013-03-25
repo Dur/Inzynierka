@@ -151,5 +151,5 @@ class WriteTransaction:
 			return False
 
 	def generateInsertToDataVersions(self, command):
-		insert = "INSERT INTO " +  self.paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + (int(self.myDataVersion)+1) + ",\'" + command + "\')"
+		insert = "INSERT INTO " +  self.paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(self.myDataVersion)+1)) + ",\'" + command + "\')"
 		return insert
