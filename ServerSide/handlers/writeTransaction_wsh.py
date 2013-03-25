@@ -54,6 +54,7 @@ def prepare(paramsDictionary, db, lock):
 	logging.error(NAME + "Prepare method")
 	socket = paramsDictionary["SOCKET"]
 	command = socket.receive_message()
+	paramsDictionary["COMMAND"] = command
 	logging.error(NAME + "received command to execute " + command)
 	if db.initConnection() == ERROR:
 		logging.error(NAME + "Cant connect to database")
@@ -79,6 +80,7 @@ def prepare(paramsDictionary, db, lock):
 def globalCommit(paramsDictionary, db, lock):
 	socket = paramsDictionary["SOCKET"]
 	logging.error(NAME + "Received global commit message")
+	db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary["COMMAND"]))
 	db.executeQueryWithoutTransaction(COMMIT)
 	socket.send_message(OK)
 	if lock.is_locked:

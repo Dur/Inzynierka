@@ -85,8 +85,9 @@ class WriteTransaction:
 
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_COMMIT)
-			#cursor.execute(self.generateInsertToDataVersions(command))
+			cursor.execute(self.generateInsertToDataVersions(command))
 			cursor.execute(COMMMIT)
+			logging.info(NAME + "Transakcja zakonczona powodzeniem")
 
 			return OK_MESSAGE
 
