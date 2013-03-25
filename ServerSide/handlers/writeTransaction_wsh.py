@@ -80,7 +80,7 @@ def prepare(paramsDictionary, db, lock):
 def globalCommit(paramsDictionary, db, lock):
 	socket = paramsDictionary["SOCKET"]
 	logging.error(NAME + "Received global commit message")
-	db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary["COMMAND"]))
+	db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
 	db.executeQueryWithoutTransaction(COMMIT)
 	socket.send_message(OK)
 	if lock.is_locked:
@@ -95,9 +95,10 @@ def globalAbort(paramsDictionary, db, lock):
 	if lock.is_locked:
 		lock.release()
 
-def generateInsertToDataVersions(command, paramsDictionary):
+def generateInsertToDataVersions(paramsDictionary):
 	versionProcessor = FileProcessor(paramsDictionary["HOME_PATH"] + "ServerSide/config/database_config/data_version.dat")
 	dataVersions = versionProcessor.readFile()
+	command = paramsDictionary["COMMAND"]
 	myDataVersion = dataVersions[LOCALHOST_NAME]
 	insert = "INSERT INTO " +  paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + (int(myDataVersion)+1) + ",\'" + command + "\')"
 	return insert
