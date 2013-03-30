@@ -24,9 +24,8 @@ from database.utils1.DatabaseConnector import DatabaseConnector
 #	print("%d %s" % (e.args[0], e.args[1]))
 #except Exception, ee:
 #	print ee.message
+aa={}
+aa["bb"] = "cc"
+if (aa["ww"] != None):
+	print("hello")
 
-aa = "22:33:44:66:"
-pp = aa.split(":")
-for single in pp:
-	if single != "":
-		print single + " ll"

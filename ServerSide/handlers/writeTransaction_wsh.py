@@ -119,7 +119,7 @@ def insertNewDataVersions(serversList, paramsDictionary):
 	newVersion = int(versions[LOCALHOST_NAME]) +1
 	for address in serversList:
 		logging.info(NAME + "for address " + address)
-		if(versions[address]) != None:
+		if(versions.contains_key(address)):
 			versions[address] = newVersion
 			logging.info(NAME + "wrote " + address )
 	versions[LOCALHOST_NAME] = newVersion
