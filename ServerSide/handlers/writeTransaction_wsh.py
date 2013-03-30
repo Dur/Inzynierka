@@ -33,6 +33,7 @@ def web_socket_transfer_data(request):
 	configReader = ConfigurationReader(paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/database.conf")
 	dbParamsDict = configReader.readConfigFile()
 	paramsDictionary["DB_PARAMS"] = dbParamsDict
+	paramsDictionary["CLIENT_ADDRESS"] = request.connection.remote_ip
 
 	login = request.ws_stream.receive_message()
 
@@ -79,9 +80,12 @@ def prepare(paramsDictionary, db, lock):
 
 def globalCommit(paramsDictionary, db, lock):
 	socket = paramsDictionary["SOCKET"]
+	servers = (socket.receive_message()).split(':')
+	servers.append(paramsDictionary["CLIENT_ADDRESS"])
 	logging.error(NAME + "Received global commit message")
 	db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
 	db.executeQueryWithoutTransaction(COMMIT)
+	insertNewDataVersions(servers, paramsDictionary)
 	socket.send_message(OK)
 	if lock.is_locked:
 		lock.release()
@@ -103,3 +107,16 @@ def generateInsertToDataVersions(paramsDictionary):
 	myDataVersion = dataVersions[LOCALHOST_NAME]
 	insert = "INSERT INTO " +  paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(myDataVersion)+1)) + ",\'" + command + "\')"
 	return insert
+
+def insertNewDataVersions(serversList, paramsDictionary):
+	homePath = paramsDictionary["HOME_PATH"]
+	versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
+	versionProcessor.lockFile()
+	versions = versionProcessor.readFile()
+	newVersion = int(versions[LOCALHOST_NAME]) +1
+	for address in serversList:
+		if(versions[address]) != None:
+			versions[address] = newVersion
+	versions[LOCALHOST_NAME] = newVersion
+	versionProcessor.writeToFile(versions)
+	versionProcessor.unlockFile()

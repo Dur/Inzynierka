@@ -69,6 +69,8 @@ class WriteTransactionThread(Thread):
 	def globalCommit(self):
 		logging.error(NAME + "GlobalCommitMethod")
 		self.connection.send_message(GLOBAL_COMMIT)
+		command = self.inputQueue.get(True, None)
+		self.connection.send_message(command)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
 		logging.error(NAME + "remote machine answered with " + answer)

@@ -55,6 +55,7 @@ class WriteTransaction:
 
 			if self.initialised == False:
 				self.initialise()
+			self.paramsDictionary["ACTIVE_SERVERS"] = self.activeServers
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(PREPARE_MESSAGE)
 				self.connectionsQueues[address].put(command)
@@ -84,8 +85,13 @@ class WriteTransaction:
 					cursor.execute("rollback")
 					return CONNECTION_PROBLEM_ERROR
 
+			activeServersString = ""
+			for address in self.activeServers:
+				activeServersString = activeServersString + address + ":"
+
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_COMMIT)
+				self.connectionsQueues[address].put(activeServersString)
 			logging.error(NAME + "########## przygotowanie insertu do tabeli z wersjami")
 			cursor.execute(self.generateInsertToDataVersions(command))
 			cursor.execute(COMMMIT)
@@ -156,3 +162,13 @@ class WriteTransaction:
 		command = command.replace('\'', '\\\'')
 		insert = "INSERT INTO " +  self.paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(self.myDataVersion)+1)) + ",\'" + command + "\')"
 		return insert
+
+	def insertNewDataVersions(self):
+		self.versionProcessor.lockFile()
+		versions = self.versionProcessor.readFile()
+		newVersion = int(versions[LOCALHOST_NAME]) +1
+		for address in self.activeServers:
+			versions[address] = newVersion
+		versions[LOCALHOST_NAME] = newVersion
+		self.versionProcessor.writeToFile(versions)
+		self.versionProcessor.unlockFile()
