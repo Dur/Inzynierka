@@ -80,7 +80,9 @@ def prepare(paramsDictionary, db, lock):
 
 def globalCommit(paramsDictionary, db, lock):
 	socket = paramsDictionary["SOCKET"]
-	servers = (socket.receive_message()).split(':')
+	servers = socket.receive_message()
+	logging.info(NAME + " got serwers " + servers)
+	servers = servers.split(':')
 	servers.append(paramsDictionary["CLIENT_ADDRESS"])
 	logging.error(NAME + "Received global commit message")
 	db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
@@ -112,11 +114,14 @@ def insertNewDataVersions(serversList, paramsDictionary):
 	homePath = paramsDictionary["HOME_PATH"]
 	versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
 	versionProcessor.lockFile()
+	logging.info(NAME + "writeing to versions file")
 	versions = versionProcessor.readFile()
 	newVersion = int(versions[LOCALHOST_NAME]) +1
 	for address in serversList:
+		logging.info(NAME + "for address " + address)
 		if(versions[address]) != None:
 			versions[address] = newVersion
+			logging.info(NAME + "wrote " + address )
 	versions[LOCALHOST_NAME] = newVersion
 	versionProcessor.writeToFile(versions)
 	versionProcessor.unlockFile()
