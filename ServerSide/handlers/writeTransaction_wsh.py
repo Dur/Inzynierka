@@ -112,8 +112,10 @@ def generateInsertToDataVersions(paramsDictionary):
 
 def insertNewDataVersions(serversList, paramsDictionary):
 	homePath = paramsDictionary["HOME_PATH"]
+	logging.info(NAME + "inside insert into data versions method")
 	versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
 	versionProcessor.lockFile()
+	logging.info(NAME + "versionsFile locked")
 	logging.info(NAME + "writeing to versions file")
 	versions = versionProcessor.readFile()
 	newVersion = int(versions[LOCALHOST_NAME]) +1
