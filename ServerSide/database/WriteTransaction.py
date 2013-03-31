@@ -95,6 +95,7 @@ class WriteTransaction:
 			logging.error(NAME + "########## przygotowanie insertu do tabeli z wersjami")
 			cursor.execute(self.generateInsertToDataVersions(command))
 			cursor.execute(COMMMIT)
+			self.insertNewDataVersions()
 			logging.info(NAME + "Transakcja zakonczona powodzeniem")
 
 			return OK_MESSAGE
@@ -167,6 +168,7 @@ class WriteTransaction:
 		self.versionProcessor.lockFile()
 		versions = self.versionProcessor.readFile()
 		newVersion = str(int(versions[LOCALHOST_NAME]) +1)
+		logging.info(NAME + "new dataversion = " + newVersion)
 		for address in self.activeServers:
 			versions[address] = newVersion
 		versions[LOCALHOST_NAME] = newVersion
