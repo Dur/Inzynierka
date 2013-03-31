@@ -120,7 +120,7 @@ def insertNewDataVersions(serversList, paramsDictionary):
 	logging.info(NAME + "versionsFile locked")
 	logging.info(NAME + "writeing to versions file")
 	versions = versionProcessor.readFile()
-	newVersion = int(versions[LOCALHOST_NAME]) +1
+	newVersion = str(int(versions[LOCALHOST_NAME]) +1)
 	for address in serversList:
 		logging.info(NAME + "for address " + address)
 		if(address in versions):

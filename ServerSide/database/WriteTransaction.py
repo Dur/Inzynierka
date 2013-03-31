@@ -166,7 +166,7 @@ class WriteTransaction:
 	def insertNewDataVersions(self):
 		self.versionProcessor.lockFile()
 		versions = self.versionProcessor.readFile()
-		newVersion = int(versions[LOCALHOST_NAME]) +1
+		newVersion = str(int(versions[LOCALHOST_NAME]) +1)
 		for address in self.activeServers:
 			versions[address] = newVersion
 		versions[LOCALHOST_NAME] = newVersion
