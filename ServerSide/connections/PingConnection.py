@@ -32,9 +32,10 @@ class PingConnection(object):
 				self.dictionary[splitedLine[0]] = splitedLine[1]
 		self._socket = None
 
-	def connect(self, host, port):
+	def connect(self, host, port, resource):
 		self.dictionary['server_port'] = port
 		self.dictionary['server_host'] = host
+		self.dictionary['resource'] = resource
 		self._socket = socket.socket()
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:

@@ -29,10 +29,11 @@ class Connection(object):
 		self._socket = None
 		self.list=[]
 
-	def connect(self, host, port):
+	def connect(self, host, port, resource):
 		self._socket = socket.socket()
 		self.dictionary['server_port'] = port
 		self.dictionary['server_host'] = host
+		self.dictionary['resource'] = resource
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
 			self._socket.connect((host, int(port)))

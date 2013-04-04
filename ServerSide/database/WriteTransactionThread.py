@@ -11,6 +11,7 @@ ABORT = "ABORT"
 GLOBAL_ABORT = "GLOBAL_ABORT"
 OK = "OK"
 OK_FLAG = 0
+RESOURCE = "/writeTransaction"
 
 class WriteTransactionThread(Thread):
 
@@ -35,7 +36,7 @@ class WriteTransactionThread(Thread):
 		try:
 			methodMapping = {PREPARE : self.prepare, GLOBAL_COMMIT : self.globalCommit, GLOBAL_ABORT : self.globalAbort}
 			self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/transaction_config.conf")
-			if self.connection.connect(self.clientAddress, 80) == OK_FLAG:
+			if self.connection.connect(self.clientAddress, 80, RESOURCE) == OK_FLAG:
 				logging.error(NAME + "Polaczenie dla transakcji zapisu nawiazane")
 				self.connection.send_message(self.dbLogin)
 				self.connection.send_message(self.dbPassword)

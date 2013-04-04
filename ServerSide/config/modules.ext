@@ -1,7 +1,5 @@
 PING:StandardPing
 
-#NEW_CONN:StandardNewConn
-
 NEW_CONN:AuthNewConn
 NEW_CONN:GetDataVersion
 
@@ -15,3 +13,11 @@ PASS_EXCH_RES:PasswordExchangeResponse
 
 PERIODIC:PeriodicPing
 PERIODIC:PeriodicPassExchange
+
+BEFORE_CONNECT:ResetServerState
+
+#BEFORE_CONNECT_PERIODIC:
+
+AFTER_CONNECT:MakeCoherent
+
+#AFTER_CONECT_PERIODIC:

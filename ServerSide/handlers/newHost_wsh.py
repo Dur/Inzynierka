@@ -11,6 +11,7 @@ NAME = "newHost_wsh: "
 PONG = "PONG:PONG"
 PING = "PING:PING"
 EXIT = "EXIT"
+RESOURCE = "/newPing"
 
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
@@ -32,7 +33,6 @@ def web_socket_transfer_data(request):
 	paramsDictionary["SOCKET"].receive_message()
 	logging.error(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
 
-
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 
 	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
@@ -48,7 +48,7 @@ def web_socket_transfer_data(request):
 				logging.error(NAME+ "znalazl dopasowanie")
 				logging.error(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
 				paramsDictionary["CONNECTION"] = PingConnection(paramsDictionary["HOME_PATH"]+"ServerSide/config/ping_config.conf")
-				paramsDictionary["CONNECTION"].connect(remoteAddress, 80)
+				paramsDictionary["CONNECTION"].connect(remoteAddress, 80, RESOURCE)
 				paramsDictionary["SOCKET"].send_message(PONG)
 				logging.error(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
 
@@ -66,7 +66,6 @@ def web_socket_transfer_data(request):
 				file.unlockFile()
 				return
 	file.unlockFile()
-
 
 	loader = ModulesLoader()
 	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")

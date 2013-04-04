@@ -6,6 +6,7 @@ __author__ = 'dur'
 
 PING = "PING:PING"
 NAME = "StandardNewConn: "
+RESOURCE = "/newPing"
 
 def execute(paramsDictionary, message):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
@@ -24,7 +25,7 @@ def execute(paramsDictionary, message):
 			if( addresses[key] != 'T' ):
 				logging.error(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
 				paramsDictionary["CONNECTION"] = PingConnection(paramsDictionary["HOME_PATH"]+"ServerSide/config/ping_config.conf")
-				paramsDictionary["CONNECTION"].connect(remoteAddress, 80)
+				paramsDictionary["CONNECTION"].connect(remoteAddress, 80, RESOURCE)
 				paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
 				paramsDictionary["SOCKET"].send_message(PING)
 				paramsDictionary["SOCKET"].receive_message()

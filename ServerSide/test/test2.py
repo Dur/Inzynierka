@@ -15,17 +15,15 @@ from database.utils1.DatabaseConnector import DatabaseConnector
 #
 #print sql
 #
-#try:
-#	connection = MySQLdb.connect("localhost", "root", "root", "distributed")
-#	cursor = connection.cursor()
-#	cursor.execute(sql)
-#	cursor.execute("commit")
-#except MySQLdb.Error, e:
-#	print("%d %s" % (e.args[0], e.args[1]))
-#except Exception, ee:
-#	print ee.message
-aa={}
-aa["bb"] = "cc"
-if (aa["ww"] != None):
-	print("hello")
+try:
+	connection = MySQLdb.connect("localhost", "root", "root", "distributed")
+	cursor = connection.cursor()
+	cursor.execute("select * from versions")
+	for id, name in cursor.fetchall():
+		print name
+except MySQLdb.Error, e:
+	print("%d %s" % (e.args[0], e.args[1]))
+except Exception, ee:
+	print ee.message
+
 
