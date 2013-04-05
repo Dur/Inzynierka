@@ -45,14 +45,17 @@ def execute(paramsDictionary, message):
 			logging.error(NAME + "cant connect to database")
 			return
 		logging.info(NAME + "polaczenie z baza nawiazane")
-		command = connection.get_message()
-		while command != END_MESSAGE:
+
+		version = connection.get_message()
+		while version != END_MESSAGE:
+			command = connection.get_message()
 			logging.info(NAME + "executing: " + command )
 			db.executeQueryWithoutTransaction(command)
-			command = connection.get_message()
+			currentVersion = version
+			version = connection.get_message()
 		logging.info(NAME + "zamykanie polaczenia z baza danych")
 		db.closeConnection()
-		currentVersion = connection.get_message()
+
 		versionsFile.lockFile()
 		dataVersions = versionsFile.readFile()
 		dataVersions[LOCALHOST_NAME] = currentVersion
@@ -60,7 +63,6 @@ def execute(paramsDictionary, message):
 		versionsFile.unlockFile()
 		logging.info(NAME + "zapisano zmiany do pliku z wersjami")
 		connection._do_closing_handshake()
-
 
 
 def findActiveUpToDateServer(addresses, versions):
