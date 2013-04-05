@@ -69,6 +69,7 @@ def findActiveUpToDateServer(addresses, versions):
 	maxVersionAddresses = findServersWithMaxDataVersion(versions)
 	for address in maxVersionAddresses:
 		if(address in addresses == True and addresses[address] == "T"):
+			logging.info(NAME + "znalezino serwer do odpytania " + address)
 			return address
 	return None
 
@@ -76,6 +77,7 @@ def findServersWithMaxDataVersion(versions):
 	maxVersionAddresses = []
 	maxVersion = 0
 	for address in versions:
+		logging.info(NAME + "analizuje " + address)
 		if int(versions[address]) > maxVersion:
 			maxVersionAddresses = []
 			maxVersionAddresses.append(address)
