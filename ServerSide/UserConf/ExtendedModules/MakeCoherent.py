@@ -68,7 +68,7 @@ def execute(paramsDictionary, message):
 def findActiveUpToDateServer(addresses, versions):
 	maxVersionAddresses = findServersWithMaxDataVersion(versions)
 	for address in maxVersionAddresses:
-		if(addresses[address] == "T"):
+		if(address in addresses == True and addresses[address] == "T"):
 			return address
 	return None
 
