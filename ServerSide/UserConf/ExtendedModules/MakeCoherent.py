@@ -81,7 +81,7 @@ def findServersWithMaxDataVersion(versions):
 		if int(versions[address]) > maxVersion:
 			maxVersionAddresses = []
 			maxVersionAddresses.append(address)
-			maxVersion = versions[address]
+			maxVersion = int(versions[address])
 		elif int(versions[address]) == maxVersion:
 			maxVersionAddresses.append(address)
 	logging.info(NAME + "Maksymalna wersja = " + str(maxVersion) )
