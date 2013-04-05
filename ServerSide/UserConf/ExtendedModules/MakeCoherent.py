@@ -68,9 +68,12 @@ def execute(paramsDictionary, message):
 def findActiveUpToDateServer(addresses, versions):
 	maxVersionAddresses = findServersWithMaxDataVersion(versions)
 	for address in maxVersionAddresses:
-		if(address in addresses == True and addresses[address] == "T"):
-			logging.info(NAME + "znalezino serwer do odpytania " + address)
-			return address
+		logging.info(NAME + "analizowany adres " + address)
+		if address in addresses:
+			logging.info(NAME + "Adres wystepuje w adresach")
+			if addresses[address] == "T":
+				logging.info(NAME + "znalezino serwer do odpytania " + address)
+				return address
 	return None
 
 def findServersWithMaxDataVersion(versions):

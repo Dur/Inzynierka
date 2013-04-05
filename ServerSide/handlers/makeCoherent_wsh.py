@@ -18,7 +18,7 @@ def web_socket_transfer_data(request):
 	socket = request.ws_stream
 	paramsDictionary["HOME_PATH"] = request.get_options()["PROJECT_LOCATION"]
 
-	configReader = ConfigurationReader(paramsDictionary["HOME_PATH"]+"ServerSide/config/database.conf")
+	configReader = ConfigurationReader(paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/database.conf")
 	dbParamsDict = configReader.readConfigFile()
 
 	login = dbParamsDict["DEFAULT_LOGIN"]
