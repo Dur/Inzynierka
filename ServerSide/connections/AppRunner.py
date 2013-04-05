@@ -33,7 +33,7 @@ class AppRunner(object):
 		self._logger = util.get_class_logger(self)
 
 	def connect(self):
-
+		logging.info(NAME + "connecting to start_wsh")
 		self._socket = socket.socket()
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:

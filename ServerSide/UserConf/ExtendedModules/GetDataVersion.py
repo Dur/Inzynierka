@@ -35,7 +35,6 @@ def dataVersionConnectionMode(paramsDictionary):
 	dataVersions[remoteAddress] = clientVersion
 	processor.lockFile()
 	temp = processor.readFile()
-	logging.error(NAME + "zawartsc pliku " + temp)
 	temp[remoteAddress] = dataVersions[remoteAddress]
 	processor.writeToFile(temp)
 	processor.unlockFile()

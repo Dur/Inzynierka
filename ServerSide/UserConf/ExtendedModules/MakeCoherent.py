@@ -17,8 +17,8 @@ def execute(paramsDictionary, message):
 
 	addressesfile = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	addressesfile.lockFile()
-	addresses = file.readFile()
-	file.unlockFile()
+	addresses = addressesfile.readFile()
+	addressesfile.unlockFile()
 
 	versionsFile = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
 	versionsFile.lockFile()
