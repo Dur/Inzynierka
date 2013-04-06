@@ -29,7 +29,7 @@ def web_socket_transfer_data(request):
 		db = MySQLdb.connect(dbParamsDict["HOST"], login, password, dbParamsDict["DATABASE"])
 		cursor = db.cursor()
 		logging.info(NAME + "polaczenie z baza nawiazane")
-		cursor.execute("select * from versions where id > " + clientVersion + " order by id")
+		cursor.execute("select * from versions where id > " + str(clientVersion) + " order by id")
 		logging.info(NAME + "komenda wyslana do bazy")
 		for version, command in cursor.fetchall():
 			socket.send_message(version)

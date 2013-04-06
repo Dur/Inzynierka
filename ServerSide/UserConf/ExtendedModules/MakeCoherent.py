@@ -51,6 +51,10 @@ def execute(paramsDictionary, message):
 			command = connection.get_message()
 			logging.info(NAME + "executing: " + command )
 			db.executeQueryWithoutTransaction(command)
+			command = command.replace('\'', '\\\'')
+			insert = "INSERT INTO " +  dbParamsDict["versionsTableName"] + " VALUES(" + str(version) + ",\'" + command + "\')"
+			logging.info(NAME + "executing " + insert)
+			db.executeQueryWithoutTransaction(insert)
 			currentVersion = version
 			version = connection.get_message()
 		logging.info(NAME + "zamykanie polaczenia z baza danych")
