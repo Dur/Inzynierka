@@ -25,6 +25,7 @@ def web_socket_transfer_data(request):
 	password = dbParamsDict["DEFAULT_PASSWORD"]
 
 	clientVersion = socket.receive_message()
+	logging.info(NAME + "client version " + clientVersion)
 	try:
 		db = MySQLdb.connect(dbParamsDict["HOST"], login, password, dbParamsDict["DATABASE"])
 		cursor = db.cursor()
@@ -38,9 +39,9 @@ def web_socket_transfer_data(request):
 		socket.send_message(END)
 		logging.info(NAME + "wyslano wiadomosc konczaca")
 	except MySQLdb.Error, e:
-		print("%d %s" % (e.args[0], e.args[1]))
+		logging.error("%d %s" % (e.args[0], e.args[1]))
 	except Exception, ee:
-		print ee.message
+		logging.error(ee.message)
 
 
 

@@ -68,11 +68,9 @@ class Connection(object):
 
 	def send_message(self, message):
 		self._stream.send_message(message)
-		logging.error(NAME + "Message send " + message)
 
 	def get_message(self):
 		message = self._stream.receive_message()
-		logging.error(NAME + "Message recived " + message)
 		return message
 
 	def _do_closing_handshake(self):
