@@ -35,7 +35,7 @@ class DatabaseConnector:
 
 	def initConnection(self):
 		try:
-			logging.error("Trying to connect with credentials: " + self.host + " " + self.login + " " + self.password + " " + self.databaseName)
+			logging.error(NAME + "Trying to connect with credentials: " + self.host + " " + self.login + " " + self.password + " " + self.databaseName)
 			self.connection = MySQLdb.connect(self.host, self.login, self.password, self.databaseName)
 			self.cursor = self.connection.cursor()
 			self.readTransaction = None

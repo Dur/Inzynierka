@@ -1,3 +1,4 @@
+import MySQLdb
 import logging
 from connections.Connection import Connection
 from database.utils1.DatabaseConnector import DatabaseConnector
@@ -39,27 +40,31 @@ def execute(paramsDictionary, message):
 		login = dbParamsDict["DEFAULT_LOGIN"]
 		password = dbParamsDict["DEFAULT_PASSWORD"]
 
-		db = DatabaseConnector(login, password, dbParamsDict["DATABASE"], dbParamsDict["HOST"])
-
-		if db.initConnection() == ERROR:
-			logging.error(NAME + "cant connect to database")
-			return
-		logging.info(NAME + "polaczenie z baza nawiazane")
-
-		version = connection.get_message()
-		while version != END_MESSAGE:
-			command = connection.get_message()
-			logging.info(NAME + "executing: " + command )
-			db.executeQueryWithoutTransaction(command)
-			command = command.replace('\'', '\\\'')
-			insert = "INSERT INTO " +  dbParamsDict["versionsTableName"] + " VALUES(" + str(version) + ",\'" + command + "\')"
-			logging.info(NAME + "executing " + insert)
-			db.executeQueryWithoutTransaction(insert)
-			logging.info(NAME + "wykonano inserta")
-			currentVersion = version
+		try:
+			db = MySQLdb.connect(dbParamsDict["HOST"], login, password, dbParamsDict["DATABASE"])
+			cursor = db.cursor()
+			logging.info(NAME + "polaczenie z baza nawiazane")
 			version = connection.get_message()
-		logging.info(NAME + "zamykanie polaczenia z baza danych")
-		db.closeConnection()
+			while version != END_MESSAGE:
+				command = connection.get_message()
+				command = command.replace('\'', '\\\'')
+				insert = "INSERT INTO " +  dbParamsDict["versionsTableName"] + " VALUES(" + str(version) + ",\'" + command + "\')"
+
+				logging.info(NAME + "executing: " + command )
+				cursor.execute(command)
+				logging.info(NAME + "executing " + insert)
+				cursor.execut(insert)
+				logging.info(NAME + "wykonano inserta")
+				currentVersion = version
+				version = connection.get_message()
+			logging.info(NAME + "zamykanie polaczenia z baza danych")
+			cursor.execute("commit")
+		except MySQLdb.Error, e:
+			logging.error("%d %s" % (e.args[0], e.args[1]))
+			cursor.execute("rollback")
+		except Exception, ee:
+			logging.error(ee.message)
+			cursor.execute("rollback")
 
 		versionsFile.lockFile()
 		dataVersions = versionsFile.readFile()
