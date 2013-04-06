@@ -35,7 +35,7 @@ def web_socket_transfer_data(request):
 		for version, command in cursor.fetchall():
 			socket.send_message(str(version))
 			socket.send_message(command)
-			logging.info(NAME + "Wyslano " + version + " " + command)
+			logging.info(NAME + "Wyslano " + str(version) + " " + command)
 		socket.send_message(END)
 		logging.info(NAME + "wyslano wiadomosc konczaca")
 	except MySQLdb.Error, e:
