@@ -33,7 +33,7 @@ def web_socket_transfer_data(request):
 		cursor.execute("select * from versions where id > " + str(clientVersion) + " order by id")
 		logging.info(NAME + "komenda wyslana do bazy")
 		for version, command in cursor.fetchall():
-			socket.send_message(version)
+			socket.send_message(str(version))
 			socket.send_message(command)
 			logging.info(NAME + "Wyslano " + version + " " + command)
 		socket.send_message(END)
