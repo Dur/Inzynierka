@@ -49,7 +49,7 @@ def execute(paramsDictionary, message):
 				command = connection.get_message()
 				logging.info(NAME + "executing: " + command )
 				cursor.execute(command)
-				
+
 				command = command.replace('\'', '\\\'')
 				logging.info(NAME + "new command " + command)
 				insert = "INSERT INTO " +  dbParamsDict["versionsTableName"] + " VALUES(" + str(version) + ",\'" + command + "\')"
