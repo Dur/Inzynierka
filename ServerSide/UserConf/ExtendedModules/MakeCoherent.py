@@ -47,7 +47,8 @@ def execute(paramsDictionary, message):
 			version = connection.get_message()
 			while version != END_MESSAGE:
 				command = connection.get_message()
-				command = command.replace('\'', '\\\'')
+				logging.info(NAME + "command " + command)
+				#command = command.replace('\'', '\\\'')
 				insert = "INSERT INTO " +  dbParamsDict["versionsTableName"] + " VALUES(" + str(version) + ",\'" + command + "\')"
 
 				logging.info(NAME + "executing: " + command )
