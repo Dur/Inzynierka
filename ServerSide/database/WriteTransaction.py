@@ -120,7 +120,7 @@ class WriteTransaction:
 		self.activeServers = []
 		self.addressesProcessor.lockFile()
 		addresses = self.addressesProcessor.readFile()
-		all = 0
+		all = 1
 		available = 1
 		for key in addresses:
 			all = all + 1
