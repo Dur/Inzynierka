@@ -19,12 +19,12 @@ UP_TO_DATE = "UP_TO_DATE"
 def execute(paramsDictionary, message):
 	homePath = paramsDictionary["HOME_PATH"]
 
-	if "LOCK" in paramsDictionary == False:
+	if "LOCK" in paramsDictionary:
+		lock = paramsDictionary["LOCK"]
+	else:
 		lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
 		lock = FileLock(lockFilePath,2,.05)
 		paramsDictionary["LOCK"] = lock
-	else:
-		lock = paramsDictionary["LOCK"]
 
 	lock.acquire()
 
