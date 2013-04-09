@@ -136,10 +136,9 @@ def checkIfServerIsUpToDate(dataVersions):
 	myVersion = dataVersions[LOCALHOST_NAME]
 	for address in dataVersions:
 		logging.info(NAME + "analizuje " + address)
-		if int(dataVersions[address]) > myVersion:
+		if int(dataVersions[address]) > int(myVersion):
 			logging.info(NAME + "Server is out of date")
 			return False
-	logging.info(NAME + "Server is up to date")
 	return True
 
 
