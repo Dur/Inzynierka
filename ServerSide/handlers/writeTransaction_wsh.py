@@ -42,8 +42,8 @@ def web_socket_transfer_data(request):
 	db = DatabaseConnector(login, password, dbParamsDict["DATABASE"], dbParamsDict["HOST"])
 
 	command = request.ws_stream.receive_message()
-	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/executedCommands.dat"
-	lock = FileLock(lockFilePath,5,.05)
+	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
+	lock = FileLock(lockFilePath,2,.05)
 	while command != EXIT:
 		methodMapping[command](paramsDictionary, db, lock)
 		command = request.ws_stream.receive_message()

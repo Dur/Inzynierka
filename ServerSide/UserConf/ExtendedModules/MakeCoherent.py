@@ -4,6 +4,7 @@ from connections.Connection import Connection
 from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor
+from utils.filelock import FileLock
 
 __author__ = 'dur'
 
@@ -12,26 +13,54 @@ RESOURCE = "/makeCoherent"
 END_MESSAGE = "END"
 ERROR = -1
 LOCALHOST_NAME = "localhost"
+LOCK_ERROR = "LOCK_ERROR"
+UP_TO_DATE = "UP_TO_DATE"
 
 def execute(paramsDictionary, message):
 	homePath = paramsDictionary["HOME_PATH"]
 
-	addressesfile = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
-	addressesfile.lockFile()
-	addresses = addressesfile.readFile()
-	addressesfile.unlockFile()
+	if "LOCK" in paramsDictionary == False:
+		lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
+		lock = FileLock(lockFilePath,2,.05)
+		paramsDictionary["LOCK"] = lock
+	else:
+		lock = paramsDictionary["LOCK"]
+
+	lock.acquire()
+
+	if lock.is_locked == False:
+		return
 
 	versionsFile = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
 	versionsFile.lockFile()
 	dataVersions = versionsFile.readFile()
 	versionsFile.unlockFile()
 
-	addressToConnect = findActiveUpToDateServer(addresses, dataVersions)
-	if addressToConnect != None:
+	if checkIfServerIsUpToDate(dataVersions) == True:
+		logging.info(NAME + "server is up to date")
+		lock.release()
+		return
+
+	addressesfile = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
+	addressesfile.lockFile()
+	addresses = addressesfile.readFile()
+	addressesfile.unlockFile()
+
+	addressesToConnect = findActiveUpToDateServer(addresses, dataVersions)
+
+	if len(addressesToConnect) > 0:
 		connection = Connection(homePath + "ServerSide/config/connection_config.conf" )
-		connection.connect(addressToConnect, 80, RESOURCE)
-		connection.send_message(dataVersions[LOCALHOST_NAME])
-		logging.info(NAME + "Connected to " + addressToConnect)
+		for addressToConnect in addressesToConnect:
+			connection.connect(addressToConnect, 80, RESOURCE)
+			connection.send_message(dataVersions[LOCALHOST_NAME])
+			version = connection.get_message()
+			if version != LOCK_ERROR:
+				logging.info(NAME + "Connected to " + addressToConnect)
+				break
+
+		if version == LOCK_ERROR:
+			logging.error(NAME + "cant make server up to date")
+			return
 
 		configReader = ConfigurationReader(paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/database.conf")
 		dbParamsDict = configReader.readConfigFile()
@@ -44,7 +73,6 @@ def execute(paramsDictionary, message):
 			db = MySQLdb.connect(dbParamsDict["HOST"], login, password, dbParamsDict["DATABASE"])
 			cursor = db.cursor()
 			logging.info(NAME + "polaczenie z baza nawiazane")
-			version = connection.get_message()
 			while version != END_MESSAGE:
 				command = connection.get_message()
 				logging.info(NAME + "executing: " + command )
@@ -78,6 +106,7 @@ def execute(paramsDictionary, message):
 
 
 def findActiveUpToDateServer(addresses, versions):
+	addressesToRet = []
 	maxVersionAddresses = findServersWithMaxDataVersion(versions)
 	for address in maxVersionAddresses:
 		logging.info(NAME + "analizowany adres " + address)
@@ -85,8 +114,8 @@ def findActiveUpToDateServer(addresses, versions):
 			logging.info(NAME + "Adres wystepuje w adresach")
 			if addresses[address] == "T":
 				logging.info(NAME + "znalezino serwer do odpytania " + address)
-				return address
-	return None
+				addressesToRet.append(address)
+		return addressesToRet
 
 def findServersWithMaxDataVersion(versions):
 	maxVersionAddresses = []
@@ -102,5 +131,15 @@ def findServersWithMaxDataVersion(versions):
 	logging.info(NAME + "Maksymalna wersja = " + str(maxVersion) )
 	logging.info(NAME + "Serwery o tej wersji " + str(maxVersionAddresses))
 	return maxVersionAddresses
+
+def checkIfServerIsUpToDate(dataVersions):
+	myVersion = dataVersions[LOCALHOST_NAME]
+	for address in dataVersions:
+		logging.info(NAME + "analizuje " + address)
+		if int(dataVersions[address]) > myVersion:
+			logging.info(NAME + "Server is out of date")
+			return False
+	logging.info(NAME + "Server is up to date")
+	return True
 
 

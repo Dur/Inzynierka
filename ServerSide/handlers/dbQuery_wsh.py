@@ -38,7 +38,7 @@ def web_socket_transfer_data(request):
 		logging.error(NAME + "User supplied invalid credentials, closing connection")
 		return
 	logging.error(NAME + "polaczenie z baza nawiazane")
-	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/executedCommands.dat"
+	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
 	lock = FileLock(lockFilePath)
 	while(True):
 		try:

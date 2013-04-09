@@ -10,7 +10,12 @@ LOCALHOST_NAME = "localhost"
 
 def execute(paramsDictionary, message):
 	logging.info(NAME + "wewnatrz modulu rozglaszania nowej wersji ")
+
 	homePath = paramsDictionary["HOME_PATH"]
+
+	lock = paramsDictionary["LOCK"]
+	if lock.is_locked == False:
+		return
 
 	addressesfile = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	addressesfile.lockFile()
@@ -31,3 +36,5 @@ def execute(paramsDictionary, message):
 			connection.connect(address, 80, RESOURCE)
 			connection.send_message(myVersion)
 			connection._do_closing_handshake()
+
+	lock.release()

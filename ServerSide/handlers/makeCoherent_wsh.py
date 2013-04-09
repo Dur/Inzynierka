@@ -1,10 +1,12 @@
 import MySQLdb
 import logging
 from utils.ConfigurationReader import ConfigurationReader
+from utils.filelock import FileLock
 
 NAME = "makeCoherent_wsh: "
 ERROR = -1
 END = "END"
+LOCK_ERROR = "LOCK_ERROR"
 
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
@@ -26,6 +28,12 @@ def web_socket_transfer_data(request):
 
 	clientVersion = socket.receive_message()
 	logging.info(NAME + "client version " + clientVersion)
+	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
+	lock = FileLock(lockFilePath,3,.05)
+	lock.acquire()
+	if lock.is_locked == False:
+		socket.send_message(LOCK_ERROR)
+		return
 	try:
 		db = MySQLdb.connect(dbParamsDict["HOST"], login, password, dbParamsDict["DATABASE"])
 		cursor = db.cursor()
