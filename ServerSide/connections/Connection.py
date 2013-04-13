@@ -47,7 +47,7 @@ class Connection(object):
 
 			self._handshake.handshake()
 
-			logging.error(NAME + 'Connection established with ' + host+":"+str(port))
+			logging.info(NAME + 'Nawiazano polaczenie z ' + host+":"+str(port))
 
 			request = ClientRequest(self._socket)
 
@@ -63,7 +63,7 @@ class Connection(object):
 			return OK_FLAG
 		except Exception, e:
 			logging.error(NAME+"Wystapil nieznany problem")
-			logging.error(e.message)
+			logging.error(NAME + e.message)
 			return ERROR_FLAG
 
 	def send_message(self, message):

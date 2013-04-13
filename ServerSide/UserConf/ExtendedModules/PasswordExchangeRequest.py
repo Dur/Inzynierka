@@ -20,16 +20,16 @@ def checkOldPassword(paramsDictionary, oldPass):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	logging.error(NAME + "Otrzymalem stare haslo")
+	logging.info(NAME + "Otrzymalem stare haslo")
 	processor = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 	passwords = processor.readFile()
-	logging.error(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + oldPass )
+	logging.info(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + oldPass )
 	if(passwords[remoteAddress] == oldPass ):
-		logging.error(NAME + "Haslo zgodne")
+		logging.info(NAME + "Haslo zgodne")
 		global generatedPass
 		generatedPass = generatePassword(PASSWORD_LENGTH)
 		socket.send_message(RES_MODULE+NEW+"%"+generatedPass)
-		logging.error(NAME + "Wyslalem nowe haslo")
+		logging.info(NAME + "Wyslalem nowe haslo")
 		global expectedMessage
 		expectedMessage = ACK
 
@@ -38,14 +38,14 @@ def acknowlage(paramsDictionary, argument):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	logging.error(NAME + "dostalem potwierdzenie zmiany hasla")
+	logging.info(NAME + "dostalem potwierdzenie zmiany hasla")
 	file = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 	file.lockFile()
 	passwords = file.readFile()
 	passwords[remoteAddress] = generatedPass
 	file.writeToFile(passwords)
 	file.unlockFile()
-	logging.error(NAME + "Haslo zostalo zmienione")
+	logging.info(NAME + "Haslo zostalo zmienione")
 	global expectedMessage
 	expectedMessage = OLD
 	global generatedPass

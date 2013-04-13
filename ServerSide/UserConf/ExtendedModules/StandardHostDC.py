@@ -6,16 +6,16 @@ __author__ = 'dur'
 NAME = "StandardHostDC: "
 
 def execute(paramsDictionary, message):
-	logging.error(NAME+ "Wlaczam dodatkowe opcje przy odlaczaniu serwera")
+	logging.info(NAME+ "Wlaczam dodatkowe opcje przy odlaczaniu serwera")
 	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	if( paramsDictionary["CONNECTION_MODE"] == True ):
 		paramsDictionary["CONNECTION"]._socket.close()
-	logging.error(NAME+ "trying to write to addresses file")
+	logging.info(NAME+ "Proba zapisu do pliku adresowego")
 	file.lockFile()
 	addresses = file.readFile()
 	addresses[paramsDictionary["CLIENT_ADDRESS"]] = 'F'
 	file.writeToFile(addresses)
 	file.unlockFile()
-	logging.error(NAME+ "wrote to addresses file")
+	logging.info(NAME+ "Plik adresowy zaktualizowany")
 	if file.lock.is_locked:
 		file.unlockFile()

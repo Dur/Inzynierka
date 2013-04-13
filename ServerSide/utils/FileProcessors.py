@@ -1,5 +1,8 @@
+import logging
+
 __author__ = 'dur'
 from utils.filelock import FileLock
+NAME = "FileProcessor: "
 
 class FileProcessor:
 
@@ -7,8 +10,13 @@ class FileProcessor:
 	lock = None
 
 	def __init__(self, file):
-		self.fileName = file
-		self.lock = FileLock(self.fileName, 10)
+		try:
+			self.fileName = file
+			self.lock = FileLock(self.fileName, 10)
+		except Exception, e:
+			logging.error(NAME + e.message)
+			raise Exception(e.message)
+
 
 	def readFile(self):
 		pairs={}
@@ -28,6 +36,9 @@ class FileProcessor:
 
 	def lockFile(self):
 		self.lock.acquire()
+		if self.lock.is_locked == False:
+			raise Exception(NAME + "Nie moge zalozyc blokady na plik")
 
 	def unlockFile(self):
-		self.lock.release()
+		if self.lock.is_locked:
+			self.lock.release()

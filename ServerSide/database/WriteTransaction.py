@@ -59,17 +59,17 @@ class WriteTransaction:
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(PREPARE_MESSAGE)
 				self.connectionsQueues[address].put(command)
-			logging.error(NAME + "Serwer rozpoczyna czekanie na zmiennej warunkowej")
-			logging.error(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
+			logging.info(NAME + "Serwer rozpoczyna czekanie na zmiennej warunkowej")
+			logging.info(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
 			if self.eventVariable.is_set:
-				logging.error(NAME + "Zmienna warunkowa ustawiona")
+				logging.info(NAME + "Zmienna warunkowa ustawiona")
 			else:
-				logging.error(NAME + "Zmienna warunkowa NIE ustawiona")
+				logging.info(NAME + "Zmienna warunkowa NIE ustawiona")
 			self.eventVariable.wait(int(self.waitForRemoteTime))
 			self.eventVariable.clear()
-			logging.error(NAME + "Serwer minal zmienna warunkowa")
+			logging.info(NAME + "Serwer minal zmienna warunkowa")
 			if self.responseQueue.full() != True:
-				logging.error(NAME + "sending global abort, not all of servers responsed")
+				logging.error(NAME + "Wysylanie GLOBA_ABOT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
 				for address in self.activeServers:
 					self.connectionsQueues[address].put(GLOBAL_ABORT)
 				cursor.execute("rollback")
@@ -77,9 +77,9 @@ class WriteTransaction:
 
 			while self.responseQueue.empty() != True:
 				response = self.responseQueue.get_nowait()
-				logging.error(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
+				logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
 				if response == ABORT:
-					logging.error(NAME + "sending global abort, not all servers ready for commit")
+					logging.error(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
 					for address in self.activeServers:
 						self.connectionsQueues[address].put(GLOBAL_ABORT)
 					cursor.execute("rollback")
@@ -92,7 +92,7 @@ class WriteTransaction:
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_COMMIT)
 				self.connectionsQueues[address].put(activeServersString)
-			logging.error(NAME + "########## przygotowanie insertu do tabeli z wersjami")
+			logging.info(NAME + "przygotowanie insertu do tabeli z wersjami")
 			cursor.execute(self.generateInsertToDataVersions(command))
 			cursor.execute(COMMMIT)
 			self.insertNewDataVersions()
@@ -104,7 +104,7 @@ class WriteTransaction:
 		self.responseQueue = Queue(len(self.activeServers))
 		for address in self.activeServers:
 			requestQueue = Queue()
-			logging.error(NAME + "Address passed to thread " + address)
+			logging.info(NAME + "Adres przekazany do watku " + address)
 			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary, address)
 			self.connectionsQueues[address] = requestQueue
 			self.threads[address] = thread
@@ -130,9 +130,9 @@ class WriteTransaction:
 		self.addressesProcessor.unlockFile()
 		self.serversCount = all + 1
 		min = int(math.floor(all / 2) + 1)
-		logging.error(NAME + "Active servers " + str(self.activeServers))
+		logging.info(NAME + "Aktywne serwery: " + str(self.activeServers))
 		if available >= min:
-			logging.error(NAME + "Wicej niz polowa serwerow aktywna")
+			logging.info(NAME + "Wicej niz polowa serwerow aktywna")
 			return True
 		else:
 			logging.error(NAME + "mniej niz polowa serwerow aktywna")
@@ -142,18 +142,18 @@ class WriteTransaction:
 		self.versionProcessor.lockFile()
 		dataVersions = self.versionProcessor.readFile()
 		self.myDataVersion = dataVersions[LOCALHOST_NAME]
-		logging.error("Lokalna wersja danych = " + self.myDataVersion)
+		logging.info("Lokalna wersja danych = " + self.myDataVersion)
 		myVersionCount = 1
 		for key in self.activeServers:
 			version = dataVersions[key]
 			if version == self.myDataVersion:
 				myVersionCount = myVersionCount + 1
-		logging.error(NAME + "Zgodnych wersji: " + str(myVersionCount))
-		logging.error(NAME + "Wszystkich wersji: " + str(self.serversCount))
+		logging.info(NAME + "Zgodnych wersji: " + str(myVersionCount))
+		logging.info(NAME + "Wszystkich wersji: " + str(self.serversCount))
 		self.versionProcessor.unlockFile()
 		min = int(math.floor(self.serversCount / 2) + 1)
 		if myVersionCount >= min:
-			logging.error(NAME + "Mozna wykonac transakcje zapisu")
+			logging.info(NAME + "Mozna wykonac transakcje zapisu")
 			return True
 		else:
 			logging.error(NAME + "Nie mozna wykonac transakcji zapisu")
@@ -168,7 +168,7 @@ class WriteTransaction:
 		self.versionProcessor.lockFile()
 		versions = self.versionProcessor.readFile()
 		newVersion = str(int(versions[LOCALHOST_NAME]) +1)
-		logging.info(NAME + "new dataversion = " + newVersion)
+		logging.info(NAME + "Nowa wersja danych = " + newVersion)
 		for address in self.activeServers:
 			versions[address] = newVersion
 		versions[LOCALHOST_NAME] = newVersion

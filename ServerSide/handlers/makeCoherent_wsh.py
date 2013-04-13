@@ -14,7 +14,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.error(NAME+ "Server dostal zgloszenie")
+	logging.info(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	socket = request.ws_stream
@@ -49,7 +49,7 @@ def web_socket_transfer_data(request):
 	except MySQLdb.Error, e:
 		logging.error("%d %s" % (e.args[0], e.args[1]))
 	except Exception, ee:
-		logging.error(ee.message)
+		logging.error(NAME + ee.message)
 
 
 

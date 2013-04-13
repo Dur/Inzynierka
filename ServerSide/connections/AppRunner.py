@@ -33,7 +33,7 @@ class AppRunner(object):
 		self._logger = util.get_class_logger(self)
 
 	def connect(self):
-		logging.info(NAME + "connecting to start_wsh")
+		logging.info(NAME + "Podlaczanie do start_wsh")
 		self._socket = socket.socket()
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
@@ -63,7 +63,8 @@ class AppRunner(object):
 		except Exception, e:
 			logging.error(NAME + e.message)
 		finally:
-			logging.error(NAME + "Po polaczeniu")
+			logging.error(NAME + "Polaczenie zakonczone z powodu bledu")
+			return
 
 	def send(self, message):
 		self._stream.send_message(message)

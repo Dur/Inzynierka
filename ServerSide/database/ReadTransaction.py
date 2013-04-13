@@ -29,11 +29,11 @@ class ReadTransaction:
 			return "%d %s" % (e.args[0], e.args[1])
 
 	def checkDataVersions(self):
-		logging.error(NAME + "Rozpoczynanie transakcji odczytu")
+		logging.info(NAME + "Rozpoczynanie transakcji odczytu")
 		self.processor.lockFile()
 		dataVersions = self.processor.readFile()
 		myDataVersion = dataVersions[LOCALHOST_NAME]
-		logging.error("Lokalna wersja danych = " + myDataVersion)
+		logging.info("Lokalna wersja danych = " + myDataVersion)
 		count = 0
 		myVersion = 0
 		for key in dataVersions:
@@ -41,12 +41,12 @@ class ReadTransaction:
 			version = dataVersions[key]
 			if version == myDataVersion:
 				myVersion = myVersion + 1
-		logging.error(NAME + "Zgodnych wersji: " + str(myVersion))
-		logging.error(NAME + "Wszystkich wersji: " + str(count))
+		logging.info(NAME + "Zgodnych wersji: " + str(myVersion))
+		logging.info(NAME + "Wszystkich wersji: " + str(count))
 		self.processor.unlockFile()
 		min = int(math.floor(count / 2) + 1)
 		if myVersion >= min:
-			logging.error(NAME + "Mozna czytac")
+			logging.info(NAME + "Mozna czytac")
 			return True
 		else:
 			logging.error(NAME + "Nie mozna czytac")

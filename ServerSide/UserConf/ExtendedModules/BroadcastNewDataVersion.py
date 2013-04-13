@@ -7,6 +7,7 @@ __author__ = 'dur'
 RESOURCE = "/broadcastDataVersion"
 NAME = "BroadcastNewDataVersion: "
 LOCALHOST_NAME = "localhost"
+OK_FLAG = 0
 
 def execute(paramsDictionary, message):
 	logging.info(NAME + "wewnatrz modulu rozglaszania nowej wersji ")
@@ -33,8 +34,10 @@ def execute(paramsDictionary, message):
 		if addresses[address] == "T":
 			logging.info(NAME + "wysylanie wersji do " + address)
 			connection = Connection(homePath + "ServerSide/config/connection_config.conf" )
-			connection.connect(address, 80, RESOURCE)
-			connection.send_message(myVersion)
-			connection._do_closing_handshake()
+			if connection.connect(address, 80, RESOURCE) == OK_FLAG:
+				connection.send_message(myVersion)
+				connection._do_closing_handshake()
+			else:
+				logging.error(NAME + "Nie moge polaczyc sie z serwerem o adresie " + address)
 
 	lock.release()

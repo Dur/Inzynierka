@@ -24,7 +24,7 @@ def web_socket_transfer_data(request):
 	loader = ModulesLoader()
 	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")
 	paramsDictionary["MODULES"] = modules
-	logging.error(NAME+ "server loaded modules")
+	logging.info(NAME+ "Serwer wczytal moduly")
 
 	if modules.has_key("BEFORE_CONNECT"):
 		for singleModule in modules["BEFORE_CONNECT"]:
@@ -44,17 +44,17 @@ def web_socket_transfer_data(request):
 			if( addresses[key] == 'F' ):
 				connection = PingConnection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/connection_config.conf")
 				if( connection.connect(key,80, RESOURCE) != -1 ):
-					logging.error(NAME+ "connection with %s established", key)
+					logging.info(NAME+ "Polaczenie z %s nawiazane", key)
 					connection.send_message(PING)
-					logging.error(NAME+ "sending ping from start method")
+					logging.info(NAME+ "Wysylanie pingu z metody startowej")
 					if connection.get_message() == PONG:
-						logging.error(NAME+ "start method received answer, closing connection")
+						logging.info(NAME+ "Metoda startowa otrzymala odpowiedz, zamykanie polaczenia")
 						connection._do_closing_handshake()
 						addresses[key] = 'T'
 					else:
-						logging.error(NAME+ "Serwer nie odpowiedzial na PING, zrywanie polaczenia")
+						logging.error(NAME+ "Serwer " + key + " nie odpowiedzial na PING, zrywanie polaczenia")
 				else:
-					logging.error(NAME+ "unable to connect to %s", key)
+					logging.error(NAME+ "Nie moge polaczyc sie z %s", key)
 		file.writeToFile(addresses)
 		file.unlockFile()
 
@@ -68,6 +68,6 @@ def web_socket_transfer_data(request):
 			for singleModule in modules["AFTER_CONNECT_PERIODIC"]:
 				singleModule.execute(paramsDictionary, None)
 
-		logging.error(NAME+ "Serwer rozpoczyna czeanie na kolejna ture sprawdzania")
+		logging.info(NAME+ "Serwer rozpoczyna czeanie na kolejna ture sprawdzania")
 		time.sleep(60)
-		logging.error(NAME+ "Serwer wznawia sprawdzanie")
+		logging.info(NAME+ "Serwer wznawia sprawdzanie")

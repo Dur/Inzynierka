@@ -7,4 +7,4 @@ import logging
 def execute(paramsDictionary, message):
 	if message == PONG:
 		paramsDictionary["QUEUE"].put(PONG)
-		logging.error(NAME+"Pong wrzucony do kolejki")
+		logging.info(NAME+"Pong wrzucony do kolejki")

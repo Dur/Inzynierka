@@ -35,16 +35,16 @@ class DatabaseConnector:
 
 	def initConnection(self):
 		try:
-			logging.error(NAME + "Trying to connect with credentials: " + self.host + " " + self.login + " " + self.password + " " + self.databaseName)
+			logging.info(NAME + "Proba nawiazania polaczenia dla: " + self.host + " " + self.login + " " + self.password + " " + self.databaseName)
 			self.connection = MySQLdb.connect(self.host, self.login, self.password, self.databaseName)
 			self.cursor = self.connection.cursor()
 			self.readTransaction = None
 			self.writeTransaction = None
-			logging.error(NAME + "Connection with database established")
+			logging.info(NAME + "Polaczenie z baza danych nawiazane")
 			return OK
 
 		except Exception, e:
-			logging.error(NAME + "Unable to connect to database " + e.message )
+			logging.error(NAME + "Nie mozna polaczyc sie z baza danych " + e.message )
 			return ERROR
 
 	def executeSQL(self, command, paramsDictionary):
@@ -53,18 +53,18 @@ class DatabaseConnector:
 			operation = splitedLine[0]
 
 			if operation.upper() != SELECT_OPERATION:
-				logging.error(NAME + "Client executes write operation" )
+				logging.info(NAME + "Klient wykonuje transakcje zapisu" )
 				if self.writeTransaction == None:
 					self.writeTransaction = WriteTransaction(paramsDictionary)
 				return self.writeTransaction.executeTransaction(self.cursor, command)
 			else:
-				logging.error(NAME + "Client executes read operation" )
+				logging.info(NAME + "Klient wykonuje transakcje odczytu" )
 				if self.readTransaction == None:
 					self.readTransaction = ReadTransaction(paramsDictionary)
 				return self.readTransaction.executeTransaction(self.cursor, command)
 
 		except Exception, e:
-			logging.error(NAME + "Exception while executing SQL command " + e.message )
+			logging.error(NAME + "Error w trakcie wykonywania zapytania SQL " + e.message )
 			return ERROR
 
 	def executeQueryWithoutTransaction(self, command):

@@ -24,7 +24,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.error(NAME+ "Server dostal zgloszenie")
+	logging.info(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	paramsDictionary["SOCKET"] = request.ws_stream
@@ -52,39 +52,39 @@ def web_socket_transfer_data(request):
 	return
 
 def prepare(paramsDictionary, db, lock):
-	logging.error(NAME + "Prepare method")
+	logging.info(NAME + "Prepare")
 	socket = paramsDictionary["SOCKET"]
 	command = socket.receive_message()
 	paramsDictionary["COMMAND"] = command
-	logging.error(NAME + "received command to execute " + command)
+	logging.info(NAME + "Otrzymano komende do wykonania " + command)
 	if db.initConnection() == ERROR:
-		logging.error(NAME + "Cant connect to database")
+		logging.error(NAME + "Nie moge polaczyc sie z baza danych")
 		socket.send_message(ABORT)
 		if lock.is_locked:
 			lock.release()
 		return
 	lock.acquire()
 	if lock.is_locked == False:
-		logging.error(NAME + "Cant aquire lock")
+		logging.error(NAME + "Nie moge zalozyc blokady")
 		socket.send_message(ABORT)
 		lock.release()
 		return
 	if db.executeQueryWithoutTransaction(command) != OK_CODE:
 		socket.send_message(ABORT)
-		logging.error(NAME + "Cant execute query")
+		logging.error(NAME + "Nie moge wykonac polecenia")
 		lock.release()
 		return
-	logging.error(NAME + "Sending ready commit")
+	logging.info(NAME + "Wysylanie READY_COMMIT")
 	socket.send_message(READY_COMMIT)
 	return
 
 def globalCommit(paramsDictionary, db, lock):
 	socket = paramsDictionary["SOCKET"]
 	servers = socket.receive_message()
-	logging.info(NAME + " got serwers " + servers)
+	logging.info(NAME + "Mam serwery " + servers)
 	servers = servers.split(':')
 	servers.append(paramsDictionary["CLIENT_ADDRESS"])
-	logging.error(NAME + "Received global commit message")
+	logging.info(NAME + "Otrzymano wiadomosc GLOBAL_COMMIT")
 	db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
 	db.executeQueryWithoutTransaction(COMMIT)
 	insertNewDataVersions(servers, paramsDictionary)
@@ -95,14 +95,14 @@ def globalCommit(paramsDictionary, db, lock):
 
 def globalAbort(paramsDictionary, db, lock):
 	socket = paramsDictionary["SOCKET"]
-	logging.error(NAME + "Received global abort message")
+	logging.error(NAME + "Orzymano wiadomosc GLOBAL_ABORT")
 	db.executeQueryWithoutTransaction(ROLLBACK)
 	socket.send_message(OK)
 	if lock.is_locked:
 		lock.release()
 
 def generateInsertToDataVersions(paramsDictionary):
-	logging.info(NAME + "inside generat inserto to database method")
+	logging.info(NAME + "Metoda generujaca wiersz dla tabeli z wersjami")
 	versionProcessor = FileProcessor(paramsDictionary["HOME_PATH"] + "ServerSide/config/database_config/data_version.dat")
 	dataVersions = versionProcessor.readFile()
 	logging.info(NAME + dataVersions[LOCALHOST_NAME])
@@ -114,18 +114,18 @@ def generateInsertToDataVersions(paramsDictionary):
 
 def insertNewDataVersions(serversList, paramsDictionary):
 	homePath = paramsDictionary["HOME_PATH"]
-	logging.info(NAME + "inside insert into data versions method")
+	logging.info(NAME + "Metoda wstawiajaca wiersz do tabeli z wierszami")
 	versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
 	versionProcessor.lockFile()
-	logging.info(NAME + "versionsFile locked")
-	logging.info(NAME + "writeing to versions file")
+	logging.info(NAME + "Plik z wersjami zablokowany")
+	logging.info(NAME + "Zapisywanie do pliku z wersjami")
 	versions = versionProcessor.readFile()
 	newVersion = str(int(versions[LOCALHOST_NAME]) +1)
 	for address in serversList:
-		logging.info(NAME + "for address " + address)
+		logging.info(NAME + "Dla adresu: " + address)
 		if(address in versions):
 			versions[address] = newVersion
-			logging.info(NAME + "wrote " + address )
+			logging.info(NAME + "Zapisano " + address )
 	versions[LOCALHOST_NAME] = newVersion
 	versionProcessor.writeToFile(versions)
 	versionProcessor.unlockFile()

@@ -5,7 +5,7 @@ __author__ = 'dur'
 NAME = "ResetServerState: "
 
 def execute(paramsDictionary, message):
-	logging.info(NAME + "Reseting server state")
+	logging.info(NAME + "Resetuje stan serwera")
 	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	file.lockFile()
 	addresses = file.readFile()

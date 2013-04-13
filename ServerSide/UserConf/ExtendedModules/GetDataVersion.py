@@ -12,7 +12,7 @@ GET_DATA_VERSION = "DATA_VERSION?"
 NAME = "GetDataVersion: "
 
 def execute(paramsDictionary, message):
-	logging.error(NAME + "Wewnatrz modulu wymiany wersji danych")
+	logging.info(NAME + "Wewnatrz modulu wymiany wersji danych")
 	if paramsDictionary["CONNECTION_MODE"] == True:
 		dataVersionConnectionMode(paramsDictionary)
 	else:
@@ -24,11 +24,11 @@ def dataVersionConnectionMode(paramsDictionary):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	logging.error(NAME + "Pobieranie wersji danych")
+	logging.info(NAME + "Pobieranie wersji danych")
 	socket.send_message(GET_DATA_VERSION)
 
 	clientVersion = socket.receive_message()
-	logging.error(NAME + "Otrzymano wersje danych klienta " + clientVersion)
+	logging.info(NAME + "Otrzymano wersje danych klienta " + clientVersion)
 
 	processor = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
 	dataVersions = processor.readFile()
@@ -41,7 +41,7 @@ def dataVersionConnectionMode(paramsDictionary):
 
 	if socket.receive_message() == GET_DATA_VERSION:
 		socket.send_message(temp[LOCALHOST])
-		logging.error(NAME + "Wyslano wersje danych do klienta " + temp[LOCALHOST])
+		logging.info(NAME + "Wyslano wersje danych do klienta " + temp[LOCALHOST])
 
 
 def dataVersionRequestMode(paramsDictionary):
@@ -51,17 +51,17 @@ def dataVersionRequestMode(paramsDictionary):
 	homePath = paramsDictionary["HOME_PATH"]
 
 	if socket.receive_message() == GET_DATA_VERSION:
-		logging.error(NAME + "Otrzymano zapytanie o wersje danych")
+		logging.info(NAME + "Otrzymano zapytanie o wersje danych")
 		processor = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
 		dataVersions = processor.readFile()
 		socket.send_message(dataVersions[LOCALHOST])
-		logging.error(NAME + "Wysylano wersji danych " + dataVersions[LOCALHOST])
+		logging.info(NAME + "Wysylano wersji danych " + dataVersions[LOCALHOST])
 
 		socket.send_message(GET_DATA_VERSION)
 
 		clientVersion = socket.receive_message()
 		dataVersions[remoteAddress] = clientVersion
-		logging.error(NAME + "Otrzymano wersje danych klienta " + clientVersion)
+		logging.info(NAME + "Otrzymano wersje danych klienta " + clientVersion)
 
 		processor.lockFile()
 		temp = processor.readFile()

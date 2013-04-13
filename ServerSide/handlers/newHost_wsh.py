@@ -19,7 +19,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.error(NAME+ "Server dostal zgloszenie")
+	logging.info(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	paramsDictionary["REQUEST"] = request
@@ -31,7 +31,7 @@ def web_socket_transfer_data(request):
 	paramsDictionary["CONFIG_PARAMS"] = configReader.readConfigFile()
 
 	paramsDictionary["SOCKET"].receive_message()
-	logging.error(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
+	logging.info(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
 
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 
@@ -40,29 +40,29 @@ def web_socket_transfer_data(request):
 	file.lockFile()
 	addresses = file.readFile()
 	for key in addresses:
-		logging.error(NAME+ "key %s", key)
-		logging.error(NAME+ "remote address %s", remoteAddress)
-		logging.error(NAME+ "addresses[key] %s", addresses[key])
+		logging.info(NAME+ "klucz %s", key)
+		logging.info(NAME+ "adres zdalnej maszyny %s", remoteAddress)
+		logging.info(NAME+ "addresses[key] %s", addresses[key])
 		if key == remoteAddress:
 			if addresses[key] == 'F':
-				logging.error(NAME+ "znalazl dopasowanie")
-				logging.error(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
+				logging.info(NAME+ "znalazl dopasowanie")
+				logging.info(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
 				paramsDictionary["CONNECTION"] = PingConnection(paramsDictionary["HOME_PATH"]+"ServerSide/config/ping_config.conf")
 				paramsDictionary["CONNECTION"].connect(remoteAddress, 80, RESOURCE)
 				paramsDictionary["SOCKET"].send_message(PONG)
-				logging.error(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
+				logging.info(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
 
 				paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
 				paramsDictionary["SOCKET"].send_message(PING)
 				paramsDictionary["SOCKET"].receive_message()
 
-				logging.error(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
+				logging.info(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
 				addresses[key] = 'T'
 				file.writeToFile(addresses)
 				break
 			else:
 				paramsDictionary["SOCKET"].send_message(EXIT)
-				logging.error(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
+				logging.info(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
 				file.unlockFile()
 				return
 	file.unlockFile()
@@ -70,7 +70,7 @@ def web_socket_transfer_data(request):
 	loader = ModulesLoader()
 	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")
 	paramsDictionary["MODULES"] = modules
-	logging.error(NAME+ "server loaded modules")
+	logging.info(NAME+ "Serwer wczytal moduly")
 
 	if modules.has_key("NEW_CONN"):
 		for singleModule in modules["NEW_CONN"]:
@@ -78,7 +78,7 @@ def web_socket_transfer_data(request):
 
 	paramsDictionary["QUEUE"] = Queue.Queue(0)
 
-	logging.error(NAME+ "server starting pinging")
+	logging.info(NAME+ "Serwer rozpoczyna pingowanie")
 	listener = ListenSocket(paramsDictionary, modules)
 	listener.setDaemon(True)
 	listener.start()
@@ -88,7 +88,7 @@ def web_socket_transfer_data(request):
 				singleModule.execute(paramsDictionary, None)
 			time.sleep(int(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"]))
 		except Exception, e:
-			logging.error(NAME+ "error in periodic modules. closing connecion")
+			logging.error(NAME+ "ERROR w modulach cyklicznych, zamykanie polaczenia")
 			logging.error(NAME + e.message)
 			for singleModule in modules["HOST_DC"]:
 				singleModule.execute(paramsDictionary, None)

@@ -15,9 +15,17 @@ from database.utils1.DatabaseConnector import DatabaseConnector
 #
 #print sql
 #
-db = MySQLdb.connect("localhost", "root", "root", "distributed")
-cursor = db.cursor()
-cursor.execute("select * from versions where id > " + str(0) + " order by id")
-for version, command in cursor.fetchall():
-	print version
-	print command
+# db = MySQLdb.connect("localhost", "root", "root", "distributed")
+# cursor = db.cursor()
+# cursor.execute("select * from versions where id > " + str(0) + " order by id")
+# for version, command in cursor.fetchall():
+# 	print version
+# 	print command
+
+try:
+	aa = 1
+	if aa == 0:
+		raise Exception("aa = 0")
+except Exception, a:
+	print a.message
+

@@ -37,7 +37,7 @@ def execute(paramsDictionary, message):
 	versionsFile.unlockFile()
 
 	if checkIfServerIsUpToDate(dataVersions) == True:
-		logging.info(NAME + "server is up to date")
+		logging.info(NAME + "Dane na serwerze sa aktualne")
 		lock.release()
 		return
 
@@ -55,11 +55,11 @@ def execute(paramsDictionary, message):
 			connection.send_message(dataVersions[LOCALHOST_NAME])
 			version = connection.get_message()
 			if version != LOCK_ERROR:
-				logging.info(NAME + "Connected to " + addressToConnect)
+				logging.info(NAME + "Polaczony z " + addressToConnect)
 				break
 
 		if version == LOCK_ERROR:
-			logging.error(NAME + "cant make server up to date")
+			logging.error(NAME + "Nie mozna zaktualizowac serwera")
 			return
 
 		configReader = ConfigurationReader(paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/database.conf")
@@ -75,14 +75,14 @@ def execute(paramsDictionary, message):
 			logging.info(NAME + "polaczenie z baza nawiazane")
 			while version != END_MESSAGE:
 				command = connection.get_message()
-				logging.info(NAME + "executing: " + command )
+				logging.info(NAME + "Wykonuje: " + command )
 				cursor.execute(command)
 
 				command = command.replace('\'', '\\\'')
-				logging.info(NAME + "new command " + command)
+				logging.info(NAME + "Komenda po transformacji " + command)
 				insert = "INSERT INTO " +  dbParamsDict["versionsTableName"] + " VALUES(" + str(version) + ",\'" + command + "\')"
 
-				logging.info(NAME + "executing " + insert)
+				logging.info(NAME + "Wykonuje: " + insert)
 				cursor.execute(insert)
 				logging.info(NAME + "wykonano inserta")
 				currentVersion = version
@@ -137,7 +137,7 @@ def checkIfServerIsUpToDate(dataVersions):
 	for address in dataVersions:
 		logging.info(NAME + "analizuje " + address)
 		if int(dataVersions[address]) > int(myVersion):
-			logging.info(NAME + "Server is out of date")
+			logging.info(NAME + "Dane na serwerze nie sa aktualne")
 			return False
 	return True
 

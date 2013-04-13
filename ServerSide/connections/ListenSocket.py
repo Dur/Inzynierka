@@ -14,18 +14,18 @@ class ListenSocket( Thread ):
 
 	def run(self):
 		try:
-			logging.error(NAME+"wewnatrz watku")
+			logging.info(NAME+"wewnatrz watku")
 			while( True ):
-				logging.error(NAME+"Oczekiwanie na wiadomosc")
+				logging.info(NAME+"Oczekiwanie na wiadomosc")
 				received = self.paramsDictionary["SOCKET"].receive_message()
-				logging.error(NAME+"odebrano %s", received)
+				logging.info(NAME+"odebrano %s", received)
 				if received != None:
 					self.dispatch(received)
 				else:
 					logging.error(NAME+"odebrano pusta wiadomosc")
 		except Exception, e:
 			logging.error(NAME+"Wystapil nieznany problem")
-			logging.error(e.message)
+			logging.error(NAME + e.message)
 			return
 
 
@@ -37,6 +37,6 @@ class ListenSocket( Thread ):
 		else:
 			message = None
 		if( self.modules[module] != None ):
-			logging.error(NAME+"znaleziono modul odpowiadajacy za obsluge")
+			logging.info(NAME+"znaleziono modul odpowiadajacy za obsluge")
 			for singleModule in self.modules[module]:
 				singleModule.execute(self.paramsDictionary, message)

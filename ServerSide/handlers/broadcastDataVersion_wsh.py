@@ -14,13 +14,17 @@ def web_socket_transfer_data(request):
 	clientAddress = request.connection.remote_ip
 	socket = request.ws_stream
 	homePath = request.get_options()["PROJECT_LOCATION"]
+	try:
 
-	versionsFile = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
-	versionsFile.lockFile()
-	dataVersions = versionsFile.readFile()
-	version = socket.receive_message()
-	logging.info(NAME + "Otrzymano nowa wersje klienta " + version)
-	dataVersions[clientAddress] = version
-	versionsFile.writeToFile(dataVersions)
-	versionsFile.unlockFile()
+		versionsFile = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
+		versionsFile.lockFile()
+		dataVersions = versionsFile.readFile()
+		version = socket.receive_message()
+		logging.info(NAME + "Otrzymano nowa wersje klienta " + version)
+		dataVersions[clientAddress] = version
+		versionsFile.writeToFile(dataVersions)
+		versionsFile.unlockFile()
+	except Exception, e:
+		logging.error(NAME + e.message)
+		return
 	logging.info(NAME + "Zapisano nowa wersje")

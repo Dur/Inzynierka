@@ -11,12 +11,12 @@ def execute(paramsDictionary, message):
 	socket = paramsDictionary["SOCKET"]
 	queue = paramsDictionary["QUEUE"]
 	pingWaitResponseTime = int(paramsDictionary["CONFIG_PARAMS"]["pingWaitResponseTime"])
-	logging.error(NAME + "Ping wait response time = " + str(pingWaitResponseTime))
+	logging.info(NAME + "Maksymalny czas oczekiwania na odpowiedz = " + str(pingWaitResponseTime))
 	wasError = False
 
 	try:
 		socket.send_message(PING)
-		logging.error(NAME+ "sending ping")
+		logging.info(NAME+ "Wysylam ping")
 		queue.get(True, int(pingWaitResponseTime))
 
 	except Queue.Empty:
@@ -25,11 +25,11 @@ def execute(paramsDictionary, message):
 
 	except ConnectionTerminatedException, a:
 		wasError = True
-		logging.error(NAME+ "Server closed connection")
+		logging.error(NAME+ "Server zamknal polaczenie")
 
 	except Exception, e:
 		wasError = True
-		logging.error(NAME+ "error - closing connection")
+		logging.error(NAME+ "error - zamykanie polaczenia")
 		logging.error(NAME + e.message)
 
 	finally:

@@ -13,7 +13,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.error(NAME+ "Server dostal zgloszenie od klienta")
+	logging.info(NAME+ "Server dostal zgloszenie od klienta")
 
 	paramsDictionary = {}
 	paramsDictionary["REQUEST"] = request
@@ -35,15 +35,15 @@ def web_socket_transfer_data(request):
 
 	if db.initConnection() == ERROR:
 		request.ws_stream.send_message("Invalid username or password")
-		logging.error(NAME + "User supplied invalid credentials, closing connection")
+		logging.error(NAME + "Uzytkownik podal niewlasciwy login lub haslo, zamykanie polaczenia")
 		return
-	logging.error(NAME + "polaczenie z baza nawiazane")
+	logging.info(NAME + "polaczenie z baza nawiazane")
 	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
 	lock = FileLock(lockFilePath)
 	while(True):
 		try:
 			query = request.ws_stream.receive_message()
-			logging.error(NAME + "otrzymal " + query)
+			logging.info(NAME + "otrzymal " + query)
 			if query == CLOSING_MESSAGE:
 				db.closeConnection()
 				return
@@ -51,11 +51,11 @@ def web_socket_transfer_data(request):
 				lock.acquire()
 				output = db.executeSQL(query, paramsDictionary)
 				lock.release()
-				logging.error(NAME + "wynik zapytania " + str(output))
+				logging.info(NAME + "wynik zapytania " + str(output))
 				request.ws_stream.send_message(str(output))
 
 		except Exception, e:
-			logging.error(NAME + "ERROR while receiving message " + e.message)
+			logging.error(NAME + "ERROR w trakcie odbierania wiadomosci " + e.message)
 			db.closeConnection()
 			if lock.is_locked:
 				lock.release()
