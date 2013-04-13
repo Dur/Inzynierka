@@ -1,3 +1,4 @@
+from connections.Connection import Connection
 from connections.PingConnection import PingConnection
 import time
 from utils.FileProcessors import FileProcessor
@@ -42,7 +43,7 @@ def web_socket_transfer_data(request):
 		addresses = file.readFile()
 		for key in addresses:
 			if( addresses[key] == 'F' ):
-				connection = PingConnection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/connection_config.conf")
+				connection = Connection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/connection_config.conf")
 				if( connection.connect(key,80, RESOURCE) != -1 ):
 					logging.info(NAME+ "Polaczenie z %s nawiazane", key)
 					connection.send_message(PING)

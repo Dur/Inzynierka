@@ -36,6 +36,7 @@ class Connection(object):
 		self.dictionary['resource'] = resource
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
+			logging.info(NAME + "connecting to " + host + ":" + str(port) + resource )
 			self._socket.connect((host, int(port)))
 			if self.dictionary.get('use_tls') == 'True':
 				self._socket = _TLSSocket(self._socket)

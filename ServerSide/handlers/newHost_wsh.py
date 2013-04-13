@@ -48,7 +48,7 @@ def web_socket_transfer_data(request):
 			if addresses[key] == 'F':
 				logging.info(NAME+ "znalazl dopasowanie")
 				logging.info(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
-				paramsDictionary["CONNECTION"] = Connection(paramsDictionary["HOME_PATH"]+"ServerSide/config/ping_config.conf")
+				paramsDictionary["CONNECTION"] = Connection(paramsDictionary["HOME_PATH"]+"ServerSide/config/connection_config.conf")
 				paramsDictionary["CONNECTION"].connect(remoteAddress, 80, RESOURCE)
 				paramsDictionary["SOCKET"].send_message(PONG)
 				logging.info(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
