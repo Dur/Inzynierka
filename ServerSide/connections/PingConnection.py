@@ -63,9 +63,10 @@ class PingConnection(object):
 			self._stream = Stream(request, stream_option)
 			logging.info(NAME+ "Polaczenie nawiazane")
 			return CONNECTION_OK_FLAG
-		except:
+		except Exception, e:
 			self._socket.close()
 			logging.error(NAME+ "Nie mozna nawiazac polaczenia")
+			logging.error(NAME + e.message)
 			return CONNECTION_PROBLEM_FLAG
 
 	def send_message(self, message):
