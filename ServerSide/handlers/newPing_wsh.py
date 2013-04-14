@@ -57,6 +57,10 @@ def web_socket_transfer_data(request):
 			logging.error(NAME + e.message)
 			for singleModule in modules["HOST_DC"]:
 				singleModule.execute(paramsDictionary, None)
+			if listener.is_alive:
+				logging.info(NAME + "Oczekiwanie na watek nasluchujacy")
+				listener.join()
+				logging.info(NAME + "Watek nasluchujacy zakonczyl dzialanie")
 			return
 
 

@@ -24,9 +24,9 @@ class ListenSocket( Thread ):
 				else:
 					logging.error(NAME+"odebrano pusta wiadomosc")
 		except Exception, e:
-			logging.error(NAME+"Wystapil nieznany problem")
+			logging.error(NAME+"Wystapil problem z polaczeniem")
 			logging.error(NAME + e.message)
-			return
+			raise Exception("Problem z polaczeniem w watku nasluchujacym")
 
 
 	def dispatch(self, message):
