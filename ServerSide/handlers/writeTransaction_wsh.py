@@ -1,3 +1,4 @@
+from mod_python import apache
 from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor
@@ -49,7 +50,7 @@ def web_socket_transfer_data(request):
 		command = request.ws_stream.receive_message()
 	if lock.is_locked:
 		lock.release()
-	return
+	return apache.HTTP_OK
 
 def prepare(paramsDictionary, db, lock):
 	logging.info(NAME + "Prepare")

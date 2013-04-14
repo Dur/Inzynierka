@@ -1,5 +1,6 @@
 import MySQLdb
 import logging
+from mod_python import apache
 from utils.ConfigurationReader import ConfigurationReader
 from utils.filelock import FileLock
 
@@ -33,7 +34,7 @@ def web_socket_transfer_data(request):
 	lock.acquire()
 	if lock.is_locked == False:
 		socket.send_message(LOCK_ERROR)
-		return
+		return apache.HTTP_OK
 	try:
 		db = MySQLdb.connect(dbParamsDict["HOST"], login, password, dbParamsDict["DATABASE"])
 		cursor = db.cursor()
@@ -46,10 +47,13 @@ def web_socket_transfer_data(request):
 			logging.info(NAME + "Wyslano " + str(version) + " " + command)
 		socket.send_message(END)
 		logging.info(NAME + "wyslano wiadomosc konczaca")
+		return apache.HTTP_OK
 	except MySQLdb.Error, e:
 		logging.error("%d %s" % (e.args[0], e.args[1]))
+		return apache.HTTP_OK
 	except Exception, ee:
 		logging.error(NAME + ee.message)
+		return apache.HTTP_OK
 
 
 

@@ -1,5 +1,6 @@
 import Queue
 import logging
+from mod_python import apache
 import time
 from connections.Connection import Connection
 from connections.ListenSocket import ListenSocket
@@ -65,7 +66,7 @@ def web_socket_transfer_data(request):
 				paramsDictionary["SOCKET"].send_message(EXIT)
 				logging.info(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
 				file.unlockFile()
-				return
+				return apache.HTTP_OK
 	file.unlockFile()
 
 	loader = ModulesLoader()
@@ -93,7 +94,7 @@ def web_socket_transfer_data(request):
 			logging.error(NAME + e.message)
 			for singleModule in modules["HOST_DC"]:
 				singleModule.execute(paramsDictionary, None)
-			return
+			return apache.HTTP_OK
 
 
 

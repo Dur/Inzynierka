@@ -1,4 +1,5 @@
 import logging
+from mod_python import apache
 from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
 from utils.filelock import FileLock
@@ -36,7 +37,7 @@ def web_socket_transfer_data(request):
 	if db.initConnection() == ERROR:
 		request.ws_stream.send_message("Invalid username or password")
 		logging.error(NAME + "Uzytkownik podal niewlasciwy login lub haslo, zamykanie polaczenia")
-		return
+		return apache.HTTP_OK
 	logging.info(NAME + "polaczenie z baza nawiazane")
 	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
 	lock = FileLock(lockFilePath)
@@ -46,7 +47,7 @@ def web_socket_transfer_data(request):
 			logging.info(NAME + "otrzymal " + query)
 			if query == CLOSING_MESSAGE:
 				db.closeConnection()
-				return
+				return apache.HTTP_OK
 			else:
 				lock.acquire()
 				output = db.executeSQL(query, paramsDictionary)
@@ -59,4 +60,4 @@ def web_socket_transfer_data(request):
 			db.closeConnection()
 			if lock.is_locked:
 				lock.release()
-			return
+			return apache.HTTP_OK

@@ -1,4 +1,5 @@
 import logging
+from mod_python import apache
 from utils.FileProcessors import FileProcessor
 
 
@@ -26,5 +27,6 @@ def web_socket_transfer_data(request):
 		versionsFile.unlockFile()
 	except Exception, e:
 		logging.error(NAME + e.message)
-		return
+		return apache.HTTP_OK
 	logging.info(NAME + "Zapisano nowa wersje")
+	return apache.HTTP_OK

@@ -1,4 +1,5 @@
 import logging
+from mod_python import apache
 
 _GOODBYE_MESSAGE = "CYA"
 _READ_FILE = u"Read"
@@ -16,4 +17,4 @@ def web_socket_transfer_data(request):
 		logging.info(NAME + "Serwer otrzymal " + line)
 		request.ws_stream.send_message(line)
 		if line == _GOODBYE_MESSAGE:
-			return
+			return apache.HTTP_OK
