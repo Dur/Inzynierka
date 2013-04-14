@@ -75,4 +75,5 @@ class Connection(object):
 		return message
 
 	def _do_closing_handshake(self):
-		self._stream.close_connection()
+		self._socket.close()
+

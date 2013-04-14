@@ -62,9 +62,6 @@ class AppRunner(object):
 			self._stream = Stream(request, stream_option)
 		except Exception, e:
 			logging.error(NAME + e.message)
-		finally:
-			logging.error(NAME + "Polaczenie zakonczone z powodu bledu")
-			return
 
 	def send(self, message):
 		self._stream.send_message(message)

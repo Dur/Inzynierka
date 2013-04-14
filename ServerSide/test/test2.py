@@ -21,11 +21,7 @@ from database.utils1.DatabaseConnector import DatabaseConnector
 # for version, command in cursor.fetchall():
 # 	print version
 # 	print command
-
-try:
-	aa = 1
-	if aa == 0:
-		raise Exception("aa = 0")
-except Exception, a:
-	print a.message
-
+con = Connection("/home/dur/Projects/ServerSide/config/connection_config.conf")
+con.connect("192.168.56.103", 80, "/echo")
+con.send_message("hola")
+print con.get_message()

@@ -51,6 +51,7 @@ def web_socket_transfer_data(request):
 					if connection.get_message() == PONG:
 						logging.info(NAME+ "Metoda startowa otrzymala odpowiedz, zamykanie polaczenia")
 						connection._do_closing_handshake()
+						logging.info(NAME + "########### polaczenie zakonczone, zapisywanie pliku adresowego")
 						addresses[key] = 'T'
 					else:
 						logging.error(NAME+ "Serwer " + key + " nie odpowiedzial na PING, zrywanie polaczenia")
