@@ -12,6 +12,7 @@ NAME = "start_wsh: "
 PING = "PING:PING"
 RESOURCE = "/newHost"
 PONG = "PONG:PONG"
+ERROR = -1
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
 
@@ -44,7 +45,7 @@ def web_socket_transfer_data(request):
 			for key in addresses:
 				if( addresses[key] == 'F' ):
 					connection = Connection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/connection_config.conf")
-					if( connection.connect(key,80, RESOURCE) != -1 ):
+					if( connection.connect(key,80, RESOURCE) != ERROR ):
 						logging.info(NAME+ "Polaczenie z %s nawiazane", key)
 						connection.send_message(PING)
 						logging.info(NAME+ "Wysylanie pingu z metody startowej")
