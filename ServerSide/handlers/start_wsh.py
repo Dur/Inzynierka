@@ -38,26 +38,30 @@ def web_socket_transfer_data(request):
 		if modules.has_key("BEFORE_CONNECT_PERIODIC"):
 			for singleModule in modules["BEFORE_CONNECT_PERIODIC"]:
 				singleModule.execute(paramsDictionary, None)
-
-		file.lockFile()
-		addresses = file.readFile()
-		for key in addresses:
-			if( addresses[key] == 'F' ):
-				connection = Connection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/connection_config.conf")
-				if( connection.connect(key,80, RESOURCE) != -1 ):
-					logging.info(NAME+ "Polaczenie z %s nawiazane", key)
-					connection.send_message(PING)
-					logging.info(NAME+ "Wysylanie pingu z metody startowej")
-					if connection.get_message() == PONG:
-						logging.info(NAME+ "Metoda startowa otrzymala odpowiedz, zamykanie polaczenia")
-						connection._do_closing_handshake()
-						logging.info(NAME + "########### polaczenie zakonczone, zapisywanie pliku adresowego")
-						addresses[key] = 'T'
+		try:
+			file.lockFile()
+			addresses = file.readFile()
+			for key in addresses:
+				if( addresses[key] == 'F' ):
+					connection = Connection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/connection_config.conf")
+					if( connection.connect(key,80, RESOURCE) != -1 ):
+						logging.info(NAME+ "Polaczenie z %s nawiazane", key)
+						connection.send_message(PING)
+						logging.info(NAME+ "Wysylanie pingu z metody startowej")
+						if connection.get_message() == PONG:
+							logging.info(NAME+ "Metoda startowa otrzymala odpowiedz, zamykanie polaczenia")
+							connection._do_closing_handshake()
+							logging.info(NAME + "########### polaczenie zakonczone, zapisywanie pliku adresowego")
+							addresses[key] = 'T'
+						else:
+							logging.error(NAME+ "Serwer " + key + " nie odpowiedzial na PING, zrywanie polaczenia")
 					else:
-						logging.error(NAME+ "Serwer " + key + " nie odpowiedzial na PING, zrywanie polaczenia")
-				else:
-					logging.error(NAME+ "Nie moge polaczyc sie z %s", key)
-		file.writeToFile(addresses)
+						logging.error(NAME+ "Nie moge polaczyc sie z %s", key)
+			file.writeToFile(addresses)
+		except Exception, e:
+			logging.error(NAME + e.message)
+			file.unlockFile()
+			continue
 		file.unlockFile()
 
 		if firstTimeIteration == True:

@@ -52,3 +52,5 @@ class ReadTransaction:
 			logging.error(NAME + "Nie mozna czytac")
 			return False
 
+	def __del__(self):
+		self.processor.unlockFile()

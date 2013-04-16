@@ -42,3 +42,7 @@ class FileProcessor:
 	def unlockFile(self):
 		if self.lock.is_locked:
 			self.lock.release()
+
+	def __del__(self):
+		if self.lock.is_locked:
+			self.lock.release()

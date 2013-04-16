@@ -31,8 +31,10 @@ def web_socket_transfer_data(request):
 	logging.info(NAME + "client version " + clientVersion)
 	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
 	lock = FileLock(lockFilePath,3,.05)
-	lock.acquire()
-	if lock.is_locked == False:
+	try:
+		lock.acquire()
+	except Exception, e:
+		logging.error(NAME + e.message)
 		socket.send_message(LOCK_ERROR)
 		return apache.HTTP_OK
 	try:
@@ -50,9 +52,13 @@ def web_socket_transfer_data(request):
 		return apache.HTTP_OK
 	except MySQLdb.Error, e:
 		logging.error("%d %s" % (e.args[0], e.args[1]))
+		if lock.is_locked:
+			lock.release()
 		return apache.HTTP_OK
 	except Exception, ee:
 		logging.error(NAME + ee.message)
+		if lock.is_locked:
+			lock.release()
 		return apache.HTTP_OK
 
 

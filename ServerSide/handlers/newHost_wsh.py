@@ -14,6 +14,7 @@ PONG = "PONG:PONG"
 PING = "PING:PING"
 EXIT = "EXIT"
 RESOURCE = "/newPing"
+ERROR = -1
 
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
@@ -39,35 +40,39 @@ def web_socket_transfer_data(request):
 
 	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	paramsDictionary["CONNECTION_MODE"] = True
-	file.lockFile()
-	addresses = file.readFile()
-	for key in addresses:
-		logging.info(NAME+ "klucz %s", key)
-		logging.info(NAME+ "adres zdalnej maszyny %s", remoteAddress)
-		logging.info(NAME+ "addresses[key] %s", addresses[key])
-		if key == remoteAddress:
-			if addresses[key] == 'F':
-				logging.info(NAME+ "znalazl dopasowanie")
-				logging.info(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
-				paramsDictionary["CONNECTION"] = Connection(paramsDictionary["HOME_PATH"]+"ServerSide/config/connection_config.conf")
-				paramsDictionary["CONNECTION"].connect(remoteAddress, 80, RESOURCE)
-				paramsDictionary["SOCKET"].send_message(PONG)
-				logging.info(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
+	try:
+		file.lockFile()
+		addresses = file.readFile()
 
-				paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
-				paramsDictionary["SOCKET"].send_message(PING)
-				paramsDictionary["SOCKET"].receive_message()
-
-				logging.info(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
-				addresses[key] = 'T'
-				file.writeToFile(addresses)
-				break
-			else:
-				paramsDictionary["SOCKET"].send_message(EXIT)
-				logging.info(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
-				file.unlockFile()
-				return apache.HTTP_OK
-	file.unlockFile()
+		for key in addresses:
+			logging.info(NAME+ "klucz %s", key)
+			logging.info(NAME+ "adres zdalnej maszyny %s", remoteAddress)
+			logging.info(NAME+ "addresses[key] %s", addresses[key])
+			if key == remoteAddress:
+				if addresses[key] == 'F':
+					logging.info(NAME+ "znalazl dopasowanie")
+					paramsDictionary["SOCKET"].send_message(PONG)
+					logging.info(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
+					logging.info(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
+					paramsDictionary["CONNECTION"] = Connection(paramsDictionary["HOME_PATH"]+"ServerSide/config/connection_config.conf")
+					if paramsDictionary["CONNECTION"].connect(remoteAddress, 80, RESOURCE) != ERROR:
+						paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
+						paramsDictionary["SOCKET"].send_message(PING)
+						paramsDictionary["SOCKET"].receive_message()
+						logging.info(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
+						addresses[key] = 'T'
+						file.writeToFile(addresses)
+						break
+				else:
+					paramsDictionary["SOCKET"].send_message(EXIT)
+					logging.info(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
+					file.unlockFile()
+					return apache.HTTP_OK
+		file.unlockFile()
+	except Exception, e:
+		logging.error(NAME + e.message)
+		file.unlockFile()
+		return apache.HTTP_OK
 
 	loader = ModulesLoader()
 	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")
