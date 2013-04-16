@@ -128,7 +128,6 @@ class WriteTransaction:
 				self.activeServers.append(key)
 				available = available + 1
 		self.addressesProcessor.unlockFile()
-		self.serversCount = all + 1
 		min = int(math.floor(all / 2) + 1)
 		logging.info(NAME + "Aktywne serwery: " + str(self.activeServers))
 		if available >= min:
