@@ -97,8 +97,10 @@ class WriteTransaction:
 			cursor.execute(COMMMIT)
 			self.insertNewDataVersions()
 			logging.info(NAME + "Transakcja zakonczona powodzeniem")
-
 			return OK_MESSAGE
+
+		else:
+			return CONNECTION_PROBLEM_ERROR
 
 	def initialise(self):
 		self.responseQueue = Queue(len(self.activeServers))

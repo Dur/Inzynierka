@@ -16,7 +16,6 @@ def web_socket_transfer_data(request):
 	socket = request.ws_stream
 	homePath = request.get_options()["PROJECT_LOCATION"]
 	try:
-
 		versionsFile = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
 		versionsFile.lockFile()
 		dataVersions = versionsFile.readFile()
@@ -27,6 +26,7 @@ def web_socket_transfer_data(request):
 		versionsFile.unlockFile()
 	except Exception, e:
 		logging.error(NAME + e.message)
+		versionsFile.unlockFile()
 		return apache.HTTP_OK
 	logging.info(NAME + "Zapisano nowa wersje")
 	return apache.HTTP_OK
