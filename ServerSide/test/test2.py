@@ -21,7 +21,19 @@ from database.utils1.DatabaseConnector import DatabaseConnector
 # for version, command in cursor.fetchall():
 # 	print version
 # 	print command
-con = Connection("/home/dur/Projects/ServerSide/config/connection_config.conf")
-con.connect("192.168.56.103", 80, "/echo")
-con.send_message("hola")
-print con.get_message()
+
+# import os
+#
+# os.chdir("/home/dur/Projects")
+# os.chdir("..")
+# os.chdir("Pulpit")
+# filelist = [ f for f in os.listdir(".") if f.endswith(".lock") ]
+# for f in filelist:
+# 	os.remove(f)
+
+import glob, os
+
+os.chdir("/home/dur/Pulpit")
+filelist = glob.glob("*.lock")
+for f in filelist:
+	os.remove(f)
