@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript">
+function WebSocketTest()
+{
+  if ("WebSocket" in window)
+  {
+     var ws = new WebSocket("ws://localhost:80/dbQuery");
+
+     ws.onopen = function()
+     {
+        // Web Socket is connected, send data using send()
+        ws.send("root");
+	ws.send("root");
+	//ws.send("begin transaction")
+	//ws.send("insert bla bla into datastore values(2,'test',3)");
+	ws.send("insert into datastore values(3,'test',3)");
+	//ws.send("select * from datastore")
+	//ws.send("update datastore set data='hello mama' where id=3");
+	//ws.send("select * from datastore")
+	ws.send("select * from datastore")
+	ws.send("delete from datastore where id=3")
+	//ws.send("insert into datastore values(3,'test',3)");
+	//ws.send("select * from datastore")
+	//ws.send("delete from datastore where id=3")
+	//ws.send("rollback")
+	//ws.send("select * from datastore")
+	ws.send("EXIT");
+
+     };
+
+     ws.onmessage = function (evt) 
+     { 
+        var received_msg = evt.data;
+        alert(received_msg);
+     };
+
+     ws.onclose = function()
+     { 
+        // websocket is closed.
+        alert("Connection is closed..."); 
+     };
+  }
+  else
+  {
+     // The browser doesn't support WebSocket
+     alert("WebSocket NOT supported by your Browser!");
+  }
+}
+</script>
+</head>
+<body>
+<div id="sse">
+   <a href="javascript:WebSocketTest()">Run WebSocket</a>
+</div>
+</body>
+</html>
