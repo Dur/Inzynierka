@@ -9,3 +9,4 @@ rm -f *.lock
 cd ..
 cd database_config
 rm -f *.lock
+python /home/dur/Projects/ServerSide/start_stop_server/StopServer.py
