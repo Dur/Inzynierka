@@ -12,6 +12,7 @@ GLOBAL_ABORT = "GLOBAL_ABORT"
 OK = "OK"
 OK_FLAG = 0
 RESOURCE = "/writeTransaction"
+EXIT = "EXIT"
 
 class WriteTransactionThread(Thread):
 
@@ -46,6 +47,7 @@ class WriteTransactionThread(Thread):
 					methodMapping[command]()
 					command = self.inputQueue.get(True, None)
 					logging.info(NAME + "Odebrano komende " + command)
+				self.connection.send_message(EXIT)
 			else:
 				logging.error(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
 				self.outputQueue.put(ABORT)

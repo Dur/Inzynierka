@@ -17,6 +17,7 @@ GLOBAL_ABORT = "GLOBAL_ABORT"
 OK = "OK"
 OK_MESSAGE = "Query executed successfully"
 COMMMIT = "commit"
+STOP_THREAD = "INTERRUPT"
 CONNECTION_PROBLEM_ERROR = "Sorry, but server is temporary unavailable, please try again later"
 
 class WriteTransaction:
@@ -92,6 +93,7 @@ class WriteTransaction:
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_COMMIT)
 				self.connectionsQueues[address].put(activeServersString)
+				self.connectionsQueues[address].put(STOP_THREAD)
 			logging.info(NAME + "przygotowanie insertu do tabeli z wersjami")
 			cursor.execute(self.generateInsertToDataVersions(command))
 			cursor.execute(COMMMIT)

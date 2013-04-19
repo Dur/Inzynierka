@@ -42,8 +42,11 @@ def web_socket_transfer_data(request):
 		try:
 			file.lockFile()
 			addresses = file.readFile()
+			file.unlockFile()
 			for key in addresses:
-				if( addresses[key] == 'F' ):
+				file.lockFile()
+				tempAddresses = file.readFile()
+				if( tempAddresses[key] == 'F' ):
 					connection = Connection(request.get_options()["PROJECT_LOCATION"]+"ServerSide/config/connection_config.conf")
 					if( connection.connect(key,80, RESOURCE) != ERROR ):
 						logging.info(NAME+ "Polaczenie z %s nawiazane", key)
@@ -53,12 +56,14 @@ def web_socket_transfer_data(request):
 							logging.info(NAME+ "Metoda startowa otrzymala odpowiedz, zamykanie polaczenia")
 							connection._do_closing_handshake()
 							logging.info(NAME + "########### polaczenie zakonczone, zapisywanie pliku adresowego")
-							addresses[key] = 'T'
+							tempAddresses[key] = 'T'
 						else:
 							logging.error(NAME+ "Serwer " + key + " nie odpowiedzial na PING, zrywanie polaczenia")
 					else:
 						logging.error(NAME+ "Nie moge polaczyc sie z %s", key)
-			file.writeToFile(addresses)
+			file.writeToFile(tempAddresses)
+			file.unlockFile()
+			logging.info(NAME + "Zapisano zmiany do pliku adresowego")
 		except Exception, e:
 			logging.error(NAME + e.message)
 			file.unlockFile()
