@@ -1,6 +1,7 @@
 from connections.Connection import Connection
 from connections.PingConnection import PingConnection
 import time
+from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor
 from utils.ModulesLoader import ModulesLoader
 
@@ -27,6 +28,9 @@ def web_socket_transfer_data(request):
 	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")
 	paramsDictionary["MODULES"] = modules
 	logging.info(NAME+ "Serwer wczytal moduly")
+
+	configReader = ConfigurationReader(paramsDictionary["HOME_PATH"]+"ServerSide/config/runParams.conf")
+	runParams = configReader.readConfigFile()
 
 	if modules.has_key("BEFORE_CONNECT"):
 		for singleModule in modules["BEFORE_CONNECT"]:
@@ -85,5 +89,5 @@ def web_socket_transfer_data(request):
 				singleModule.execute(paramsDictionary, None)
 
 		logging.info(NAME+ "Serwer rozpoczyna czeanie na kolejna ture sprawdzania")
-		time.sleep(60)
+		time.sleep(int(runParams["ConnectionCheckPeriod"]))
 		logging.info(NAME+ "Serwer wznawia sprawdzanie")

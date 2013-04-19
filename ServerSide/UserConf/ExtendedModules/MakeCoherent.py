@@ -54,7 +54,6 @@ def execute(paramsDictionary, message):
 
 	addressesToConnect = findActiveUpToDateServer(addresses, dataVersions)
 	try:
-
 		if len(addressesToConnect) > 0:
 			connection = Connection(homePath + "ServerSide/config/connection_config.conf" )
 			for addressToConnect in addressesToConnect:
@@ -75,6 +74,9 @@ def execute(paramsDictionary, message):
 
 			login = dbParamsDict["DEFAULT_LOGIN"]
 			password = dbParamsDict["DEFAULT_PASSWORD"]
+		else:
+			logging.info(NAME + "Brak serwerow, od ktorych mozna pobrac aktualne dane")
+			return
 	except Exception, e:
 		logging.error(NAME + e.message)
 		if lock.is_locked:
@@ -128,7 +130,7 @@ def findActiveUpToDateServer(addresses, versions):
 			if addresses[address] == "T":
 				logging.info(NAME + "znalezino serwer do odpytania " + address)
 				addressesToRet.append(address)
-		return addressesToRet
+	return addressesToRet
 
 def findServersWithMaxDataVersion(versions):
 	maxVersionAddresses = []
