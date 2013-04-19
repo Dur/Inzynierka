@@ -20,7 +20,7 @@ def checkOldPassword(paramsDictionary, oldPass):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	logging.info(NAME + "Otrzymalem stare haslo")
+	logging.info(NAME + "Otrzymalem stare haslo od " + remoteAddress)
 	processor = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 	passwords = processor.readFile()
 	logging.info(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + oldPass )
@@ -38,7 +38,7 @@ def acknowlage(paramsDictionary, argument):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	logging.info(NAME + "dostalem potwierdzenie zmiany hasla")
+	logging.info(NAME + "dostalem potwierdzenie zmiany hasla od " + remoteAddress)
 	file = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 	file.lockFile()
 	passwords = file.readFile()
