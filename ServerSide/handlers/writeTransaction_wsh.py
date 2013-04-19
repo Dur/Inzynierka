@@ -12,7 +12,7 @@ GLOBAL_COMMIT = "GLOBAL_COMMIT"
 ABORT = "ABORT"
 GLOBAL_ABORT = "GLOBAL_ABORT"
 OK = "OK"
-EXIT = "exit"
+EXIT = "EXIT"
 ERROR = -1
 OK_CODE = 0
 READY_COMMIT = "READY_COMMIT"
@@ -56,6 +56,7 @@ def web_socket_transfer_data(request):
 		if lock.is_locked:
 			lock.release()
 		return apache.HTTP_OK
+	logging.info(NAME + "Zakonczono wymiane danych z klientem #########")
 	return apache.HTTP_OK
 
 def prepare(paramsDictionary, db, lock):
