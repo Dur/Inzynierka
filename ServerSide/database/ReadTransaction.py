@@ -7,7 +7,7 @@ __author__ = 'dur'
 
 NAME = "ReadTransaction: "
 LOCALHOST_NAME = "localhost"
-ERROR_MESSAGE = "Sorry but database is not consistent, please try again later"
+ERROR_MESSAGE = "Sorry, but server is temporary unavailable, please try again later"
 
 class ReadTransaction:
 	paramsDictionary = {}
@@ -16,10 +16,11 @@ class ReadTransaction:
 		self.paramsDictionary = paramsDictionary
 		homePath = self.paramsDictionary["HOME_PATH"]
 		self.processor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
+		self.addressesProcessor = FileProcessor(homePath + "ServerSide/config/addresses.conf")
 
 	def executeTransaction(self, cursor, command):
 		try:
-			if self.checkDataVersions() == True:
+			if self.checkActiveServersCount() == True and self.checkDataVersions() == True:
 				cursor.execute(command)
 				return cursor.fetchall()
 			else:
@@ -52,5 +53,24 @@ class ReadTransaction:
 			logging.error(NAME + "Nie mozna czytac")
 			return False
 
+	def checkActiveServersCount(self):
+		self.addressesProcessor.lockFile()
+		addresses = self.addressesProcessor.readFile()
+		self.addressesProcessor.unlockFile()
+		all = 1
+		available = 1
+		for key in addresses:
+			all = all + 1
+			if addresses[key] == 'T':
+				available = available + 1
+		min = int(math.floor(all / 2) + 1)
+		if available >= min:
+			logging.info(NAME + "Wicej niz polowa serwerow aktywna")
+			return True
+		else:
+			logging.error(NAME + "mniej niz polowa serwerow aktywna")
+			return False
+
 	def __del__(self):
 		self.processor.unlockFile()
+		self.addressesProcessor.unlockFile()
