@@ -1,39 +1,18 @@
-import MySQLdb
-from Queue import Queue
 from connections.Connection import Connection
+from utils.FileProcessors import FileProcessor
 
-#connection = Connection("/home/dur/Projects/ServerSide/config/database_config/transaction_config.conf")
-#connection.connect("192.168.56.102", 80)
-from database.utils1.DatabaseConnector import DatabaseConnector
-
-#command = "insert into datastore values(3,'test',3)"
+# TICKET_PARAM = "ticketServer"
 #
-#aa = "ababa"
-#print aa.replace('a', 'c')
-#command = command.replace('\'', '\\\'')
-#sql = "INSERT INTO " +  "versions" + " VALUES(" + str("1") + ",\'" + command + "\')"
-#
-#print sql
-#
-# db = MySQLdb.connect("localhost", "root", "root", "distributed")
-# cursor = db.cursor()
-# cursor.execute("select * from versions where id > " + str(0) + " order by id")
-# for version, command in cursor.fetchall():
-# 	print version
-# 	print command
+# connection = Connection("/home/dur/Projects/ServerSide/config/connection_config.conf")
+# tempProcessor = FileProcessor("/home/dur/Projects/ServerSide/config/tempParams.conf")
+# tempProcessor.lockFile()
+# params = tempProcessor.readFile()
+# tempProcessor.unlockFile()
+# connection.connect(params[TICKET_PARAM], 80, "/ticket")
+# print(connection.get_message())
 
-# import os
-#
-# os.chdir("/home/dur/Projects")
-# os.chdir("..")
-# os.chdir("Pulpit")
-# filelist = [ f for f in os.listdir(".") if f.endswith(".lock") ]
-# for f in filelist:
-# 	os.remove(f)
-
-import glob, os
-
-os.chdir("/home/dur/Pulpit")
-filelist = glob.glob("*.lock")
-for f in filelist:
-	os.remove(f)
+tempProcessor = FileProcessor("/home/dur/Projects/ServerSide/config/tempParams.conf")
+tempProcessor.lockFile()
+params = tempProcessor.readFile()
+print(params)
+tempProcessor.unlockFile()

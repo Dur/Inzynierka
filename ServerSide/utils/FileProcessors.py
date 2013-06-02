@@ -46,3 +46,13 @@ class FileProcessor:
 	def __del__(self):
 		if self.lock.is_locked:
 			self.lock.release()
+
+	def readFirstLine(self):
+		with open(self.fileName, 'r') as f:
+			for singleLine in f:
+				return singleLine
+
+	def writeSingleLine(self, line):
+		with open(self.fileName, 'w') as f:
+				f.write(line)
+		return

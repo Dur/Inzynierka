@@ -1,9 +1,12 @@
 import MySQLdb
 from Queue import Queue
+from _mysql import result
 from threading import Event
 import math
+from database.DelayedTransactionThread import DelayedTransactionThread
 from database.WriteTransactionThread import WriteTransactionThread
 from utils.FileProcessors import FileProcessor
+from connections.Connection import Connection
 import logging
 
 __author__ = 'dur'
@@ -15,9 +18,13 @@ GLOBAL_COMMIT = "GLOBAL_COMMIT"
 ABORT = "ABORT"
 GLOBAL_ABORT = "GLOBAL_ABORT"
 OK = "OK"
+COMMIT = "commit"
+WAIT = "WAIT"
 OK_MESSAGE = "Query executed successfully"
-COMMMIT = "commit"
 STOP_THREAD = "INTERRUPT"
+EXPECTED_TICKET = "expectedTicket"
+TICKET_PARAM = "ticketServer"
+SKIP = "SKIP"
 CONNECTION_PROBLEM_ERROR = "Sorry, but server is temporary unavailable, please try again later"
 
 class WriteTransaction:
@@ -27,82 +34,130 @@ class WriteTransaction:
 	paramsDictionary = None
 	versionProcessor = None
 	addressesProcessor = None
+	tempProcessor = None
 	serversCount = 0
 	activeServers = []
-	initialised = False
 	connectionsQueues = {}
 	threads = {}
 	waitForRemoteTime = 0
 	myDataVersion = 0
+	homePath = ""
+
 
 	def __init__(self, paramsDictionary):
-		homePath = paramsDictionary["HOME_PATH"]
+		self.homePath = paramsDictionary["HOME_PATH"]
 		self.paramsDictionary = paramsDictionary
-		self.versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
-		self.addressesProcessor = FileProcessor(homePath + "ServerSide/config/addresses.conf")
+		self.versionProcessor = FileProcessor(self.homePath + "ServerSide/config/database_config/data_version.dat")
+		self.addressesProcessor = FileProcessor(self.homePath + "ServerSide/config/addresses.conf")
 		self.waitForRemoteTime = int(paramsDictionary["DB_PARAMS"]["waitForRemoteTime"])
 		self.eventVariable.clear()
+		self.tempProcessor = FileProcessor(self.homePath + "ServerSide/config/tempParams.conf")
 
 
 	def executeTransaction(self, cursor, command):
 		if self.chceckTransactionPossibility() == True:
-			try:
-				cursor.execute(command)
-			except MySQLdb.Error, e:
-				cursor.execute("rollback")
-				logging.error(NAME + "Rzucilo wyjatkiem SQL")
-				logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
-				return "%d %s" % (e.args[0], e.args[1])
+			ticket = self.getTicket()
 
-			if self.initialised == False:
-				self.initialise()
-			self.paramsDictionary["ACTIVE_SERVERS"] = self.activeServers
-			for address in self.activeServers:
-				self.connectionsQueues[address].put(PREPARE_MESSAGE)
-				self.connectionsQueues[address].put(command)
-			logging.info(NAME + "Serwer rozpoczyna czekanie na zmiennej warunkowej")
-			logging.info(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
-			if self.eventVariable.is_set:
-				logging.info(NAME + "Zmienna warunkowa ustawiona")
+			if self.readTempVars()[EXPECTED_TICKET] == ticket:
+				return self.runNormalTransaction(cursor, command, ticket)
 			else:
-				logging.info(NAME + "Zmienna warunkowa NIE ustawiona")
-			self.eventVariable.wait(int(self.waitForRemoteTime))
-			self.eventVariable.clear()
-			logging.info(NAME + "Serwer minal zmienna warunkowa")
-			if self.responseQueue.full() != True:
-				logging.error(NAME + "Wysylanie GLOBA_ABOT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
+				return self.runDelayedTransaction(cursor, command, ticket)
+		else:
+			return CONNECTION_PROBLEM_ERROR
+
+	def runNormalTransaction(self, cursor, command, ticket):
+		try:
+			cursor.execute(command)
+		except MySQLdb.Error, e:
+			cursor.execute("rollback")
+			logging.error(NAME + "Rzucilo wyjatkiem SQL")
+			logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
+			return "%d %s" % (e.args[0], e.args[1])
+
+		self.initialise()
+
+		self.paramsDictionary["ACTIVE_SERVERS"] = self.activeServers
+		for address in self.activeServers:
+			self.connectionsQueues[address].put(PREPARE_MESSAGE)
+			self.connectionsQueues[address].put(command)
+
+		logging.info(NAME + "Serwer rozpoczyna czekanie na zmiennej warunkowej")
+		logging.info(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
+		if self.eventVariable.is_set:
+			logging.info(NAME + "Zmienna warunkowa ustawiona")
+		else:
+			logging.info(NAME + "Zmienna warunkowa NIE ustawiona")
+		self.eventVariable.wait(int(self.waitForRemoteTime))
+		self.eventVariable.clear()
+		logging.info(NAME + "Serwer minal zmienna warunkowa")
+		if self.responseQueue.full() != True:
+			logging.error(NAME + "Wysylanie GLOBA_ABOT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
+			for address in self.activeServers:
+				self.connectionsQueues[address].put(GLOBAL_ABORT)
+				self.connectionsQueues[address].put(STOP_THREAD)
+			cursor.execute("rollback")
+			return CONNECTION_PROBLEM_ERROR
+
+		while self.responseQueue.empty() != True:
+			response = self.responseQueue.get_nowait()
+			logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
+			if response == ABORT:
+				logging.error(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
 				for address in self.activeServers:
 					self.connectionsQueues[address].put(GLOBAL_ABORT)
+					self.connectionsQueues[address].put(STOP_THREAD)
 				cursor.execute("rollback")
 				return CONNECTION_PROBLEM_ERROR
 
-			while self.responseQueue.empty() != True:
-				response = self.responseQueue.get_nowait()
-				logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
-				if response == ABORT:
-					logging.error(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
-					for address in self.activeServers:
-						self.connectionsQueues[address].put(GLOBAL_ABORT)
-					cursor.execute("rollback")
-					return CONNECTION_PROBLEM_ERROR
+		activeServersString = ""
+		for address in self.activeServers:
+			activeServersString = activeServersString + address + ":"
 
-			activeServersString = ""
-			for address in self.activeServers:
-				activeServersString = activeServersString + address + ":"
+		for address in self.activeServers:
+			self.connectionsQueues[address].put(GLOBAL_COMMIT)
+			self.connectionsQueues[address].put(activeServersString)
+			self.connectionsQueues[address].put(STOP_THREAD)
+		logging.info(NAME + "przygotowanie insertu do tabeli z wersjami")
+		cursor.execute(self.generateInsertToDataVersions(command))
+		cursor.execute(COMMIT)
+		self.insertNewDataVersions()
+		logging.info(NAME + "Transakcja zakonczona powodzeniem")
+		return OK_MESSAGE
 
+	def runDelayedTransaction(self, cursor, command, ticket):
+
+		self.initaliseDelayed()
+
+		self.paramsDictionary["ACTIVE_SERVERS"] = self.activeServers
+		for address in self.activeServers:
+			self.connectionsQueues[address].put(ticket)
+
+		logging.info(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
+		self.eventVariable.wait(int(self.waitForRemoteTime))
+		self.eventVariable.clear()
+		logging.info(NAME + "Serwer minal zmienna warunkowa")
+		if self.responseQueue.full() != True or self.readTempVars()[EXPECTED_TICKET] != ticket:
+			logging.error(NAME + "Wysylanie SKIP, nie wszystkie serwery odpowiedzialy w zadanym czasie")
 			for address in self.activeServers:
-				self.connectionsQueues[address].put(GLOBAL_COMMIT)
-				self.connectionsQueues[address].put(activeServersString)
+				self.connectionsQueues[address].put(SKIP)
 				self.connectionsQueues[address].put(STOP_THREAD)
-			logging.info(NAME + "przygotowanie insertu do tabeli z wersjami")
-			cursor.execute(self.generateInsertToDataVersions(command))
-			cursor.execute(COMMMIT)
-			self.insertNewDataVersions()
-			logging.info(NAME + "Transakcja zakonczona powodzeniem")
-			return OK_MESSAGE
-
-		else:
 			return CONNECTION_PROBLEM_ERROR
+
+		while self.responseQueue.empty() != True:
+			response = self.responseQueue.get_nowait()
+			logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
+			if response == ABORT:
+				logging.error(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
+				for address in self.activeServers:
+					self.connectionsQueues[address].put(SKIP)
+					self.connectionsQueues[address].put(STOP_THREAD)
+				return CONNECTION_PROBLEM_ERROR
+
+		for address in self.activeServers:
+			self.connectionsQueues[address].put(OK)
+			self.connectionsQueues[address].put(STOP_THREAD)
+
+		return self.runNormalTransaction(cursor, command, ticket)
 
 	def initialise(self):
 		self.responseQueue = Queue(len(self.activeServers))
@@ -110,6 +165,16 @@ class WriteTransaction:
 			requestQueue = Queue()
 			logging.info(NAME + "Adres przekazany do watku " + address)
 			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary, address)
+			self.connectionsQueues[address] = requestQueue
+			self.threads[address] = thread
+			thread.start()
+
+	def initialiseDelayed(self):
+		self.responseQueue = Queue(len(self.activeServers))
+		for address in self.activeServers:
+			requestQueue = Queue()
+			logging.info(NAME + "Adres przekazany do watku " + address)
+			thread = DelayedTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary, address)
 			self.connectionsQueues[address] = requestQueue
 			self.threads[address] = thread
 			thread.start()
@@ -177,3 +242,15 @@ class WriteTransaction:
 		versions[LOCALHOST_NAME] = newVersion
 		self.versionProcessor.writeToFile(versions)
 		self.versionProcessor.unlockFile()
+
+	def getTicket(self):
+		connection = Connection("/home/dur/Projects/ServerSide/config/connection_config.conf")
+		params = self.readTempVars()
+		connection.connect(params[TICKET_PARAM], 80, "/ticket")
+		return connection.get_message()
+
+	def readTempVars(self):
+		self.tempProcessor.lockFile()
+		params = self.tempProcessor.readFile()
+		self.tempProcessor.unlockFile()
+		return params

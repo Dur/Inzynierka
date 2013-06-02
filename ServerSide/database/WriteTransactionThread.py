@@ -35,7 +35,10 @@ class WriteTransactionThread(Thread):
 
 	def run(self):
 		try:
-			methodMapping = {PREPARE : self.prepare, GLOBAL_COMMIT : self.globalCommit, GLOBAL_ABORT : self.globalAbort}
+			methodMapping = {PREPARE : self.prepare,
+			                 GLOBAL_COMMIT : self.globalCommit,
+			                 GLOBAL_ABORT : self.globalAbort}
+
 			self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/transaction_config.conf")
 			if self.connection.connect(self.clientAddress, 80, RESOURCE) == OK_FLAG:
 				logging.info(NAME + "Polaczenie dla transakcji zapisu nawiazane")
