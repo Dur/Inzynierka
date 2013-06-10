@@ -65,7 +65,7 @@ class WriteTransaction:
 		else:
 			return CONNECTION_PROBLEM_ERROR
 
-	def runNormalTransaction(self, cursor, command, ticket):
+	def runNormalTransaction(self, cursor, command):
 		try:
 			cursor.execute(command)
 		except MySQLdb.Error, e:
@@ -157,7 +157,7 @@ class WriteTransaction:
 			self.connectionsQueues[address].put(OK)
 			self.connectionsQueues[address].put(STOP_THREAD)
 
-		return self.runNormalTransaction(cursor, command, ticket)
+		return self.runNormalTransaction(cursor, command)
 
 	def initialise(self):
 		self.responseQueue = Queue(len(self.activeServers))

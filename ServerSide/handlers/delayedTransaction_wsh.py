@@ -32,7 +32,7 @@ def web_socket_transfer_data(request):
 	currentTicket = readTempVars(paramsDictionary)[EXPECTED_TICKET]
 	timeOut = (int(ticket) - int(currentTicket)) * 5
 	start = time.time()
-	while currentTicket != ticket and time.time() - start < timeOut:
+	while currentTicket < ticket and time.time() - start < timeOut:
 		time.sleep(1)
 		currentTicket = readTempVars(paramsDictionary)[EXPECTED_TICKET]
 	if currentTicket == ticket:

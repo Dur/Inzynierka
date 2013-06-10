@@ -56,3 +56,8 @@ class FileProcessor:
 		with open(self.fileName, 'w') as f:
 				f.write(line)
 		return
+
+	def appendToFile(self, line):
+		with open(self.fileName, 'a') as f:
+			f.write(line)
+		return

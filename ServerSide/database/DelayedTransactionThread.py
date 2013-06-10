@@ -69,6 +69,7 @@ class DelayedTransactionThread(Thread):
 		self.outputQueue.put(answer)
 		logging.info(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():
+			self.eventVariable.set()
 			logging.info(NAME + "Wybudzanie watku transakcji")
 
 	def ok(self):
