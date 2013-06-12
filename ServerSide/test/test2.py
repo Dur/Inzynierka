@@ -4,11 +4,10 @@ import time
 
 # TICKET_PARAM = "ticketServer"
 #
-from utils.Logger import Logger
+import utils.Logger as logger
 
-logger = Logger()
 
-logger.logImportant("mama")
+logger.logImportant("nowy log")
 # tempProcessor = FileProcessor("/home/dur/Projects/ServerSide/config/tempParams.conf")
 # tempProcessor.lockFile()
 # params = tempProcessor.readFile()
