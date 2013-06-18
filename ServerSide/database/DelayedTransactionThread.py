@@ -1,6 +1,7 @@
 from threading import Thread
 from connections.Connection import Connection
 import logging
+import utils.Logger as logger
 
 NAME = "DelayedTransactionThread: "
 STOP_THREAD = "INTERRUPT"
@@ -12,6 +13,7 @@ OK = "OK"
 OK_FLAG = 0
 RESOURCE = "/delayedTransaction"
 EXIT = "EXIT"
+
 
 class DelayedTransactionThread(Thread):
 
@@ -50,16 +52,16 @@ class DelayedTransactionThread(Thread):
 				logging.error(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
 				self.outputQueue.put(ABORT)
 				self.connection._do_closing_handshake()
-			logging.info(NAME + "Konice watku transakcji zapisu")
+			logger.logImportant(NAME + "Konice watku transakcji zapisu")
 		except Exception, e:
 			logging.error(NAME + e.message )
 
 	def skip(self):
-		logging.info(NAME + "SkipMethod")
+		logger.logImportant(NAME + "SkipMethod")
 		self.connection.send_message(SKIP)
 
 	def start(self):
-		logging.info(NAME + "StartMethod")
+		logger.logImportant(NAME + "StartMethod")
 		ticket = self.inputQueue.get(True, None)
 		self.connection.send_message(ticket)
 		try:
@@ -67,12 +69,12 @@ class DelayedTransactionThread(Thread):
 		except Exception, e:
 			logging.error(NAME + e.message )
 		self.outputQueue.put(answer)
-		logging.info(NAME + "Zdalny serwer odpowiedzial: " + answer)
+		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():
 			self.eventVariable.set()
-			logging.info(NAME + "Wybudzanie watku transakcji")
+			logger.logImportant(NAME + "Wybudzanie watku transakcji")
 
 	def ok(self):
-		logging.info(NAME + "OkMethod")
+		logger.logImportant(NAME + "OkMethod")
 		self.connection.send_message(OK)
 

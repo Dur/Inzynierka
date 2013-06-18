@@ -1,6 +1,6 @@
 import MySQLdb
 from Queue import Queue
-from _mysql import result
+import utils.Logger as logger
 from threading import Event
 import math
 from database.DelayedTransactionThread import DelayedTransactionThread
@@ -70,8 +70,8 @@ class WriteTransaction:
 			cursor.execute(command)
 		except MySQLdb.Error, e:
 			cursor.execute("rollback")
-			logging.error(NAME + "Rzucilo wyjatkiem SQL")
-			logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
+			logger.logError(NAME + "Rzucilo wyjatkiem SQL")
+			logger.logError(NAME + "%d %s" % (e.args[0], e.args[1]))
 			return "%d %s" % (e.args[0], e.args[1])
 
 		self.initialise()
@@ -91,7 +91,7 @@ class WriteTransaction:
 		self.eventVariable.clear()
 		logging.info(NAME + "Serwer minal zmienna warunkowa")
 		if self.responseQueue.full() != True:
-			logging.error(NAME + "Wysylanie GLOBA_ABOT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
+			logger.logImportant(NAME + "Wysylanie GLOBA_ABOT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_ABORT)
 				self.connectionsQueues[address].put(STOP_THREAD)
@@ -102,7 +102,7 @@ class WriteTransaction:
 			response = self.responseQueue.get_nowait()
 			logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
 			if response == ABORT:
-				logging.error(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
+				logger.logImportant(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
 				for address in self.activeServers:
 					self.connectionsQueues[address].put(GLOBAL_ABORT)
 					self.connectionsQueues[address].put(STOP_THREAD)
@@ -121,7 +121,7 @@ class WriteTransaction:
 		cursor.execute(self.generateInsertToDataVersions(command))
 		cursor.execute(COMMIT)
 		self.insertNewDataVersions()
-		logging.info(NAME + "Transakcja zakonczona powodzeniem")
+		logger.logImportant(NAME + "Transakcja zakonczona powodzeniem")
 		return OK_MESSAGE
 
 	def runDelayedTransaction(self, cursor, command, ticket):
@@ -147,7 +147,7 @@ class WriteTransaction:
 			response = self.responseQueue.get_nowait()
 			logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
 			if response == ABORT:
-				logging.error(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
+				logger.logImportant(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
 				for address in self.activeServers:
 					self.connectionsQueues[address].put(SKIP)
 					self.connectionsQueues[address].put(STOP_THREAD)
@@ -198,33 +198,33 @@ class WriteTransaction:
 				available = available + 1
 		self.addressesProcessor.unlockFile()
 		min = int(math.floor(all / 2) + 1)
-		logging.info(NAME + "Aktywne serwery: " + str(self.activeServers))
+		logger.logImportant(NAME + "Aktywne serwery: " + str(self.activeServers))
 		if available >= min:
-			logging.info(NAME + "Wicej niz polowa serwerow aktywna")
+			logger.logImportant(NAME + "Wicej niz polowa serwerow aktywna")
 			return True
 		else:
-			logging.error(NAME + "mniej niz polowa serwerow aktywna")
+			logger.logImportant(NAME + "mniej niz polowa serwerow aktywna")
 			return False
 
 	def checkDataVersions(self):
 		self.versionProcessor.lockFile()
 		dataVersions = self.versionProcessor.readFile()
 		self.myDataVersion = dataVersions[LOCALHOST_NAME]
-		logging.info("Lokalna wersja danych = " + self.myDataVersion)
+		logger.logImportant("Lokalna wersja danych = " + self.myDataVersion)
 		myVersionCount = 1
 		for key in self.activeServers:
 			version = dataVersions[key]
 			if version == self.myDataVersion:
 				myVersionCount = myVersionCount + 1
-		logging.info(NAME + "Zgodnych wersji: " + str(myVersionCount))
-		logging.info(NAME + "Wszystkich wersji: " + str(self.serversCount))
+		logger.logImportant(NAME + "Zgodnych wersji: " + str(myVersionCount))
+		logger.logImportant(NAME + "Wszystkich wersji: " + str(self.serversCount))
 		self.versionProcessor.unlockFile()
 		min = int(math.floor(self.serversCount / 2) + 1)
 		if myVersionCount >= min:
-			logging.info(NAME + "Mozna wykonac transakcje zapisu")
+			logger.logImportant(NAME + "Mozna wykonac transakcje zapisu")
 			return True
 		else:
-			logging.error(NAME + "Nie mozna wykonac transakcji zapisu")
+			logger.logImportant(NAME + "Nie mozna wykonac transakcji zapisu")
 			return False
 
 	def generateInsertToDataVersions(self, command):
@@ -236,7 +236,7 @@ class WriteTransaction:
 		self.versionProcessor.lockFile()
 		versions = self.versionProcessor.readFile()
 		newVersion = str(int(versions[LOCALHOST_NAME]) +1)
-		logging.info(NAME + "Nowa wersja danych = " + newVersion)
+		logger.logImportant(NAME + "Nowa wersja danych = " + newVersion)
 		for address in self.activeServers:
 			versions[address] = newVersion
 		versions[LOCALHOST_NAME] = newVersion

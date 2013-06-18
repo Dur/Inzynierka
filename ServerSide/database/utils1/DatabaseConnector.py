@@ -5,7 +5,7 @@ __author__ = 'dur'
 
 import MySQLdb
 import logging
-
+import utils.Logger as logger
 # tabela to datastore
 #baza danych distributed
 
@@ -44,7 +44,7 @@ class DatabaseConnector:
 			return OK
 
 		except Exception, e:
-			logging.error(NAME + "Nie mozna polaczyc sie z baza danych " + e.message )
+			logger.logImportant(NAME + "Nie mozna polaczyc sie z baza danych " + e.message )
 			return ERROR
 
 	def executeSQL(self, command, paramsDictionary):
@@ -64,7 +64,7 @@ class DatabaseConnector:
 				return self.readTransaction.executeTransaction(self.cursor, command)
 
 		except Exception, e:
-			logging.error(NAME + "Error w trakcie wykonywania zapytania SQL " + e.message )
+			logger.logImportant(NAME + "Error w trakcie wykonywania zapytania SQL " + e.message )
 			return ERROR
 
 	def executeQueryWithoutTransaction(self, command):
@@ -73,10 +73,10 @@ class DatabaseConnector:
 			return OK
 		except MySQLdb.Error, e:
 			self.cursor.execute("rollback")
-			logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
+			logger.logImportant(NAME + "%d %s" % (e.args[0], e.args[1]))
 			return "%d %s" % (e.args[0], e.args[1])
 		except Exception, e:
-			logging.error(NAME + e.message)
+			logger.logImportant(NAME + e.message)
 
 	def closeConnection(self):
 		if self.connection != None:

@@ -3,7 +3,7 @@ from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor
 from utils.filelock import FileLock
-
+import utils.Logger as logger
 import logging
 
 NAME = "writeTransaction_wsh: "
@@ -25,7 +25,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.info(NAME+ "Server dostal zgloszenie")
+	logger.logImportant(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	paramsDictionary["SOCKET"] = request.ws_stream
@@ -56,16 +56,16 @@ def web_socket_transfer_data(request):
 		if lock.is_locked:
 			lock.release()
 		return apache.HTTP_OK
-	logging.info(NAME + "Zakonczono wymiane danych z klientem #########")
+	logger.logImportant(NAME + "Zakonczono wymiane danych z klientem #########")
 	return apache.HTTP_OK
 
 def prepare(paramsDictionary, db, lock):
-	logging.info(NAME + "Prepare")
+	logger.logImportant(NAME + "Prepare")
 	try:
 		socket = paramsDictionary["SOCKET"]
 		command = socket.receive_message()
 		paramsDictionary["COMMAND"] = command
-		logging.info(NAME + "Otrzymano komende do wykonania " + command)
+		logger.logImportant(NAME + "Otrzymano komende do wykonania " + command)
 		if db.initConnection() == ERROR:
 			logging.error(NAME + "Nie moge polaczyc sie z baza danych")
 			socket.send_message(ABORT)
@@ -74,16 +74,16 @@ def prepare(paramsDictionary, db, lock):
 			return
 		lock.acquire()
 		if lock.is_locked == False:
-			logging.error(NAME + "Nie moge zalozyc blokady")
+			logger.logImportant(NAME + "Nie moge zalozyc blokady")
 			socket.send_message(ABORT)
 			lock.release()
 			return
 		if db.executeQueryWithoutTransaction(command) != OK_CODE:
 			socket.send_message(ABORT)
-			logging.error(NAME + "Nie moge wykonac polecenia")
+			logger.logImportant(NAME + "Nie moge wykonac polecenia")
 			lock.release()
 			return
-		logging.info(NAME + "Wysylanie READY_COMMIT")
+		logger.logImportant(NAME + "Wysylanie READY_COMMIT")
 		socket.send_message(READY_COMMIT)
 		return
 	except Exception, e:
@@ -98,7 +98,7 @@ def globalCommit(paramsDictionary, db, lock):
 		logging.info(NAME + "Mam serwery " + servers)
 		servers = servers.split(':')
 		servers.append(paramsDictionary["CLIENT_ADDRESS"])
-		logging.info(NAME + "Otrzymano wiadomosc GLOBAL_COMMIT")
+		logger.logImportant(NAME + "Otrzymano wiadomosc GLOBAL_COMMIT")
 		db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
 		db.executeQueryWithoutTransaction(COMMIT)
 		insertNewDataVersions(servers, paramsDictionary)
@@ -114,7 +114,7 @@ def globalCommit(paramsDictionary, db, lock):
 def globalAbort(paramsDictionary, db, lock):
 	try:
 		socket = paramsDictionary["SOCKET"]
-		logging.error(NAME + "Orzymano wiadomosc GLOBAL_ABORT")
+		logger.logImportant(NAME + "Orzymano wiadomosc GLOBAL_ABORT")
 		db.executeQueryWithoutTransaction(ROLLBACK)
 		socket.send_message(OK)
 		if lock.is_locked:

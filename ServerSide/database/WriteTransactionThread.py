@@ -1,6 +1,7 @@
 from threading import Thread
 from connections.Connection import Connection
 import logging
+import utils.Logger as logger
 
 NAME = "WriteTransactionThread: "
 STOP_THREAD = "INTERRUPT"
@@ -49,46 +50,46 @@ class WriteTransactionThread(Thread):
 				while command != STOP_THREAD:
 					methodMapping[command]()
 					command = self.inputQueue.get(True, None)
-					logging.info(NAME + "Odebrano komende " + command)
+					logger.logImportant(NAME + "Odebrano komende " + command)
 				self.connection.send_message(EXIT)
 			else:
-				logging.error(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
+				logger.logImportant(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
 				self.outputQueue.put(ABORT)
 				self.connection._do_closing_handshake()
-			logging.info(NAME + "Konice watku transakcji zapisu")
+			logger.logImportant(NAME + "Konice watku transakcji zapisu")
 		except Exception, e:
 			logging.error(NAME + e.message )
 
 	def prepare(self):
-		logging.info(NAME + "PrepareMethod")
+		logger.logImportant(NAME + "PrepareMethod")
 		command = self.inputQueue.get(True, None)
-		logging.info(NAME + "Otrzymalem zapytanie sql do wykonania " + command)
+		logger.logImportant(NAME + "Otrzymalem zapytanie sql do wykonania " + command)
 		self.connection.send_message(PREPARE)
 		self.connection.send_message(command)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
-		logging.info(NAME + "Zdalny serwer odpowiedzial: " + answer)
+		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():
 			self.eventVariable.set()
-			logging.info(NAME + "Wybudzanie watku transakcji")
+			logger.logImportant(NAME + "Wybudzanie watku transakcji")
 
 	def globalCommit(self):
-		logging.info(NAME + "GlobalCommitMethod")
+		logger.logImportant(NAME + "GlobalCommitMethod")
 		self.connection.send_message(GLOBAL_COMMIT)
 		command = self.inputQueue.get(True, None)
 		self.connection.send_message(command)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
-		logging.info(NAME + "Zdalny serwer odpowiedzial: " + answer)
+		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():
-			logging.info(NAME + "Wybudzanie watku transakcji")
+			logger.logImportant(NAME + "Wybudzanie watku transakcji")
 
 	def globalAbort(self):
-		logging.info(NAME + "GlobalAbortMethod")
+		logger.logImportant(NAME + "GlobalAbortMethod")
 		self.connection.send_message(GLOBAL_ABORT)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
-		logging.info(NAME + "Zdalny serwer odpowiedzial: " + answer)
+		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():
-			logging.info(NAME + "Wybudzanie watku transakcji")
+			logger.logImportant(NAME + "Wybudzanie watku transakcji")
 

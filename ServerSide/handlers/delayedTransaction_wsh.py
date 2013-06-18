@@ -1,7 +1,7 @@
 from mod_python import apache
 from utils.FileProcessors import FileProcessor
 from Queue import Queue
-
+import utils.Logger as logger
 import logging
 import time
 from utils.KillableListenThread import KillableListenThread
@@ -19,7 +19,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.info(NAME+ "Server dostal zgloszenie")
+	logger.logImportant(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	paramsDictionary["SOCKET"] = request.ws_stream
