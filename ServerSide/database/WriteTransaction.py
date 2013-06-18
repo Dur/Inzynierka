@@ -55,12 +55,16 @@ class WriteTransaction:
 
 
 	def executeTransaction(self, cursor, command):
+		logger.logImportant(NAME + "Rozpoczynanie transakcji zapisu")
 		if self.chceckTransactionPossibility() == True:
 			ticket = self.getTicket()
+			logger.logImportant(NAME + "Mam: " + ticket + " Chce: " + self.readTempVars()[EXPECTED_TICKET] )
 
 			if self.readTempVars()[EXPECTED_TICKET] == ticket:
-				return self.runNormalTransaction(cursor, command, ticket)
+				logger.logImportant(NAME + "Rozpoczynanie normalnej transakcji")
+				return self.runNormalTransaction(cursor, command)
 			else:
+				logger.logImportant(NAME + "Rozpoczynanie odroczonej transakcji")
 				return self.runDelayedTransaction(cursor, command, ticket)
 		else:
 			return CONNECTION_PROBLEM_ERROR
@@ -70,8 +74,8 @@ class WriteTransaction:
 			cursor.execute(command)
 		except MySQLdb.Error, e:
 			cursor.execute("rollback")
-			logger.logError(NAME + "Rzucilo wyjatkiem SQL")
-			logger.logError(NAME + "%d %s" % (e.args[0], e.args[1]))
+			logger.logImportant(NAME + "Rzucilo wyjatkiem SQL")
+			logger.logImportant(NAME + "%d %s" % (e.args[0], e.args[1]))
 			return "%d %s" % (e.args[0], e.args[1])
 
 		self.initialise()

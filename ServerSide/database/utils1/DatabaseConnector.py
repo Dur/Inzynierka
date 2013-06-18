@@ -53,12 +53,12 @@ class DatabaseConnector:
 			operation = splitedLine[0]
 
 			if operation.upper() != SELECT_OPERATION:
-				logging.info(NAME + "Klient wykonuje transakcje zapisu" )
+				logger.logImportant(NAME + "Klient wykonuje transakcje zapisu" )
 				if self.writeTransaction == None:
 					self.writeTransaction = WriteTransaction(paramsDictionary)
 				return self.writeTransaction.executeTransaction(self.cursor, command)
 			else:
-				logging.info(NAME + "Klient wykonuje transakcje odczytu" )
+				logger.logImportant(NAME + "Klient wykonuje transakcje odczytu" )
 				if self.readTransaction == None:
 					self.readTransaction = ReadTransaction(paramsDictionary)
 				return self.readTransaction.executeTransaction(self.cursor, command)

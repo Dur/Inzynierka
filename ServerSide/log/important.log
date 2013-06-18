@@ -9,3 +9,90 @@
 06/12/13 21:42:38 127.0.0.1 mama
 06/12/13 21:42:46 127.0.0.1 nowy log
 06/12/13 21:47:36 192.168.56.103 nowy log po stronie serwera
+06/18/13 20:49:21 127.0.0.1 dbQuery_wsh: Server dostal zgloszenie od klienta
+06/18/13 20:49:22 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/18/13 20:49:31 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104']
+06/18/13 20:49:31 127.0.0.1 WriteTransaction: mniej niz polowa serwerow aktywna
+06/18/13 20:49:31 127.0.0.1 dbQuery_wsh: wynik zapytania Sorry, but server is temporary unavailable, please try again later
+06/18/13 20:49:31 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje odczytu
+06/18/13 20:49:31 127.0.0.1 dbQuery_wsh: wynik zapytania Sorry, but server is temporary unavailable, please try again later
+06/18/13 20:49:31 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/18/13 20:49:31 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/18/13 20:49:31 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/18/13 20:49:31 127.0.0.1 Lokalna wersja danych = 20
+06/18/13 20:49:31 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/18/13 20:49:31 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/18/13 20:49:31 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/18/13 20:49:31 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/18/13 20:49:31 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 13
+06/18/13 20:49:31 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL WriteTransaction instance has no attribute 'initaliseDelayed'
+06/18/13 20:49:31 127.0.0.1 dbQuery_wsh: wynik zapytania -1
+06/18/13 20:52:50 127.0.0.1 dbQuery_wsh: Server dostal zgloszenie od klienta
+06/18/13 20:52:51 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/18/13 20:52:51 127.0.0.1 Lokalna wersja danych = 20
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/18/13 20:52:51 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/18/13 20:52:51 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL WriteTransaction instance has no attribute 'initaliseDelayed'
+06/18/13 20:52:51 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 2
+06/18/13 20:52:51 127.0.0.1 dbQuery_wsh: wynik zapytania -1
+06/18/13 20:52:51 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje odczytu
+06/18/13 20:52:51 127.0.0.1 dbQuery_wsh: wynik zapytania ()
+06/18/13 20:52:51 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/18/13 20:52:51 127.0.0.1 Lokalna wersja danych = 20
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/18/13 20:52:51 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/18/13 20:52:51 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/18/13 20:52:51 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL WriteTransaction instance has no attribute 'initaliseDelayed'
+06/18/13 20:52:51 127.0.0.1 dbQuery_wsh: wynik zapytania -1
+06/18/13 20:52:51 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 3
+06/18/13 20:53:58 127.0.0.1 dbQuery_wsh: Server dostal zgloszenie od klienta
+06/18/13 20:53:58 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/18/13 20:54:03 127.0.0.1 Lokalna wersja danych = 20
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/18/13 20:54:03 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/18/13 20:54:03 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 3
+06/18/13 20:54:03 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL WriteTransaction instance has no attribute 'initaliseDelayed'
+06/18/13 20:54:03 127.0.0.1 dbQuery_wsh: wynik zapytania -1
+06/18/13 20:54:03 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje odczytu
+06/18/13 20:54:03 127.0.0.1 dbQuery_wsh: wynik zapytania ()
+06/18/13 20:54:03 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/18/13 20:54:03 127.0.0.1 Lokalna wersja danych = 20
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/18/13 20:54:03 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/18/13 20:54:03 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/18/13 20:54:03 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 4
+06/18/13 20:54:03 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL WriteTransaction instance has no attribute 'initaliseDelayed'
+06/18/13 20:54:03 127.0.0.1 dbQuery_wsh: wynik zapytania -1
+06/18/13 21:02:42 127.0.0.1 dbQuery_wsh: Server dostal zgloszenie od klienta
+06/18/13 21:02:43 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/18/13 21:02:53 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL Timeout occured.
+06/18/13 21:02:53 127.0.0.1 dbQuery_wsh: wynik zapytania -1
+06/18/13 21:05:44 127.0.0.1 dbQuery_wsh: Server dostal zgloszenie od klienta
+06/18/13 21:05:44 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/18/13 21:05:44 127.0.0.1 WriteTransaction: Rozpoczynanie transakcji zapisu
+06/18/13 21:05:44 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/18/13 21:05:44 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/18/13 21:05:44 127.0.0.1 Lokalna wersja danych = 20
+06/18/13 21:05:44 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/18/13 21:05:44 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/18/13 21:05:44 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/18/13 21:05:44 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/18/13 21:05:44 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 2
+06/18/13 21:05:44 127.0.0.1 WriteTransaction: Mam: 2 Chce: 2
+06/18/13 21:05:44 127.0.0.1 WriteTransaction: Rozpoczynanie normalnej transakcji
+06/18/13 21:05:44 127.0.0.1 dbQuery_wsh: wynik zapytania -1
+06/18/13 21:05:44 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL runNormalTransaction() takes exactly 3 arguments (4 given)

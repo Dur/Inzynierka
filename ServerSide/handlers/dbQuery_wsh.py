@@ -3,6 +3,7 @@ from mod_python import apache
 from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
 from utils.filelock import FileLock
+import utils.Logger as logger
 
 ERROR = -1
 NAME = "dbQuery_wsh: "
@@ -14,7 +15,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.info(NAME+ "Server dostal zgloszenie od klienta")
+	logger.logImportant(NAME+ "Server dostal zgloszenie od klienta")
 
 	paramsDictionary = {}
 	paramsDictionary["REQUEST"] = request
@@ -52,11 +53,11 @@ def web_socket_transfer_data(request):
 				lock.acquire()
 				output = db.executeSQL(query, paramsDictionary)
 				lock.release()
-				logging.info(NAME + "wynik zapytania " + str(output))
+				logger.logImportant(NAME + "wynik zapytania " + str(output))
 				request.ws_stream.send_message(str(output))
 
 		except Exception, e:
-			logging.error(NAME + "ERROR w trakcie odbierania wiadomosci " + e.message)
+			logger.logImportant(NAME + "ERROR w trakcie odbierania wiadomosci " + e.message)
 			db.closeConnection()
 			if lock.is_locked:
 				lock.release()
