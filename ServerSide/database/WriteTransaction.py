@@ -130,7 +130,7 @@ class WriteTransaction:
 		cursor.execute(self.generateInsertToDataVersions(command))
 		cursor.execute(COMMIT)
 		self.insertNewDataVersions()
-		TicketUtil.setNextExpectedTicket()
+		TicketUtil.setNextExpectedTicket(ticket)
 		logger.logImportant(NAME + "Transakcja zakonczona powodzeniem")
 		return OK_MESSAGE
 

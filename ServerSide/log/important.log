@@ -161,3 +161,63 @@
 06/18/13 21:10:36 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL WriteTransaction instance has no attribute 'initaliseDelayed'
 06/18/13 21:10:36 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
 06/19/13 20:45:26 127.0.0.1 nowy log
+06/23/13 12:36:49 127.0.0.1 dbQuery_wsh: Server dostal zgloszenie od klienta
+06/23/13 12:36:49 127.0.0.1 dbQuery_wsh: Server dostal zgloszenie od klienta
+06/23/13 12:36:51 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/23/13 12:36:52 127.0.0.1 WriteTransaction: Rozpoczynanie transakcji zapisu
+06/23/13 12:36:53 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/23/13 12:36:53 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/23/13 12:36:53 127.0.0.1 Lokalna wersja danych = 21
+06/23/13 12:36:53 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/23/13 12:36:53 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/23/13 12:36:53 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/23/13 12:36:53 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/23/13 12:36:53 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 2
+06/23/13 12:36:53 127.0.0.1 WriteTransaction: Mam: 2 Chce: 2
+06/23/13 12:36:53 127.0.0.1 WriteTransaction: Rozpoczynanie normalnej transakcji
+06/23/13 12:36:53 192.168.56.103 writeTransaction_wsh: Server dostal zgloszenie
+06/23/13 12:36:53 127.0.0.1 WriteTransactionThread: PrepareMethod
+06/23/13 12:36:53 127.0.0.1 WriteTransactionThread: Otrzymalem zapytanie sql do wykonania insert into datastore values(3,'test',3)
+06/23/13 12:36:53 192.168.56.103 writeTransaction_wsh: Prepare
+06/23/13 12:36:53 192.168.56.103 writeTransaction_wsh: Otrzymano komende do wykonania insert into datastore values(3,'test',3)
+06/23/13 12:36:53 192.168.56.104 writeTransaction_wsh: Server dostal zgloszenie
+06/23/13 12:36:53 127.0.0.1 WriteTransactionThread: PrepareMethod
+06/23/13 12:36:53 127.0.0.1 WriteTransactionThread: Otrzymalem zapytanie sql do wykonania insert into datastore values(3,'test',3)
+06/23/13 12:36:54 192.168.56.104 writeTransaction_wsh: Prepare
+06/23/13 12:36:54 192.168.56.104 writeTransaction_wsh: Otrzymano komende do wykonania insert into datastore values(3,'test',3)
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Zdalny serwer odpowiedzial: READY_COMMIT
+06/23/13 12:36:54 192.168.56.103 writeTransaction_wsh: Wysylanie READY_COMMIT
+06/23/13 12:36:54 192.168.56.104 writeTransaction_wsh: Wysylanie READY_COMMIT
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Zdalny serwer odpowiedzial: READY_COMMIT
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Wybudzanie watku transakcji
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Odebrano komende GLOBAL_COMMIT
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: GlobalCommitMethod
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Odebrano komende GLOBAL_COMMIT
+06/23/13 12:36:54 192.168.56.103 writeTransaction_wsh: Otrzymano wiadomosc GLOBAL_COMMIT
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: GlobalCommitMethod
+06/23/13 12:36:54 192.168.56.104 writeTransaction_wsh: Otrzymano wiadomosc GLOBAL_COMMIT
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Zdalny serwer odpowiedzial: OK
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Zdalny serwer odpowiedzial: OK
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Wybudzanie watku transakcji
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Wybudzanie watku transakcji
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Odebrano komende INTERRUPT
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Konice watku transakcji zapisu
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Odebrano komende INTERRUPT
+06/23/13 12:36:54 127.0.0.1 WriteTransactionThread: Konice watku transakcji zapisu
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Nowa wersja danych = 22
+06/23/13 12:36:54 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/23/13 12:36:54 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL setNextExpectedTicket() takes exactly 1 argument (0 given)
+06/23/13 12:36:54 127.0.0.1 dbQuery_wsh: wynik zapytania -1
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Rozpoczynanie transakcji zapisu
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/23/13 12:36:54 127.0.0.1 Lokalna wersja danych = 22
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/23/13 12:36:54 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/23/13 12:36:54 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 3
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Mam: 3 Chce: 2
+06/23/13 12:36:54 127.0.0.1 WriteTransaction: Rozpoczynanie odroczonej transakcji
+06/23/13 12:36:54 127.0.0.1 DatabaseConnector: Error w trakcie wykonywania zapytania SQL WriteTransaction instance has no attribute 'initaliseDelayed'
+06/23/13 12:36:54 127.0.0.1 dbQuery_wsh: wynik zapytania -1

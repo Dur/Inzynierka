@@ -103,14 +103,15 @@ def globalCommit(paramsDictionary, db, lock):
 		db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
 		db.executeQueryWithoutTransaction(COMMIT)
 		insertNewDataVersions(servers, paramsDictionary)
+		logger.logImportant(NAME + "Przed pobraniem obecnego biletu" )
 		ticket = socket.receive_message()
 		TicketUtil.setNextExpectedTicket(ticket)
-		logger.logImportant(NAME + "Next Ticket: " + TicketUtil.getCurrentExpectedTicket() )
+		logger.logImportant(NAME + "Kolejny bilet: " + TicketUtil.getCurrentExpectedTicket() )
 		socket.send_message(OK)
 		if lock.is_locked:
 			lock.release()
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logImportant(NAME + e.message)
 		if lock.is_locked:
 			lock.release()
 
