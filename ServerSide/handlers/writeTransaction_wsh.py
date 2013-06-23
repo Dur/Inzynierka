@@ -143,6 +143,7 @@ def generateInsertToDataVersions(paramsDictionary):
 	command = command.replace('\'', '\\\'')
 	myDataVersion = dataVersions[LOCALHOST_NAME]
 	insert = "INSERT INTO " +  paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(myDataVersion)+1)) + ",\'" + command + "\')"
+	logger.logImportant(NAME + "wygenerowano komende insert " + insert)
 	return insert
 
 def insertNewDataVersions(serversList, paramsDictionary):
