@@ -135,10 +135,10 @@ def globalAbort(paramsDictionary, db, lock):
 			lock.release()
 
 def generateInsertToDataVersions(paramsDictionary):
-	logging.info(NAME + "Metoda generujaca wiersz dla tabeli z wersjami")
+	logger.logImportant(NAME + "Metoda generujaca wiersz dla tabeli z wersjami")
 	versionProcessor = FileProcessor(paramsDictionary["HOME_PATH"] + "ServerSide/config/database_config/data_version.dat")
 	dataVersions = versionProcessor.readFile()
-	logging.info(NAME + dataVersions[LOCALHOST_NAME])
+	logger.logImportant(NAME + dataVersions[LOCALHOST_NAME])
 	command = paramsDictionary["COMMAND"]
 	command = command.replace('\'', '\\\'')
 	myDataVersion = dataVersions[LOCALHOST_NAME]
