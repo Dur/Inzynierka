@@ -400,3 +400,48 @@
 06/23/13 13:06:51 127.0.0.1 WriteTransactionThread: Wybudzanie watku transakcji
 06/23/13 13:06:51 127.0.0.1 WriteTransactionThread: Odebrano komende INTERRUPT
 06/23/13 13:06:51 127.0.0.1 WriteTransactionThread: Konice watku transakcji zapisu
+06/23/13 13:10:22 127.0.0.1 dbQuery_wsh: Server dostal zgloszenie od klienta
+06/23/13 13:10:22 127.0.0.1 DatabaseConnector: Klient wykonuje transakcje zapisu
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Rozpoczynanie transakcji zapisu
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Aktywne serwery: ['192.168.56.104', '192.168.56.103']
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Wicej niz polowa serwerow aktywna
+06/23/13 13:10:22 127.0.0.1 Lokalna wersja danych = 26
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Zgodnych wersji: 3
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Wszystkich wersji: 0
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Mozna wykonac transakcje zapisu
+06/23/13 13:10:22 127.0.0.1 ticket_wsh: Zgloszenie po bilet od 127.0.0.1
+06/23/13 13:10:22 127.0.0.1 ticket_wsh: 127.0.0.1 otrzymal bilet 6
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Mam: 6 Chce: 6
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Rozpoczynanie normalnej transakcji
+06/23/13 13:10:22 192.168.56.103 writeTransaction_wsh: Server dostal zgloszenie
+06/23/13 13:10:22 192.168.56.104 writeTransaction_wsh: Server dostal zgloszenie
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: PrepareMethod
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: PrepareMethod
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Otrzymalem zapytanie sql do wykonania insert into datastore values(3,'test',3)
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Otrzymalem zapytanie sql do wykonania insert into datastore values(3,'test',3)
+06/23/13 13:10:22 192.168.56.103 writeTransaction_wsh: Prepare
+06/23/13 13:10:22 192.168.56.103 writeTransaction_wsh: Otrzymano komende do wykonania insert into datastore values(3,'test',3)
+06/23/13 13:10:22 192.168.56.104 writeTransaction_wsh: Otrzymano komende do wykonania insert into datastore values(3,'test',3)
+06/23/13 13:10:22 192.168.56.104 writeTransaction_wsh: Prepare
+06/23/13 13:10:22 192.168.56.103 writeTransaction_wsh: Wysylanie READY_COMMIT
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Zdalny serwer odpowiedzial: READY_COMMIT
+06/23/13 13:10:22 192.168.56.104 writeTransaction_wsh: Wysylanie READY_COMMIT
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Zdalny serwer odpowiedzial: READY_COMMIT
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Wybudzanie watku transakcji
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Odebrano komende GLOBAL_COMMIT
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Odebrano komende GLOBAL_COMMIT
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: GlobalCommitMethod
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: GlobalCommitMethod
+06/23/13 13:10:22 192.168.56.103 writeTransaction_wsh: Otrzymano wiadomosc GLOBAL_COMMIT
+06/23/13 13:10:22 192.168.56.104 writeTransaction_wsh: Otrzymano wiadomosc GLOBAL_COMMIT
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Nowa wersja danych = 27
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Zdalny serwer odpowiedzial: OK
+06/23/13 13:10:22 127.0.0.1 WriteTransaction: Transakcja zakonczona powodzeniem
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Zdalny serwer odpowiedzial: OK
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Wybudzanie watku transakcji
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Odebrano komende INTERRUPT
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Wybudzanie watku transakcji
+06/23/13 13:10:22 127.0.0.1 dbQuery_wsh: wynik zapytania Query executed successfully
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Odebrano komende INTERRUPT
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Konice watku transakcji zapisu
+06/23/13 13:10:22 127.0.0.1 WriteTransactionThread: Konice watku transakcji zapisu
