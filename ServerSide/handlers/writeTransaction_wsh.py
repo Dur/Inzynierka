@@ -1,4 +1,5 @@
 from mod_python import apache
+from database.utils1 import TicketUtil
 from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor
@@ -102,6 +103,9 @@ def globalCommit(paramsDictionary, db, lock):
 		db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
 		db.executeQueryWithoutTransaction(COMMIT)
 		insertNewDataVersions(servers, paramsDictionary)
+		ticket = socket.receive_message()
+		TicketUtil.setNextExpectedTicket(ticket)
+		logger.logImportant(NAME + "Next Ticket: " + TicketUtil.getCurrentExpectedTicket() )
 		socket.send_message(OK)
 		if lock.is_locked:
 			lock.release()
@@ -116,7 +120,10 @@ def globalAbort(paramsDictionary, db, lock):
 		socket = paramsDictionary["SOCKET"]
 		logger.logImportant(NAME + "Orzymano wiadomosc GLOBAL_ABORT")
 		db.executeQueryWithoutTransaction(ROLLBACK)
+		ticket = socket.receive_message()
+		TicketUtil.skipTicket(ticket)
 		socket.send_message(OK)
+		logger.logImportant(NAME + "Next Ticket: " + TicketUtil.getCurrentExpectedTicket() )
 		if lock.is_locked:
 			lock.release()
 	except Exception, e:

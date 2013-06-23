@@ -1,5 +1,6 @@
 import MySQLdb
 from Queue import Queue
+from database.utils1 import TicketUtil
 import utils.Logger as logger
 from threading import Event
 import math
@@ -17,6 +18,7 @@ PREPARE_MESSAGE = "PREPARE"
 GLOBAL_COMMIT = "GLOBAL_COMMIT"
 ABORT = "ABORT"
 GLOBAL_ABORT = "GLOBAL_ABORT"
+SKIP_TICKETS = "skipTickets"
 OK = "OK"
 COMMIT = "commit"
 WAIT = "WAIT"
@@ -62,14 +64,14 @@ class WriteTransaction:
 
 			if self.readTempVars()[EXPECTED_TICKET] == ticket:
 				logger.logImportant(NAME + "Rozpoczynanie normalnej transakcji")
-				return self.runNormalTransaction(cursor, command)
+				return self.runNormalTransaction(cursor, command, ticket)
 			else:
 				logger.logImportant(NAME + "Rozpoczynanie odroczonej transakcji")
 				return self.runDelayedTransaction(cursor, command, ticket)
 		else:
 			return CONNECTION_PROBLEM_ERROR
 
-	def runNormalTransaction(self, cursor, command):
+	def runNormalTransaction(self, cursor, command, ticket):
 		try:
 			cursor.execute(command)
 		except MySQLdb.Error, e:
@@ -98,6 +100,7 @@ class WriteTransaction:
 			logger.logImportant(NAME + "Wysylanie GLOBA_ABOT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_ABORT)
+				self.connectionsQueues[address].put(ticket)
 				self.connectionsQueues[address].put(STOP_THREAD)
 			cursor.execute("rollback")
 			return CONNECTION_PROBLEM_ERROR
@@ -109,6 +112,7 @@ class WriteTransaction:
 				logger.logImportant(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
 				for address in self.activeServers:
 					self.connectionsQueues[address].put(GLOBAL_ABORT)
+					self.connectionsQueues[address].put(ticket)
 					self.connectionsQueues[address].put(STOP_THREAD)
 				cursor.execute("rollback")
 				return CONNECTION_PROBLEM_ERROR
@@ -120,11 +124,13 @@ class WriteTransaction:
 		for address in self.activeServers:
 			self.connectionsQueues[address].put(GLOBAL_COMMIT)
 			self.connectionsQueues[address].put(activeServersString)
+			self.connectionsQueues[address].put(ticket)
 			self.connectionsQueues[address].put(STOP_THREAD)
 		logging.info(NAME + "przygotowanie insertu do tabeli z wersjami")
 		cursor.execute(self.generateInsertToDataVersions(command))
 		cursor.execute(COMMIT)
 		self.insertNewDataVersions()
+		TicketUtil.setNextExpectedTicket()
 		logger.logImportant(NAME + "Transakcja zakonczona powodzeniem")
 		return OK_MESSAGE
 
@@ -258,3 +264,12 @@ class WriteTransaction:
 		params = self.tempProcessor.readFile()
 		self.tempProcessor.unlockFile()
 		return params
+
+	def getNextExpectedTicket(self, ticket):
+		ticket = int(ticket)
+		toSkip = self.readTempVars[SKIP_TICKETS]
+		if(toSkip != None and len(toSkip) != 0):
+			for single in toSkip.split(","):
+				if int(single)== ticket:
+					ticket = ticket + 1
+		tickets = self.readTempVars()

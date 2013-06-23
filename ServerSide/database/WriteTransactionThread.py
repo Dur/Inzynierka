@@ -78,6 +78,8 @@ class WriteTransactionThread(Thread):
 		self.connection.send_message(GLOBAL_COMMIT)
 		command = self.inputQueue.get(True, None)
 		self.connection.send_message(command)
+		ticket = self.inputQueue.get(True, None)
+		self.connection.send_message(ticket)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
 		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
@@ -87,6 +89,8 @@ class WriteTransactionThread(Thread):
 	def globalAbort(self):
 		logger.logImportant(NAME + "GlobalAbortMethod")
 		self.connection.send_message(GLOBAL_ABORT)
+		ticket = self.inputQueue.get(True, None)
+		self.connection.send_message(ticket)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
 		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
