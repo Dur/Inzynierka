@@ -57,7 +57,7 @@ def web_socket_transfer_data(request):
 		if lock.is_locked:
 			lock.release()
 		return apache.HTTP_OK
-	logger.logImportant(NAME + "Zakonczono wymiane danych z klientem #########")
+	logger.logImportant(NAME + "Klient zakonczyl transakcje")
 	return apache.HTTP_OK
 
 def prepare(paramsDictionary, db, lock):
@@ -66,7 +66,7 @@ def prepare(paramsDictionary, db, lock):
 		socket = paramsDictionary["SOCKET"]
 		command = socket.receive_message()
 		paramsDictionary["COMMAND"] = command
-		logger.logImportant(NAME + "Otrzymano komende do wykonania " + command)
+		logger.logImportant(NAME + "Wezel otrzymal komende do wykonania " + command)
 		if db.initConnection() == ERROR:
 			logging.error(NAME + "Nie moge polaczyc sie z baza danych")
 			socket.send_message(ABORT)
@@ -84,7 +84,7 @@ def prepare(paramsDictionary, db, lock):
 			logger.logImportant(NAME + "Nie moge wykonac polecenia")
 			lock.release()
 			return
-		logger.logImportant(NAME + "Wysylanie READY_COMMIT")
+		logger.logImportant(NAME + "Wysylanie READY_COMMIT do koordynatora")
 		socket.send_message(READY_COMMIT)
 		return
 	except Exception, e:
@@ -96,19 +96,15 @@ def globalCommit(paramsDictionary, db, lock):
 	try:
 		socket = paramsDictionary["SOCKET"]
 		servers = socket.receive_message()
-		logging.info(NAME + "Mam serwery " + servers)
+		logger.logInfo(NAME + "Mam serwery " + servers)
 		servers = servers.split(':')
 		servers.append(paramsDictionary["CLIENT_ADDRESS"])
-		logger.logImportant(NAME + "Otrzymano wiadomosc GLOBAL_COMMIT")
+		logger.logImportant(NAME + "Otrzymano polecenie GLOBAL_COMMIT")
 		db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
-		logger.logImportant(NAME + "Wykonano zapis 1")
 		db.executeQueryWithoutTransaction(COMMIT)
-		logger.logImportant(NAME + "Wykonano commit")
 		insertNewDataVersions(servers, paramsDictionary)
-		logger.logImportant(NAME + "Przed pobraniem obecnego biletu" )
 		ticket = socket.receive_message()
 		TicketUtil.setNextExpectedTicket(ticket)
-		logger.logImportant(NAME + "Kolejny bilet: " + TicketUtil.getCurrentExpectedTicket() )
 		socket.send_message(OK)
 		if lock.is_locked:
 			lock.release()
@@ -121,12 +117,11 @@ def globalCommit(paramsDictionary, db, lock):
 def globalAbort(paramsDictionary, db, lock):
 	try:
 		socket = paramsDictionary["SOCKET"]
-		logger.logImportant(NAME + "Orzymano wiadomosc GLOBAL_ABORT")
+		logger.logImportant(NAME + "Orzymano polecenie GLOBAL_ABORT")
 		db.executeQueryWithoutTransaction(ROLLBACK)
 		ticket = socket.receive_message()
 		TicketUtil.skipTicket(ticket)
 		socket.send_message(OK)
-		logger.logImportant(NAME + "Next Ticket: " + TicketUtil.getCurrentExpectedTicket() )
 		if lock.is_locked:
 			lock.release()
 	except Exception, e:
@@ -135,35 +130,35 @@ def globalAbort(paramsDictionary, db, lock):
 			lock.release()
 
 def generateInsertToDataVersions(paramsDictionary):
-	logger.logImportant(NAME + "Metoda generujaca wiersz dla tabeli z wersjami")
+	logger.logInfo(NAME + "Metoda generujaca wiersz dla tabeli z wersjami")
 	versionProcessor = FileProcessor(paramsDictionary["HOME_PATH"] + "ServerSide/config/database_config/data_version.dat")
 	dataVersions = versionProcessor.readFile()
-	logger.logImportant(NAME + dataVersions[LOCALHOST_NAME])
+	logger.logInfo(NAME + dataVersions[LOCALHOST_NAME])
 	command = paramsDictionary["COMMAND"]
 	command = command.replace('\'', '\\\'')
 	myDataVersion = dataVersions[LOCALHOST_NAME]
 	insert = "INSERT INTO " +  paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(myDataVersion)+1)) + ",\'" + command + "\')"
-	logger.logImportant(NAME + "wygenerowano komende insert " + insert)
+	logger.logInfo(NAME + "wygenerowano komende insert " + insert)
 	return insert
 
 def insertNewDataVersions(serversList, paramsDictionary):
 	try:
 		homePath = paramsDictionary["HOME_PATH"]
-		logging.info(NAME + "Metoda wstawiajaca wiersz do tabeli z wierszami")
+		logger.logInfo(NAME + "Metoda wstawiajaca wiersz do tabeli z wierszami")
 		versionProcessor = FileProcessor(homePath + "ServerSide/config/database_config/data_version.dat")
 		versionProcessor.lockFile()
-		logging.info(NAME + "Plik z wersjami zablokowany")
-		logging.info(NAME + "Zapisywanie do pliku z wersjami")
+		logger.logInfo(NAME + "Plik z wersjami zablokowany")
+		logger.logInfo(NAME + "Zapisywanie do pliku z wersjami")
 		versions = versionProcessor.readFile()
 		newVersion = str(int(versions[LOCALHOST_NAME]) +1)
 		for address in serversList:
-			logging.info(NAME + "Dla adresu: " + address)
+			logger.logInfo(NAME + "Dla adresu: " + address)
 			if(address in versions):
 				versions[address] = newVersion
-				logging.info(NAME + "Zapisano " + address )
+				logger.logInfo(NAME + "Zapisano " + address )
 		versions[LOCALHOST_NAME] = newVersion
 		versionProcessor.writeToFile(versions)
 		versionProcessor.unlockFile()
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logImportant(NAME + e.message)
 		versionProcessor.unlockFile()

@@ -4,7 +4,6 @@ from mod_python import apache
 import time
 from connections.Connection import Connection
 from connections.ListenSocket import ListenSocket
-from connections.PingConnection import PingConnection
 from utils.FileProcessors import FileProcessor
 from utils.ModulesLoader import ModulesLoader
 from utils.ConfigurationReader import ConfigurationReader

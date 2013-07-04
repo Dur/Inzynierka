@@ -1,7 +1,7 @@
 from utils.FileProcessors import FileProcessor
 
 __author__ = 'dur'
-import logging
+import utils.Logger as logger
 import string
 import random
 
@@ -20,16 +20,16 @@ def checkOldPassword(paramsDictionary, oldPass):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	logging.info(NAME + "Otrzymalem stare haslo od " + remoteAddress)
+	logger.logInfo(NAME + "Otrzymalem stare haslo od " + remoteAddress)
 	processor = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 	passwords = processor.readFile()
-	logging.info(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + oldPass )
+	logger.logInfo(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + oldPass )
 	if(passwords[remoteAddress] == oldPass ):
-		logging.info(NAME + "Haslo zgodne")
+		logger.logInfo(NAME + "Haslo zgodne")
 		global generatedPass
 		generatedPass = generatePassword(PASSWORD_LENGTH)
 		socket.send_message(RES_MODULE+NEW+"%"+generatedPass)
-		logging.info(NAME + "Wyslalem nowe haslo")
+		logger.logInfo(NAME + "Wyslalem nowe haslo")
 		global expectedMessage
 		expectedMessage = ACK
 
@@ -38,14 +38,14 @@ def acknowlage(paramsDictionary, argument):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	logging.info(NAME + "dostalem potwierdzenie zmiany hasla od " + remoteAddress)
+	logger.logInfo(NAME + "dostalem potwierdzenie zmiany hasla od " + remoteAddress)
 	file = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 	file.lockFile()
 	passwords = file.readFile()
 	passwords[remoteAddress] = generatedPass
 	file.writeToFile(passwords)
 	file.unlockFile()
-	logging.info(NAME + "Haslo zostalo zmienione")
+	logger.logInfo(NAME + "Haslo zostalo zmienione")
 	global expectedMessage
 	expectedMessage = OLD
 	global generatedPass

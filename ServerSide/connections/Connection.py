@@ -1,4 +1,4 @@
-import logging
+import utils.Logger as logger
 import socket
 from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
@@ -36,7 +36,7 @@ class Connection(object):
 		self.dictionary['resource'] = resource
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
-			logging.info(NAME + "connecting to " + host + ":" + str(port) + resource )
+			logger.logInfo(NAME + "connecting to " + host + ":" + str(port) + resource )
 			self._socket.connect((host, int(port)))
 			if self.dictionary.get('use_tls') == 'True':
 				self._socket = _TLSSocket(self._socket)
@@ -48,7 +48,7 @@ class Connection(object):
 
 			self._handshake.handshake()
 
-			logging.info(NAME + 'Nawiazano polaczenie z ' + host+":"+str(port))
+			logger.logInfo(NAME + 'Nawiazano polaczenie z ' + host+":"+str(port))
 
 			request = ClientRequest(self._socket)
 
@@ -63,8 +63,8 @@ class Connection(object):
 			self._stream = Stream(request, stream_option)
 			return OK_FLAG
 		except Exception, e:
-			logging.error(NAME+"Wystapil nieznany problem")
-			logging.error(NAME + e.message)
+			logger.logError(NAME+"Wystapil problem")
+			logger.logError(NAME + e.message)
 			return ERROR_FLAG
 
 	def send_message(self, message):

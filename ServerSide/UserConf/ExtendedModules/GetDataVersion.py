@@ -1,7 +1,7 @@
 from utils.FileProcessors import FileProcessor
 
 __author__ = 'dur'
-import logging
+import utils.Logger as logger
 
 
 # modul sluzacy do wymiany informacji o wersji danych na kazdym serwerze
@@ -12,7 +12,7 @@ GET_DATA_VERSION = "DATA_VERSION?"
 NAME = "GetDataVersion: "
 
 def execute(paramsDictionary, message):
-	logging.info(NAME + "Wewnatrz modulu wymiany wersji danych")
+	logger.logInfo(NAME + "Wewnatrz modulu wymiany wersji danych")
 	if paramsDictionary["CONNECTION_MODE"] == True:
 		dataVersionConnectionMode(paramsDictionary)
 	else:
@@ -24,11 +24,11 @@ def dataVersionConnectionMode(paramsDictionary):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	logging.info(NAME + "Pobieranie wersji danych")
+	logger.logInfo(NAME + "Pobieranie wersji danych")
 	socket.send_message(GET_DATA_VERSION)
 
 	clientVersion = socket.receive_message()
-	logging.info(NAME + "Otrzymano wersje danych klienta " + clientVersion)
+	logger.logInfo(NAME + "Otrzymano wersje danych klienta " + clientVersion)
 
 	processor = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
 	dataVersions = processor.readFile()
@@ -41,7 +41,7 @@ def dataVersionConnectionMode(paramsDictionary):
 
 	if socket.receive_message() == GET_DATA_VERSION:
 		socket.send_message(temp[LOCALHOST])
-		logging.info(NAME + "Wyslano wersje danych do klienta " + temp[LOCALHOST])
+		logger.logInfo(NAME + "Wyslano wersje danych do klienta " + temp[LOCALHOST])
 
 
 def dataVersionRequestMode(paramsDictionary):
@@ -51,17 +51,17 @@ def dataVersionRequestMode(paramsDictionary):
 	homePath = paramsDictionary["HOME_PATH"]
 
 	if socket.receive_message() == GET_DATA_VERSION:
-		logging.info(NAME + "Otrzymano zapytanie o wersje danych")
+		logger.logInfo(NAME + "Otrzymano zapytanie o wersje danych")
 		processor = FileProcessor(homePath+"ServerSide/config/database_config/data_version.dat")
 		dataVersions = processor.readFile()
 		socket.send_message(dataVersions[LOCALHOST])
-		logging.info(NAME + "Wysylano wersji danych " + dataVersions[LOCALHOST])
+		logger.logInfo(NAME + "Wysylano wersji danych " + dataVersions[LOCALHOST])
 
 		socket.send_message(GET_DATA_VERSION)
 
 		clientVersion = socket.receive_message()
 		dataVersions[remoteAddress] = clientVersion
-		logging.info(NAME + "Otrzymano wersje danych klienta " + clientVersion)
+		logger.logInfo(NAME + "Otrzymano wersje danych klienta " + clientVersion)
 
 		processor.lockFile()
 		temp = processor.readFile()

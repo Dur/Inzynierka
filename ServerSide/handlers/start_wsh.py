@@ -1,5 +1,4 @@
 from connections.Connection import Connection
-from connections.PingConnection import PingConnection
 import time
 from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor

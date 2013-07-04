@@ -1,11 +1,11 @@
-import logging
 from utils.FileProcessors import FileProcessor
+import utils.Logger as logger
 
 __author__ = 'dur'
 NAME = "ResetServerState: "
 
 def execute(paramsDictionary, message):
-	logging.info(NAME + "Resetuje stan serwera")
+	logger.logInfo(NAME + "Resetuje stan serwera")
 	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	file.lockFile()
 	addresses = file.readFile()

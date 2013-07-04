@@ -20,5 +20,5 @@ import utils.Logger as logger
 # params = tempProcessor.readFile()
 # print(params)
 # tempProcessor.unlockFile()
-print TicketUtil.getCurrentExpectedTicket()
+print TicketUtil.setNextExpectedTicket(22)
 #TicketUtil.skipTicket(1)

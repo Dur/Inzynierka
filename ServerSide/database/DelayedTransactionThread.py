@@ -35,12 +35,12 @@ class DelayedTransactionThread(Thread):
 	def run(self):
 		try:
 			methodMapping = {SKIP : self.skip,
-			                 START : self.start,
+			                 START : self.startTransaction,
 			                 OK : self.ok}
 
 			self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/connection_config.conf")
 			if self.connection.connect(self.clientAddress, 80, RESOURCE) == OK_FLAG:
-				logging.info(NAME + "Polaczenie dla transakcji zapisu nawiazane")
+				logger.logImportant(NAME + "Polaczenie dla transakcji zapisu nawiazane")
 
 				command = self.inputQueue.get(True, None)
 				while command != STOP_THREAD:
@@ -54,13 +54,13 @@ class DelayedTransactionThread(Thread):
 				self.connection._do_closing_handshake()
 			logger.logImportant(NAME + "Konice watku transakcji zapisu")
 		except Exception, e:
-			logging.error(NAME + e.message )
+			logger.logImportant(NAME + e.message )
 
 	def skip(self):
 		logger.logImportant(NAME + "SkipMethod")
 		self.connection.send_message(SKIP)
 
-	def start(self):
+	def startTransaction(self):
 		logger.logImportant(NAME + "StartMethod")
 		ticket = self.inputQueue.get(True, None)
 		self.connection.send_message(ticket)
@@ -68,6 +68,7 @@ class DelayedTransactionThread(Thread):
 			answer = self.connection.get_message()
 		except Exception, e:
 			logging.error(NAME + e.message )
+			return
 		self.outputQueue.put(answer)
 		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():

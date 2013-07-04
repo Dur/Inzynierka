@@ -1,5 +1,5 @@
 from threading import Thread
-import logging
+import utils.Logger as logger
 
 __author__ = 'dur'
 
@@ -14,18 +14,18 @@ class ListenSocket( Thread ):
 
 	def run(self):
 		try:
-			logging.info(NAME+"wewnatrz watku")
+			logger.logInfo(NAME+"wewnatrz watku")
 			while( True ):
-				logging.info(NAME+"Oczekiwanie na wiadomosc")
+				logger.logInfo(NAME+"Oczekiwanie na wiadomosc")
 				received = self.paramsDictionary["SOCKET"].receive_message()
-				logging.info(NAME+"odebrano %s", received)
+				logger.logInfo(NAME+"odebrano %s", received)
 				if received != None:
 					self.dispatch(received)
 				else:
-					logging.error(NAME+"odebrano pusta wiadomosc")
+					logger.logError(NAME+"odebrano pusta wiadomosc")
 		except Exception, e:
-			logging.error(NAME+"Wystapil problem z polaczeniem")
-			logging.error(NAME + e.message)
+			logger.logError(NAME+"Wystapil problem z polaczeniem")
+			logger.logError(NAME + e.message)
 			raise Exception("Problem z polaczeniem w watku nasluchujacym")
 
 
@@ -37,6 +37,6 @@ class ListenSocket( Thread ):
 		else:
 			message = None
 		if( self.modules[module] != None ):
-			logging.info(NAME+"znaleziono modul odpowiadajacy za obsluge")
+			logger.logInfo(NAME+"znaleziono modul odpowiadajacy za obsluge")
 			for singleModule in self.modules[module]:
 				singleModule.execute(self.paramsDictionary, message)

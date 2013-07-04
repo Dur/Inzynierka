@@ -7,7 +7,6 @@ import math
 from database.DelayedTransactionThread import DelayedTransactionThread
 from database.WriteTransactionThread import WriteTransactionThread
 from utils.FileProcessors import FileProcessor
-from connections.Connection import Connection
 import logging
 
 __author__ = 'dur'
@@ -28,9 +27,10 @@ EXPECTED_TICKET = "expectedTicket"
 TICKET_PARAM = "ticketServer"
 SKIP = "SKIP"
 CONNECTION_PROBLEM_ERROR = "Sorry, but server is temporary unavailable, please try again later"
+START_TRANSACTION = "START"
+
 
 class WriteTransaction:
-
 	responseQueue = None
 	eventVariable = Event()
 	paramsDictionary = None
@@ -59,10 +59,10 @@ class WriteTransaction:
 	def executeTransaction(self, cursor, command):
 		logger.logImportant(NAME + "Rozpoczynanie transakcji zapisu")
 		if self.chceckTransactionPossibility() == True:
-			ticket = self.getTicket()
-			logger.logImportant(NAME + "Mam: " + ticket + " Chce: " + self.readTempVars()[EXPECTED_TICKET] )
+			ticket = TicketUtil.getTicket()
+			logger.logImportant(NAME + "Mam: " + ticket + " Chce: " + TicketUtil.readTempVars()[EXPECTED_TICKET])
 
-			if self.readTempVars()[EXPECTED_TICKET] == ticket:
+			if TicketUtil.readTempVars()[EXPECTED_TICKET] == ticket:
 				logger.logImportant(NAME + "Rozpoczynanie normalnej transakcji")
 				return self.runNormalTransaction(cursor, command, ticket)
 			else:
@@ -96,7 +96,7 @@ class WriteTransaction:
 		self.eventVariable.wait(int(self.waitForRemoteTime))
 		self.eventVariable.clear()
 		logging.info(NAME + "Serwer minal zmienna warunkowa")
-		if self.responseQueue.full() != True:
+		if not self.responseQueue.full():
 			logger.logImportant(NAME + "Wysylanie GLOBA_ABOT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_ABORT)
@@ -109,7 +109,8 @@ class WriteTransaction:
 			response = self.responseQueue.get_nowait()
 			logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
 			if response == ABORT:
-				logger.logImportant(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
+				logger.logImportant(
+					NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
 				for address in self.activeServers:
 					self.connectionsQueues[address].put(GLOBAL_ABORT)
 					self.connectionsQueues[address].put(ticket)
@@ -136,20 +137,22 @@ class WriteTransaction:
 
 	def runDelayedTransaction(self, cursor, command, ticket):
 
-		self.initaliseDelayed()
+		self.initialiseDelayed()
 
 		self.paramsDictionary["ACTIVE_SERVERS"] = self.activeServers
 		for address in self.activeServers:
+			self.connectionsQueues[address].put(START_TRANSACTION)
 			self.connectionsQueues[address].put(ticket)
 
 		logging.info(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
 		self.eventVariable.wait(int(self.waitForRemoteTime))
 		self.eventVariable.clear()
-		logging.info(NAME + "Serwer minal zmienna warunkowa")
-		if self.responseQueue.full() != True or self.readTempVars()[EXPECTED_TICKET] != ticket:
-			logging.error(NAME + "Wysylanie SKIP, nie wszystkie serwery odpowiedzialy w zadanym czasie")
+		logger.logImportant(NAME + "Serwer minal zmienna warunkowa")
+		if self.responseQueue.full() != True: ########### or TicketUtil.readTempVars()[EXPECTED_TICKET] != ticket:
+			logger.logImportant(NAME + "Wysylanie SKIP, nie wszystkie serwery odpowiedzialy w zadanym czasie")
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(SKIP)
+				self.connectionsQueues[address].put(ticket)
 				self.connectionsQueues[address].put(STOP_THREAD)
 			return CONNECTION_PROBLEM_ERROR
 
@@ -167,27 +170,32 @@ class WriteTransaction:
 			self.connectionsQueues[address].put(OK)
 			self.connectionsQueues[address].put(STOP_THREAD)
 
-		return self.runNormalTransaction(cursor, command)
+		return self.runNormalTransaction(cursor, command, ticket)
 
 	def initialise(self):
 		self.responseQueue = Queue(len(self.activeServers))
 		for address in self.activeServers:
 			requestQueue = Queue()
 			logging.info(NAME + "Adres przekazany do watku " + address)
-			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary, address)
+			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary,
+			                                address)
 			self.connectionsQueues[address] = requestQueue
 			self.threads[address] = thread
 			thread.start()
 
 	def initialiseDelayed(self):
+		logger.logImportant(NAME + "Inicjowanie transakcji odroczonej")
 		self.responseQueue = Queue(len(self.activeServers))
 		for address in self.activeServers:
 			requestQueue = Queue()
-			logging.info(NAME + "Adres przekazany do watku " + address)
-			thread = DelayedTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary, address)
+			logger.logImportant(NAME + "Adres przekazany do watku " + address)
+			thread = DelayedTransactionThread(self.responseQueue, requestQueue, self.eventVariable,
+			                                  self.paramsDictionary, address)
 			self.connectionsQueues[address] = requestQueue
 			self.threads[address] = thread
 			thread.start()
+			logger.logImportant(NAME + "Watek wystartowal")
+		logger.logImportant(NAME + "Konczenie inicjalizacji transakcji opoznionej")
 
 	def chceckTransactionPossibility(self):
 		if self.checkActiveServersCount() and self.checkDataVersions():
@@ -199,17 +207,18 @@ class WriteTransaction:
 		self.activeServers = []
 		self.addressesProcessor.lockFile()
 		addresses = self.addressesProcessor.readFile()
-		all = 1
+		allServers = 1
 		available = 1
 		for key in addresses:
-			all = all + 1
+			allServers = allServers + 1
 			if addresses[key] == 'T':
 				self.activeServers.append(key)
-				available = available + 1
+				available += 1
 		self.addressesProcessor.unlockFile()
-		min = int(math.floor(all / 2) + 1)
+		minVersion = int(math.floor(allServers / 2) + 1)
 		logger.logImportant(NAME + "Aktywne serwery: " + str(self.activeServers))
-		if available >= min:
+		self.serversCount = len(addresses) + 1
+		if available >= minVersion:
 			logger.logImportant(NAME + "Wicej niz polowa serwerow aktywna")
 			return True
 		else:
@@ -229,8 +238,8 @@ class WriteTransaction:
 		logger.logImportant(NAME + "Zgodnych wersji: " + str(myVersionCount))
 		logger.logImportant(NAME + "Wszystkich wersji: " + str(self.serversCount))
 		self.versionProcessor.unlockFile()
-		min = int(math.floor(self.serversCount / 2) + 1)
-		if myVersionCount >= min:
+		minVersion = int(math.floor(self.serversCount / 2) + 1)
+		if myVersionCount >= minVersion:
 			logger.logImportant(NAME + "Mozna wykonac transakcje zapisu")
 			return True
 		else:
@@ -239,37 +248,17 @@ class WriteTransaction:
 
 	def generateInsertToDataVersions(self, command):
 		command = command.replace('\'', '\\\'')
-		insert = "INSERT INTO " +  self.paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str((int(self.myDataVersion)+1)) + ",\'" + command + "\')"
+		insert = "INSERT INTO " + self.paramsDictionary["DB_PARAMS"]["versionsTableName"] + " VALUES(" + str(
+			(int(self.myDataVersion) + 1)) + ",\'" + command + "\')"
 		return insert
 
 	def insertNewDataVersions(self):
 		self.versionProcessor.lockFile()
 		versions = self.versionProcessor.readFile()
-		newVersion = str(int(versions[LOCALHOST_NAME]) +1)
+		newVersion = str(int(versions[LOCALHOST_NAME]) + 1)
 		logger.logImportant(NAME + "Nowa wersja danych = " + newVersion)
 		for address in self.activeServers:
 			versions[address] = newVersion
 		versions[LOCALHOST_NAME] = newVersion
 		self.versionProcessor.writeToFile(versions)
 		self.versionProcessor.unlockFile()
-
-	def getTicket(self):
-		connection = Connection("/home/dur/Projects/ServerSide/config/connection_config.conf")
-		params = self.readTempVars()
-		connection.connect(params[TICKET_PARAM], 80, "/ticket")
-		return connection.get_message()
-
-	def readTempVars(self):
-		self.tempProcessor.lockFile()
-		params = self.tempProcessor.readFile()
-		self.tempProcessor.unlockFile()
-		return params
-
-	def getNextExpectedTicket(self, ticket):
-		ticket = int(ticket)
-		toSkip = self.readTempVars[SKIP_TICKETS]
-		if(toSkip != None and len(toSkip) != 0):
-			for single in toSkip.split(","):
-				if int(single)== ticket:
-					ticket = ticket + 1
-		tickets = self.readTempVars()

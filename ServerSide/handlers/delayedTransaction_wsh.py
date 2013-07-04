@@ -1,4 +1,5 @@
 from mod_python import apache
+from database.utils1 import TicketUtil
 from utils.FileProcessors import FileProcessor
 from Queue import Queue
 import utils.Logger as logger
@@ -29,12 +30,12 @@ def web_socket_transfer_data(request):
 	listenThread = KillableListenThread(request.ws_stream, stopQueue)
 
 	ticket = request.ws_stream.receive_message()
-	currentTicket = readTempVars(paramsDictionary)[EXPECTED_TICKET]
+	currentTicket = TicketUtil.readTempVars()[EXPECTED_TICKET]
 	timeOut = (int(ticket) - int(currentTicket)) * 5
 	start = time.time()
 	while currentTicket < ticket and time.time() - start < timeOut:
 		time.sleep(1)
-		currentTicket = readTempVars(paramsDictionary)[EXPECTED_TICKET]
+		currentTicket = TicketUtil.readTempVars()[EXPECTED_TICKET]
 	if currentTicket == ticket:
 		request.ws_stream.send_message(OK)
 		listenThread.start()
@@ -64,11 +65,3 @@ def skip(paramsDictionary, ticket):
 		params[SKIP_TICKETS] = toRet
 	tempProcessor.writeToFile(params)
 	tempProcessor.unlockFile()
-
-
-def readTempVars(paramsDictionary):
-	tempProcessor = FileProcessor(paramsDictionary["HOME_PATH"] + "ServerSide/config/tempParams.conf")
-	tempProcessor.lockFile()
-	params = tempProcessor.readFile()
-	tempProcessor.unlockFile()
-	return params

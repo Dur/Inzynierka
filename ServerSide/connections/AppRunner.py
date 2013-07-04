@@ -3,7 +3,7 @@ from WebSocket._TLSSocket import _TLSSocket
 from WebSocket.ClientRequest import ClientRequest
 
 __author__ = 'dur'
-import logging
+import utils.Logger as logger
 import socket
 from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
@@ -27,13 +27,13 @@ class AppRunner(object):
 				splitedLine = singleLine.split('=')
 				self.dictionary[splitedLine[0]] = splitedLine[1]
 		print self.dictionary
-		logging.basicConfig(level=logging.getLevelName(self.dictionary.get('log_level').upper()))
+		#logging.basicConfig(level=logging.getLevelName(self.dictionary.get('log_level').upper()))
 		self._socket = None
 		self.list=[]
 		self._logger = util.get_class_logger(self)
 
 	def connect(self):
-		logging.info(NAME + "Podlaczanie do start_wsh")
+		logger.logInfo(NAME + "Podlaczanie do start_wsh")
 		self._socket = socket.socket()
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
@@ -61,7 +61,7 @@ class AppRunner(object):
 
 			self._stream = Stream(request, stream_option)
 		except Exception, e:
-			logging.error(NAME + e.message)
+			logger.logError(NAME + e.message)
 
 	def send(self, message):
 		self._stream.send_message(message)

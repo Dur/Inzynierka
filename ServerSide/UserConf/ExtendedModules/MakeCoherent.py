@@ -1,10 +1,9 @@
 import MySQLdb
-import logging
 from connections.Connection import Connection
-from database.utils1.DatabaseConnector import DatabaseConnector
 from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor
 from utils.filelock import FileLock
+import utils.Logger as logger
 
 __author__ = 'dur'
 
@@ -29,7 +28,7 @@ def execute(paramsDictionary, message):
 	try:
 		lock.acquire()
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logError(NAME + e.message)
 		if lock.is_locked:
 			lock.release()
 		return
@@ -43,7 +42,7 @@ def execute(paramsDictionary, message):
 	versionsFile.unlockFile()
 
 	if checkIfServerIsUpToDate(dataVersions) == True:
-		logging.info(NAME + "Dane na serwerze sa aktualne")
+		logger.logInfo(NAME + "Dane na serwerze sa aktualne")
 		lock.release()
 		return
 
@@ -61,11 +60,11 @@ def execute(paramsDictionary, message):
 					connection.send_message(dataVersions[LOCALHOST_NAME])
 					version = connection.get_message()
 					if version != LOCK_ERROR:
-						logging.info(NAME + "Polaczony z " + addressToConnect)
+						logger.logInfo(NAME + "Polaczony z " + addressToConnect)
 						break
 
 			if version == LOCK_ERROR:
-				logging.error(NAME + "Nie mozna zaktualizowac serwera")
+				logger.logError(NAME + "Nie mozna zaktualizowac serwera")
 				return
 
 			configReader = ConfigurationReader(paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/database.conf")
@@ -75,38 +74,38 @@ def execute(paramsDictionary, message):
 			login = dbParamsDict["DEFAULT_LOGIN"]
 			password = dbParamsDict["DEFAULT_PASSWORD"]
 		else:
-			logging.info(NAME + "Brak serwerow, od ktorych mozna pobrac aktualne dane")
+			logger.logError(NAME + "Brak serwerow, od ktorych mozna pobrac aktualne dane")
 			return
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logError(NAME + e.message)
 		if lock.is_locked:
 			lock.release()
 
 	try:
 		db = MySQLdb.connect(dbParamsDict["HOST"], login, password, dbParamsDict["DATABASE"])
 		cursor = db.cursor()
-		logging.info(NAME + "polaczenie z baza nawiazane")
+		logger.logInfo(NAME + "polaczenie z baza nawiazane")
 		while version != END_MESSAGE:
 			command = connection.get_message()
-			logging.info(NAME + "Wykonuje: " + command )
+			logger.logInfo(NAME + "Wykonuje: " + command )
 			cursor.execute(command)
 
 			command = command.replace('\'', '\\\'')
-			logging.info(NAME + "Komenda po transformacji " + command)
+			logger.logInfo(NAME + "Komenda po transformacji " + command)
 			insert = "INSERT INTO " +  dbParamsDict["versionsTableName"] + " VALUES(" + str(version) + ",\'" + command + "\')"
 
-			logging.info(NAME + "Wykonuje: " + insert)
+			logger.logInfo(NAME + "Wykonuje: " + insert)
 			cursor.execute(insert)
-			logging.info(NAME + "wykonano inserta")
+			logger.logInfo(NAME + "wykonano inserta")
 			currentVersion = version
 			version = connection.get_message()
-		logging.info(NAME + "zamykanie polaczenia z baza danych")
+		logger.logInfo(NAME + "zamykanie polaczenia z baza danych")
 		cursor.execute("commit")
 	except MySQLdb.Error, e:
-		logging.error("%d %s" % (e.args[0], e.args[1]))
+		logger.logError("%d %s" % (e.args[0], e.args[1]))
 		cursor.execute("rollback")
 	except Exception, ee:
-		logging.error(ee.message)
+		logger.logError(ee.message)
 		cursor.execute("rollback")
 		if lock.is_locked:
 			lock.release()
@@ -116,7 +115,7 @@ def execute(paramsDictionary, message):
 	dataVersions[LOCALHOST_NAME] = currentVersion
 	versionsFile.writeToFile(dataVersions)
 	versionsFile.unlockFile()
-	logging.info(NAME + "zapisano zmiany do pliku z wersjami")
+	logger.logInfo(NAME + "zapisano zmiany do pliku z wersjami")
 	connection._do_closing_handshake()
 
 
@@ -124,11 +123,11 @@ def findActiveUpToDateServer(addresses, versions):
 	addressesToRet = []
 	maxVersionAddresses = findServersWithMaxDataVersion(versions)
 	for address in maxVersionAddresses:
-		logging.info(NAME + "analizowany adres " + address)
+		logger.logInfo(NAME + "analizowany adres " + address)
 		if address in addresses:
-			logging.info(NAME + "Adres wystepuje w adresach")
+			logger.logInfo(NAME + "Adres wystepuje w adresach")
 			if addresses[address] == "T":
-				logging.info(NAME + "znalezino serwer do odpytania " + address)
+				logger.logInfo(NAME + "znalezino serwer do odpytania " + address)
 				addressesToRet.append(address)
 	return addressesToRet
 
@@ -136,23 +135,23 @@ def findServersWithMaxDataVersion(versions):
 	maxVersionAddresses = []
 	maxVersion = 0
 	for address in versions:
-		logging.info(NAME + "analizuje " + address)
+		logger.logInfo(NAME + "analizuje " + address)
 		if int(versions[address]) > maxVersion:
 			maxVersionAddresses = []
 			maxVersionAddresses.append(address)
 			maxVersion = int(versions[address])
 		elif int(versions[address]) == maxVersion:
 			maxVersionAddresses.append(address)
-	logging.info(NAME + "Maksymalna wersja = " + str(maxVersion) )
-	logging.info(NAME + "Serwery o tej wersji " + str(maxVersionAddresses))
+	logger.logInfo(NAME + "Maksymalna wersja = " + str(maxVersion) )
+	logger.logInfo(NAME + "Serwery o tej wersji " + str(maxVersionAddresses))
 	return maxVersionAddresses
 
 def checkIfServerIsUpToDate(dataVersions):
 	myVersion = dataVersions[LOCALHOST_NAME]
 	for address in dataVersions:
-		logging.info(NAME + "analizuje " + address)
+		logger.logInfo(NAME + "analizuje " + address)
 		if int(dataVersions[address]) > int(myVersion):
-			logging.info(NAME + "Dane na serwerze nie sa aktualne")
+			logger.logInfo(NAME + "Dane na serwerze nie sa aktualne")
 			return False
 	return True
 

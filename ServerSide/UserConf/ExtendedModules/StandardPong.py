@@ -2,9 +2,9 @@ __author__ = 'dur'
 
 NAME = "StandardPong: "
 PONG = "PONG"
-import logging
+import utils.Logger as logger
 
 def execute(paramsDictionary, message):
 	if message == PONG:
 		paramsDictionary["QUEUE"].put(PONG)
-		logging.info(NAME+"Pong wrzucony do kolejki")
+		logger.logInfo(NAME+"Pong wrzucony do kolejki")

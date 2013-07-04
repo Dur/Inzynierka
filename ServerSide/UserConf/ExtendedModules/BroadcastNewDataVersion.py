@@ -1,7 +1,6 @@
-import logging
 from connections.Connection import Connection
 from utils.FileProcessors import FileProcessor
-
+import utils.Logger as logger
 
 __author__ = 'dur'
 RESOURCE = "/broadcastDataVersion"
@@ -10,7 +9,7 @@ LOCALHOST_NAME = "localhost"
 OK_FLAG = 0
 
 def execute(paramsDictionary, message):
-	logging.info(NAME + "wewnatrz modulu rozglaszania nowej wersji ")
+	logger.logInfo(NAME + "wewnatrz modulu rozglaszania nowej wersji ")
 
 	homePath = paramsDictionary["HOME_PATH"]
 
@@ -29,17 +28,17 @@ def execute(paramsDictionary, message):
 		versionsFile.unlockFile()
 
 		myVersion = dataVersions[LOCALHOST_NAME]
-		logging.info(NAME + "Moja wersja danych " + myVersion)
+		logger.logInfo(NAME + "Moja wersja danych " + myVersion)
 		for address in addresses:
 			if addresses[address] == "T":
-				logging.info(NAME + "wysylanie wersji do " + address)
+				logger.logInfo(NAME + "wysylanie wersji do " + address)
 				connection = Connection(homePath + "ServerSide/config/connection_config.conf" )
 				if connection.connect(address, 80, RESOURCE) == OK_FLAG:
 					connection.send_message(myVersion)
 					connection._do_closing_handshake()
 				else:
-					logging.error(NAME + "Nie moge polaczyc sie z serwerem o adresie " + address)
+					logger.logError(NAME + "Nie moge polaczyc sie z serwerem o adresie " + address)
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logError(NAME + e.message)
 		lock.release
 	lock.release()
