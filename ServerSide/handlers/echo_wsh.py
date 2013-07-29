@@ -1,4 +1,4 @@
-import logging
+import utils.Logger as logger
 from mod_python import apache
 
 _GOODBYE_MESSAGE = "CYA"
@@ -14,7 +14,7 @@ def web_socket_do_extra_handshake(request):
 def web_socket_transfer_data(request):
 	while True:
 		line = request.ws_stream.receive_message()
-		logging.info(NAME + "Serwer otrzymal " + line)
+		logger.logInfo(NAME + "Serwer otrzymal " + line)
 		request.ws_stream.send_message(line)
 		if line == _GOODBYE_MESSAGE:
 			return apache.HTTP_OK

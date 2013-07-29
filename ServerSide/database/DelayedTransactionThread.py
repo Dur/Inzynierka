@@ -1,6 +1,5 @@
 from threading import Thread
 from connections.Connection import Connection
-import logging
 import utils.Logger as logger
 
 NAME = "DelayedTransactionThread: "
@@ -40,42 +39,42 @@ class DelayedTransactionThread(Thread):
 
 			self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/connection_config.conf")
 			if self.connection.connect(self.clientAddress, 80, RESOURCE) == OK_FLAG:
-				logger.logImportant(NAME + "Polaczenie dla transakcji zapisu nawiazane")
+				logger.logImportant(NAME + "Polaczenie z uczestnikiem transakcji " + self.clientAddress + " nawiazane" )
 
 				command = self.inputQueue.get(True, None)
 				while command != STOP_THREAD:
 					methodMapping[command]()
 					command = self.inputQueue.get(True, None)
-					logging.info(NAME + "Odebrano komende " + command)
+					logger.logInfo(NAME + "Odebrano komende " + command)
 				self.connection.send_message(EXIT)
 			else:
-				logging.error(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
+				logger.logError(NAME + "Nie mozna nawiazac polaczenia z " + self.clientAddress)
 				self.outputQueue.put(ABORT)
 				self.connection._do_closing_handshake()
-			logger.logImportant(NAME + "Konice watku transakcji zapisu")
+			logger.logImportant(NAME + "Koordynator konczy polaczenie z " + self.clientAddress)
 		except Exception, e:
 			logger.logImportant(NAME + e.message )
 
 	def skip(self):
-		logger.logImportant(NAME + "SkipMethod")
+		logger.logInfo(NAME + "SkipMethod")
 		self.connection.send_message(SKIP)
 
 	def startTransaction(self):
-		logger.logImportant(NAME + "StartMethod")
+		logger.logInfo(NAME + "StartMethod")
 		ticket = self.inputQueue.get(True, None)
 		self.connection.send_message(ticket)
 		try:
 			answer = self.connection.get_message()
 		except Exception, e:
-			logging.error(NAME + e.message )
+			logger.logError(NAME + e.message )
 			return
 		self.outputQueue.put(answer)
-		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
+		logger.logImportant(NAME + "Uczestnik " + self.clientAddress + " odpowiedzial: " + answer)
 		if self.outputQueue.full():
 			self.eventVariable.set()
-			logger.logImportant(NAME + "Wybudzanie watku transakcji")
+			logger.logInfo(NAME + "Wybudzanie watku transakcji")
 
 	def ok(self):
-		logger.logImportant(NAME + "OkMethod")
+		logger.logInfo(NAME + "OkMethod")
 		self.connection.send_message(OK)
 

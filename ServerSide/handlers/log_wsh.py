@@ -1,6 +1,6 @@
 from mod_python import apache
-import logging
 import time
+import utils.Logger as logger
 from utils.FileProcessors import FileProcessor
 
 IMPORTANT = "IMP"
@@ -18,14 +18,12 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 	path = request.get_options()["PROJECT_LOCATION"]
-	logging.error("zaczynamy")
 	message = request.ws_stream.receive_message()
 	level = request.ws_stream.receive_message()
 	processor = FileProcessor(path + map[level])
 	processor.lockFile()
 	toLog = time.strftime('%x %X') + " " + request.connection.remote_ip + " " + message + '\n'
 	processor.appendToFile(toLog)
-	logging.error("zapis do logu " + toLog)
 	processor.unlockFile()
 	return apache.HTTP_OK
 

@@ -1,4 +1,4 @@
-import logging
+import utils.Logger as logger
 
 __author__ = 'dur'
 from utils.filelock import FileLock
@@ -14,7 +14,7 @@ class FileProcessor:
 			self.fileName = file
 			self.lock = FileLock(self.fileName, 10)
 		except Exception, e:
-			logging.error(NAME + e.message)
+			logger.logError(NAME + e.message)
 			raise Exception(e.message)
 
 

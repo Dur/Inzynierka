@@ -1,6 +1,6 @@
 import MySQLdb
 import math
-import logging
+import utils.Logger as logger
 from utils.FileProcessors import FileProcessor
 
 __author__ = 'dur'
@@ -26,15 +26,15 @@ class ReadTransaction:
 			else:
 				return ERROR_MESSAGE
 		except MySQLdb.Error, e:
-			logging.error(NAME + "%d %s" % (e.args[0], e.args[1]))
+			logger.logError(NAME + "%d %s" % (e.args[0], e.args[1]))
 			return "%d %s" % (e.args[0], e.args[1])
 
 	def checkDataVersions(self):
-		logging.info(NAME + "Rozpoczynanie transakcji odczytu")
+		logger.logInfo(NAME + "Rozpoczynanie transakcji odczytu")
 		self.processor.lockFile()
 		dataVersions = self.processor.readFile()
 		myDataVersion = dataVersions[LOCALHOST_NAME]
-		logging.info("Lokalna wersja danych = " + myDataVersion)
+		logger.logInfo("Lokalna wersja danych = " + myDataVersion)
 		count = 0
 		myVersion = 0
 		for key in dataVersions:
@@ -42,15 +42,15 @@ class ReadTransaction:
 			version = dataVersions[key]
 			if version == myDataVersion:
 				myVersion = myVersion + 1
-		logging.info(NAME + "Zgodnych wersji: " + str(myVersion))
-		logging.info(NAME + "Wszystkich wersji: " + str(count))
+		logger.logInfo(NAME + "Zgodnych wersji: " + str(myVersion))
+		logger.logInfo(NAME + "Wszystkich wersji: " + str(count))
 		self.processor.unlockFile()
 		min = int(math.floor(count / 2) + 1)
 		if myVersion >= min:
-			logging.info(NAME + "Mozna czytac")
+			logger.logInfo(NAME + "Mozna czytac")
 			return True
 		else:
-			logging.error(NAME + "Nie mozna czytac")
+			logger.logError(NAME + "Nie mozna czytac")
 			return False
 
 	def checkActiveServersCount(self):
@@ -65,10 +65,10 @@ class ReadTransaction:
 				available = available + 1
 		min = int(math.floor(all / 2) + 1)
 		if available >= min:
-			logging.info(NAME + "Wicej niz polowa serwerow aktywna")
+			logger.logImportant(NAME + "Wicej niz polowa serwerow aktywna, mozna wykonac operacje")
 			return True
 		else:
-			logging.error(NAME + "mniej niz polowa serwerow aktywna")
+			logger.logImportant(NAME + "Mniej niz polowa serwerow aktywna, nie mozna wykonac operacji")
 			return False
 
 	def __del__(self):

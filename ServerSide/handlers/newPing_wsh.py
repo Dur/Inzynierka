@@ -1,5 +1,5 @@
 import Queue
-import logging
+import utils.Logger as logger
 from mod_python import apache
 import time
 from connections.ListenSocket import ListenSocket
@@ -16,7 +16,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.info(NAME+ "Server dostal zgloszenie")
+	logger.logInfo(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	paramsDictionary["REQUEST"] = request
@@ -29,14 +29,14 @@ def web_socket_transfer_data(request):
 	paramsDictionary["CONFIG_PARAMS"] = configReader.readConfigFile()
 
 	paramsDictionary["SOCKET"].receive_message()
-	logging.info(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
+	logger.logInfo(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
 	paramsDictionary["SOCKET"].send_message(PONG)
-	logging.info(NAME+ "Server odpowiedzial do " + paramsDictionary["CLIENT_ADDRESS"])
+	logger.logInfo(NAME+ "Server odpowiedzial do " + paramsDictionary["CLIENT_ADDRESS"])
 
 	loader = ModulesLoader()
 	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")
 	paramsDictionary["MODULES"] = modules
-	logging.info(NAME+ "Serwer wczytal moduly")
+	logger.logInfo(NAME+ "Serwer wczytal moduly")
 
 	if modules.has_key("NEW_CONN"):
 		for singleModule in modules["NEW_CONN"]:
@@ -44,7 +44,7 @@ def web_socket_transfer_data(request):
 
 	paramsDictionary["QUEUE"] = Queue.Queue(0)
 
-	logging.info(NAME+ "Serwer rozpoczyna pingowanie")
+	logger.logInfo(NAME+ "Serwer rozpoczyna pingowanie")
 	listener = ListenSocket(paramsDictionary, modules)
 	listener.setDaemon(True)
 	listener.start()
@@ -54,11 +54,11 @@ def web_socket_transfer_data(request):
 				singleModule.execute(paramsDictionary, None)
 			time.sleep(int(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"]))
 		except Exception, e:
-			logging.error(NAME+ "ERROR w modulach okresowych, zamykanie polaczenia")
-			logging.error(NAME + e.message)
+			logger.logError(NAME+ "ERROR w modulach okresowych, zamykanie polaczenia")
+			logger.logError(NAME + e.message)
 			for singleModule in modules["HOST_DC"]:
 				singleModule.execute(paramsDictionary, None)
-			logging.info(NAME + "Polaczenie zakonczone")
+			logger.logInfo(NAME + "Polaczenie zakonczone")
 			return apache.HTTP_OK
 
 

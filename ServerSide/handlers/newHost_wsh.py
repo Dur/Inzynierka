@@ -1,6 +1,6 @@
 import Queue
-import logging
 from mod_python import apache
+import utils.Logger as logger
 import time
 from connections.Connection import Connection
 from connections.ListenSocket import ListenSocket
@@ -21,7 +21,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logging.info(NAME+ "Server dostal zgloszenie")
+	logger.logInfo(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	paramsDictionary["REQUEST"] = request
@@ -33,7 +33,7 @@ def web_socket_transfer_data(request):
 	paramsDictionary["CONFIG_PARAMS"] = configReader.readConfigFile()
 
 	paramsDictionary["SOCKET"].receive_message()
-	logging.info(NAME+ "Server otrzymal ping od " + paramsDictionary["CLIENT_ADDRESS"])
+	logger.logImportant(NAME+ "Serwer " + paramsDictionary["CLIENT_ADDRESS"] + " probuje nawiazac polaczenie")
 
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 
@@ -44,39 +44,39 @@ def web_socket_transfer_data(request):
 		addresses = file.readFile()
 
 		for key in addresses:
-			logging.info(NAME+ "klucz %s", key)
-			logging.info(NAME+ "adres zdalnej maszyny %s", remoteAddress)
-			logging.info(NAME+ "addresses[key] %s", addresses[key])
+			logger.logInfo(NAME+ "klucz %s " + key)
+			logger.logInfo(NAME+ "adres zdalnej maszyny %s " + remoteAddress)
+			logger.logInfo(NAME+ "addresses[key] %s " + addresses[key])
 			if key == remoteAddress:
 				if addresses[key] == 'F':
-					logging.info(NAME+ "znalazl dopasowanie")
+					logger.logInfo(NAME+ "znalazl dopasowanie")
 					paramsDictionary["SOCKET"].send_message(PONG)
-					logging.info(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
-					logging.info(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
+					logger.logInfo(NAME+ "Server odpowiedzial PONG do " + paramsDictionary["CLIENT_ADDRESS"])
+					logger.logInfo(NAME+ "proba nawiazania polaczenia z nowododanym serwerem")
 					paramsDictionary["CONNECTION"] = Connection(paramsDictionary["HOME_PATH"]+"ServerSide/config/connection_config.conf")
 					if paramsDictionary["CONNECTION"].connect(remoteAddress, 80, RESOURCE) != ERROR:
 						paramsDictionary["SOCKET"] = paramsDictionary["CONNECTION"]._stream
 						paramsDictionary["SOCKET"].send_message(PING)
 						paramsDictionary["SOCKET"].receive_message()
-						logging.info(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
+						logger.logInfo(NAME+ "nawiazywanie polaczenia z nowododanym serwerem")
 						addresses[key] = 'T'
 						file.writeToFile(addresses)
 						break
 				else:
 					paramsDictionary["SOCKET"].send_message(EXIT)
-					logging.info(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
+					logger.logInfo(NAME+ "Server odpowiedzial EXIT do " + paramsDictionary["CLIENT_ADDRESS"])
 					file.unlockFile()
 					return apache.HTTP_OK
 		file.unlockFile()
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logError(NAME + e.message)
 		file.unlockFile()
 		return apache.HTTP_OK
 
 	loader = ModulesLoader()
 	modules = loader.loadModules(paramsDictionary["HOME_PATH"]+"ServerSide/config/modules.ext")
 	paramsDictionary["MODULES"] = modules
-	logging.info(NAME+ "Serwer wczytal moduly")
+	logger.logInfo(NAME+ "Serwer wczytal moduly")
 
 	if modules.has_key("NEW_CONN"):
 		for singleModule in modules["NEW_CONN"]:
@@ -84,7 +84,7 @@ def web_socket_transfer_data(request):
 
 	paramsDictionary["QUEUE"] = Queue.Queue(0)
 
-	logging.info(NAME+ "Serwer rozpoczyna pingowanie")
+	logger.logImportant(NAME+ "Polaczenie z " + paramsDictionary["CLIENT_ADDRESS"] + " nawiazane")
 	listener = ListenSocket(paramsDictionary, modules)
 	listener.setDaemon(True)
 	listener.start()
@@ -94,8 +94,8 @@ def web_socket_transfer_data(request):
 				singleModule.execute(paramsDictionary, None)
 			time.sleep(int(paramsDictionary["CONFIG_PARAMS"]["singlePeriod"]))
 		except Exception, e:
-			logging.error(NAME+ "ERROR w modulach cyklicznych, zamykanie polaczenia")
-			logging.error(NAME + e.message)
+			logger.logError(NAME+ "ERROR w modulach cyklicznych, zamykanie polaczenia")
+			logger.logError(NAME + e.message)
 			for singleModule in modules["HOST_DC"]:
 				singleModule.execute(paramsDictionary, None)
 			return apache.HTTP_OK

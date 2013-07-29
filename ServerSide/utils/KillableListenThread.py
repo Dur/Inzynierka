@@ -1,6 +1,6 @@
+import utils.Logger as logger
 from threading import Thread
 from Queue import Queue
-import logging
 from Queue import Empty
 
 __author__ = 'dur'
@@ -35,7 +35,7 @@ class KillableListenThread(Thread):
 			try:
 				message = self.internalQueue.get(True, 2)
 			except Empty:
-				logging.info(NAME + "No message")
+				logger.logInfo(NAME + "No message")
 				continue
 			self.messageQueue.put(message)
 

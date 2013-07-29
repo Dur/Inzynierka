@@ -7,7 +7,6 @@ import math
 from database.DelayedTransactionThread import DelayedTransactionThread
 from database.WriteTransactionThread import WriteTransactionThread
 from utils.FileProcessors import FileProcessor
-import logging
 
 __author__ = 'dur'
 
@@ -57,16 +56,16 @@ class WriteTransaction:
 
 
 	def executeTransaction(self, cursor, command):
-		logger.logImportant(NAME + "Rozpoczynanie transakcji zapisu")
+		logger.logImportant(NAME + "Rozpoczynanie operacji zapisu")
 		if self.chceckTransactionPossibility() == True:
 			ticket = TicketUtil.getTicket()
-			logger.logImportant(NAME + "Mam: " + ticket + " Chce: " + TicketUtil.readTempVars()[EXPECTED_TICKET])
+			logger.logInfo(NAME + "Otrzymalem bilet: " + ticket + " Ocekiwany bilet: " + TicketUtil.readTempVars()[EXPECTED_TICKET])
 
 			if TicketUtil.readTempVars()[EXPECTED_TICKET] == ticket:
-				logger.logImportant(NAME + "Rozpoczynanie normalnej transakcji")
+				logger.logInfo(NAME + "Rozpoczynanie normalnej transakcji")
 				return self.runNormalTransaction(cursor, command, ticket)
 			else:
-				logger.logImportant(NAME + "Rozpoczynanie odroczonej transakcji")
+				logger.logInfo(NAME + "Rozpoczynanie odroczonej transakcji")
 				return self.runDelayedTransaction(cursor, command, ticket)
 		else:
 			return CONNECTION_PROBLEM_ERROR
@@ -87,17 +86,17 @@ class WriteTransaction:
 			self.connectionsQueues[address].put(PREPARE_MESSAGE)
 			self.connectionsQueues[address].put(command)
 
-		logging.info(NAME + "Serwer rozpoczyna czekanie na zmiennej warunkowej")
-		logging.info(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
+		logger.logInfo(NAME + "Serwer rozpoczyna czekanie na zmiennej warunkowej")
+		logger.logInfo(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
 		if self.eventVariable.is_set:
-			logging.info(NAME + "Zmienna warunkowa ustawiona")
+			logger.logInfo(NAME + "Zmienna warunkowa ustawiona")
 		else:
-			logging.info(NAME + "Zmienna warunkowa NIE ustawiona")
+			logger.logInfo(NAME + "Zmienna warunkowa NIE ustawiona")
 		self.eventVariable.wait(int(self.waitForRemoteTime))
 		self.eventVariable.clear()
-		logging.info(NAME + "Serwer minal zmienna warunkowa")
+		logger.logInfo(NAME + "Serwer minal zmienna warunkowa")
 		if not self.responseQueue.full():
-			logger.logImportant(NAME + "Wysylanie GLOBA_ABOT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
+			logger.logImportant(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_ABORT)
 				self.connectionsQueues[address].put(ticket)
@@ -107,7 +106,7 @@ class WriteTransaction:
 
 		while self.responseQueue.empty() != True:
 			response = self.responseQueue.get_nowait()
-			logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
+			logger.logInfo(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
 			if response == ABORT:
 				logger.logImportant(
 					NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
@@ -127,7 +126,7 @@ class WriteTransaction:
 			self.connectionsQueues[address].put(activeServersString)
 			self.connectionsQueues[address].put(ticket)
 			self.connectionsQueues[address].put(STOP_THREAD)
-		logging.info(NAME + "przygotowanie insertu do tabeli z wersjami")
+		logger.logInfo(NAME + "przygotowanie insertu do tabeli z wersjami")
 		cursor.execute(self.generateInsertToDataVersions(command))
 		cursor.execute(COMMIT)
 		self.insertNewDataVersions()
@@ -144,7 +143,7 @@ class WriteTransaction:
 			self.connectionsQueues[address].put(START_TRANSACTION)
 			self.connectionsQueues[address].put(ticket)
 
-		logging.info(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
+		logger.logInfo(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
 		self.eventVariable.wait(int(self.waitForRemoteTime))
 		self.eventVariable.clear()
 		logger.logImportant(NAME + "Serwer minal zmienna warunkowa")
@@ -158,7 +157,7 @@ class WriteTransaction:
 
 		while self.responseQueue.empty() != True:
 			response = self.responseQueue.get_nowait()
-			logging.info(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
+			logger.logInfo(NAME + "Serwer wyciaga kolejne wiadomosci z kolejki")
 			if response == ABORT:
 				logger.logImportant(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery sa gotowe do zatwierdzenia transakcji")
 				for address in self.activeServers:
@@ -176,7 +175,7 @@ class WriteTransaction:
 		self.responseQueue = Queue(len(self.activeServers))
 		for address in self.activeServers:
 			requestQueue = Queue()
-			logging.info(NAME + "Adres przekazany do watku " + address)
+			logger.logInfo(NAME + "Adres przekazany do watku " + address)
 			thread = WriteTransactionThread(self.responseQueue, requestQueue, self.eventVariable, self.paramsDictionary,
 			                                address)
 			self.connectionsQueues[address] = requestQueue
@@ -184,18 +183,18 @@ class WriteTransaction:
 			thread.start()
 
 	def initialiseDelayed(self):
-		logger.logImportant(NAME + "Inicjowanie transakcji odroczonej")
+		logger.logInfo(NAME + "Inicjowanie transakcji odroczonej")
 		self.responseQueue = Queue(len(self.activeServers))
 		for address in self.activeServers:
 			requestQueue = Queue()
-			logger.logImportant(NAME + "Adres przekazany do watku " + address)
+			logger.logInfo(NAME + "Adres przekazany do watku " + address)
 			thread = DelayedTransactionThread(self.responseQueue, requestQueue, self.eventVariable,
 			                                  self.paramsDictionary, address)
 			self.connectionsQueues[address] = requestQueue
 			self.threads[address] = thread
 			thread.start()
-			logger.logImportant(NAME + "Watek wystartowal")
-		logger.logImportant(NAME + "Konczenie inicjalizacji transakcji opoznionej")
+			logger.logInfo(NAME + "Watek wystartowal")
+		logger.logInfo(NAME + "Konczenie inicjalizacji transakcji opoznionej")
 
 	def chceckTransactionPossibility(self):
 		if self.checkActiveServersCount() and self.checkDataVersions():
@@ -219,31 +218,31 @@ class WriteTransaction:
 		logger.logImportant(NAME + "Aktywne serwery: " + str(self.activeServers))
 		self.serversCount = len(addresses) + 1
 		if available >= minVersion:
-			logger.logImportant(NAME + "Wicej niz polowa serwerow aktywna")
+			logger.logImportant(NAME + "Wicej niz polowa serwerow aktywna, mozna przeprowadzic operacje zapisu")
 			return True
 		else:
-			logger.logImportant(NAME + "mniej niz polowa serwerow aktywna")
+			logger.logImportant(NAME + "mniej niz polowa serwerow aktywna, nie mozna przeprowadzic operacji zapisu")
 			return False
 
 	def checkDataVersions(self):
 		self.versionProcessor.lockFile()
 		dataVersions = self.versionProcessor.readFile()
 		self.myDataVersion = dataVersions[LOCALHOST_NAME]
-		logger.logImportant("Lokalna wersja danych = " + self.myDataVersion)
+		logger.logInfo("Lokalna wersja danych = " + self.myDataVersion)
 		myVersionCount = 1
 		for key in self.activeServers:
 			version = dataVersions[key]
 			if version == self.myDataVersion:
 				myVersionCount = myVersionCount + 1
-		logger.logImportant(NAME + "Zgodnych wersji: " + str(myVersionCount))
-		logger.logImportant(NAME + "Wszystkich wersji: " + str(self.serversCount))
+		logger.logInfo(NAME + "Zgodnych wersji: " + str(myVersionCount))
+		logger.logInfo(NAME + "Wszystkich wersji: " + str(self.serversCount))
 		self.versionProcessor.unlockFile()
 		minVersion = int(math.floor(self.serversCount / 2) + 1)
 		if myVersionCount >= minVersion:
-			logger.logImportant(NAME + "Mozna wykonac transakcje zapisu")
+			logger.logInfo(NAME + "Mozna wykonac transakcje zapisu")
 			return True
 		else:
-			logger.logImportant(NAME + "Nie mozna wykonac transakcji zapisu")
+			logger.logInfo(NAME + "Nie mozna wykonac transakcji zapisu")
 			return False
 
 	def generateInsertToDataVersions(self, command):
@@ -256,7 +255,7 @@ class WriteTransaction:
 		self.versionProcessor.lockFile()
 		versions = self.versionProcessor.readFile()
 		newVersion = str(int(versions[LOCALHOST_NAME]) + 1)
-		logger.logImportant(NAME + "Nowa wersja danych = " + newVersion)
+		logger.logInfo(NAME + "Nowa wersja danych = " + newVersion)
 		for address in self.activeServers:
 			versions[address] = newVersion
 		versions[LOCALHOST_NAME] = newVersion

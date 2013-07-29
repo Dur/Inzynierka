@@ -5,7 +5,6 @@ from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor
 from utils.filelock import FileLock
 import utils.Logger as logger
-import logging
 
 NAME = "writeTransaction_wsh: "
 PREPARE = "PREPARE"
@@ -53,7 +52,7 @@ def web_socket_transfer_data(request):
 		if lock.is_locked:
 			lock.release()
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logError(NAME + e.message)
 		if lock.is_locked:
 			lock.release()
 		return apache.HTTP_OK
@@ -68,7 +67,7 @@ def prepare(paramsDictionary, db, lock):
 		paramsDictionary["COMMAND"] = command
 		logger.logImportant(NAME + "Wezel otrzymal komende do wykonania " + command)
 		if db.initConnection() == ERROR:
-			logging.error(NAME + "Nie moge polaczyc sie z baza danych")
+			logger.logError(NAME + "Nie moge polaczyc sie z baza danych")
 			socket.send_message(ABORT)
 			if lock.is_locked:
 				lock.release()
@@ -88,7 +87,7 @@ def prepare(paramsDictionary, db, lock):
 		socket.send_message(READY_COMMIT)
 		return
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logError(NAME + e.message)
 		if lock.is_locked:
 			lock.release()
 
@@ -125,7 +124,7 @@ def globalAbort(paramsDictionary, db, lock):
 		if lock.is_locked:
 			lock.release()
 	except Exception, e:
-		logging.error(NAME + e.message)
+		logger.logError(NAME + e.message)
 		if lock.is_locked:
 			lock.release()
 

@@ -4,7 +4,6 @@ from database.WriteTransaction import WriteTransaction
 __author__ = 'dur'
 
 import MySQLdb
-import logging
 import utils.Logger as logger
 # tabela to datastore
 #baza danych distributed
@@ -35,12 +34,12 @@ class DatabaseConnector:
 
 	def initConnection(self):
 		try:
-			logging.info(NAME + "Proba nawiazania polaczenia dla: " + self.host + " " + self.login + " " + self.password + " " + self.databaseName)
+			logger.logInfo(NAME + "Proba nawiazania polaczenia dla: " + self.host + " " + self.login + " " + self.password + " " + self.databaseName)
 			self.connection = MySQLdb.connect(self.host, self.login, self.password, self.databaseName)
 			self.cursor = self.connection.cursor()
 			self.readTransaction = None
 			self.writeTransaction = None
-			logging.info(NAME + "Polaczenie z baza danych nawiazane")
+			logger.logInfo(NAME + "Polaczenie z baza danych nawiazane")
 			return OK
 
 		except Exception, e:

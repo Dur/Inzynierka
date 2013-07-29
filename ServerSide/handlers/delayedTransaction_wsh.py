@@ -3,7 +3,6 @@ from database.utils1 import TicketUtil
 from utils.FileProcessors import FileProcessor
 from Queue import Queue
 import utils.Logger as logger
-import logging
 import time
 from utils.KillableListenThread import KillableListenThread
 

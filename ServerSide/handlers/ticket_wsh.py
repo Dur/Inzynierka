@@ -1,4 +1,3 @@
-import logging
 from mod_python import apache
 from utils.FileProcessors import FileProcessor
 import utils.Logger as logger
