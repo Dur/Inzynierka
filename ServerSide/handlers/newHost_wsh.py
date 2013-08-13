@@ -1,13 +1,13 @@
 import Queue
 from mod_python import apache
-import utils.Logger as logger
 import time
+
 from connections.Connection import Connection
 from connections.ListenSocket import ListenSocket
 from utils.FileProcessors import FileProcessor
 from utils.ModulesLoader import ModulesLoader
 from utils.ConfigurationReader import ConfigurationReader
-
+import utils.Logger as logger
 NAME = "newHost_wsh: "
 PONG = "PONG:PONG"
 PING = "PING:PING"

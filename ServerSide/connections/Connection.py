@@ -1,4 +1,3 @@
-import utils.Logger as logger
 import socket
 from mod_pywebsocket import common
 from mod_pywebsocket.stream import Stream
@@ -7,6 +6,8 @@ from WebSocket._TLSSocket import _TLSSocket
 from WebSocket.ClientRequest import ClientRequest
 from WebSocket.ClientHandshakeProcessor import ClientHandshakeProcessor
 from utils.ConfigurationReader import ConfigurationReader
+import utils.Logger as logger
+
 
 _UPGRADE_HEADER = 'Upgrade: websocket\r\n'
 _CONNECTION_HEADER = 'Connection: Upgrade\r\n'
@@ -65,6 +66,7 @@ class Connection(object):
 		except Exception, e:
 			logger.logError(NAME+"Wystapil problem")
 			logger.logError(NAME + e.message)
+			print(e.message)
 			return ERROR_FLAG
 
 	def send_message(self, message):
@@ -76,4 +78,3 @@ class Connection(object):
 
 	def _do_closing_handshake(self):
 		self._socket.close()
-

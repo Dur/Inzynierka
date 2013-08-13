@@ -1,11 +1,6 @@
-from connections.Connection import Connection
-from database.utils1 import TicketUtil
-from utils.FileProcessors import FileProcessor
-import time
 
 # TICKET_PARAM = "ticketServer"
 #
-import utils.Logger as logger
 
 
 #logger.logImportant("nowy log")
@@ -14,11 +9,15 @@ import utils.Logger as logger
 # params = tempProcessor.readFile()
 # tempProcessor.unlockFile()
 
-
+#import utils.Logger as logger
 # tempProcessor = FileProcessor("/home/dur/Projects/ServerSide/config/tempParams.conf")
 # tempProcessor.lockFile()
 # params = tempProcessor.readFile()
 # print(params)
 # tempProcessor.unlockFile()
-print TicketUtil.setNextExpectedTicket(22)
+#logger.logError("Error message")
 #TicketUtil.skipTicket(1)
+import utils.Logger as logger
+
+logger.logError("Error")
+

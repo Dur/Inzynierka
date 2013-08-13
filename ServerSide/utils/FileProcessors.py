@@ -1,9 +1,8 @@
-import utils.Logger as logger
 
 __author__ = 'dur'
 from utils.filelock import FileLock
 NAME = "FileProcessor: "
-
+#import utils.Logger as logger
 class FileProcessor:
 
 	fileName = ""
@@ -14,7 +13,7 @@ class FileProcessor:
 			self.fileName = file
 			self.lock = FileLock(self.fileName, 10)
 		except Exception, e:
-			logger.logError(NAME + e.message)
+			#logger.logError(NAME + e.message)
 			raise Exception(e.message)
 
 
@@ -61,3 +60,4 @@ class FileProcessor:
 		with open(self.fileName, 'a') as f:
 			f.write(line)
 		return
+
