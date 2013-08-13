@@ -18,7 +18,7 @@ class ListenSocket( Thread ):
 			while( True ):
 				logger.logInfo(NAME+"Oczekiwanie na wiadomosc")
 				received = self.paramsDictionary["SOCKET"].receive_message()
-				logger.logInfo(NAME+"odebrano %s", received)
+				logger.logInfo(NAME+"odebrano " + received)
 				if received != None:
 					self.dispatch(received)
 				else:

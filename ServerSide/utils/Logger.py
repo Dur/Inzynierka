@@ -13,30 +13,34 @@ LOGGER = "logger"
 def logError(message):
 	connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
 	connection.connect(_getLoggerAddress(), 80, "/log")
-	connection.send_message(message)
-	connection.send_message(ERROR)
-	connection._do_closing_handshake()
+	if connection.isConnected:
+		connection.send_message(message)
+		connection.send_message(ERROR)
+		connection._do_closing_handshake()
 
 def logImportant(message):
 	connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
 	connection.connect(_getLoggerAddress(), 80, "/log")
-	connection.send_message(message)
-	connection.send_message(IMPORTANT)
-	connection._do_closing_handshake()
+	if connection.isConnected:
+		connection.send_message(message)
+		connection.send_message(IMPORTANT)
+		connection._do_closing_handshake()
 
 def logInfo(message):
 	connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
 	connection.connect(_getLoggerAddress(), 80, "/log")
-	connection.send_message(message)
-	connection.send_message(INFO)
-	connection._do_closing_handshake()
+	if connection.isConnected:
+		connection.send_message(message)
+		connection.send_message(INFO)
+		connection._do_closing_handshake()
 
 def logDebug(message):
 	connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
 	connection.connect(_getLoggerAddress(), 80, "/log")
-	connection.send_message(message)
-	connection.send_message(DEBUG)
-	connection._do_closing_handshake()
+	if connection.isConnected:
+		connection.send_message(message)
+		connection.send_message(DEBUG)
+		connection._do_closing_handshake()
 
 def _getLoggerAddress():
 	tempProcessor = FileProcessor(HOME_PATH + "ServerSide/config/tempParams.conf")
@@ -87,6 +91,7 @@ class Connection(object):
 		try:
 			#logger.logInfo(NAME + "connecting to " + host + ":" + str(port) + resource )
 			self._socket.connect((host, int(port)))
+			self.isConnected = True
 			if self.dictionary.get('use_tls') == 'True':
 				self._socket = _TLSSocket(self._socket)
 
@@ -112,17 +117,21 @@ class Connection(object):
 			self._stream = Stream(request, stream_option)
 			return OK_FLAG
 		except Exception, e:
+			self.isConnected = False
 			#logger.logError(NAME+"Wystapil problem")
 			#logger.logError(NAME + e.message)
 			print(e.message)
 			return ERROR_FLAG
 
 	def send_message(self, message):
-		self._stream.send_message(message)
+		if self.isConnected == True:
+			self._stream.send_message(message)
 
 	def get_message(self):
-		message = self._stream.receive_message()
-		return message
+		if self.isConnected == True:
+			message = self._stream.receive_message()
+			return message
+		return ""
 
 	def _do_closing_handshake(self):
 		self._socket.close()

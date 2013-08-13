@@ -7,7 +7,7 @@ NAME = "StandardHostDC: "
 
 def execute(paramsDictionary, message):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
-	logger.logImportant(NAME+ "Wykryto odłączenie serwera " + remoteAddress)
+	logger.logImportant(NAME+ "Wykryto odlaczenie serwera " + remoteAddress)
 	file = FileProcessor(paramsDictionary["HOME_PATH"]+"ServerSide/config/addresses.conf")
 	if( paramsDictionary["CONNECTION_MODE"] == True ):
 		paramsDictionary["CONNECTION"]._socket.close()

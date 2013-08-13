@@ -1,2 +1,159 @@
 08/12/13 23:30:30 Serwer 1 AppRunner: Podlaczanie do start_wsh
 08/12/13 23:30:53 Serwer 1 echo_wsh: Serwer otrzymal lol
+08/13/13 20:52:21 Serwer 1 newHost_wsh: Server dostal zgloszenie
+08/13/13 20:52:21 Serwer 1 newHost_wsh: klucz %s 192.168.56.105
+08/13/13 20:52:21 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.105
+08/13/13 20:52:21 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 20:52:21 Serwer 1 newHost_wsh: znalazl dopasowanie
+08/13/13 20:52:21 Serwer 1 newHost_wsh: Server odpowiedzial PONG do 192.168.56.105
+08/13/13 20:52:21 Serwer 1 newHost_wsh: proba nawiazania polaczenia z nowododanym serwerem
+08/13/13 20:52:21 Serwer 1 newHost_wsh: nawiazywanie polaczenia z nowododanym serwerem
+08/13/13 20:52:46 Serwer 1 newHost_wsh: Server dostal zgloszenie
+08/13/13 20:52:46 Serwer 1 newHost_wsh: klucz %s 192.168.56.105
+08/13/13 20:52:46 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 20:52:46 Serwer 1 newHost_wsh: addresses[key] %s T
+08/13/13 20:52:46 Serwer 1 newHost_wsh: klucz %s 192.168.56.104
+08/13/13 20:52:46 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 20:52:46 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 20:52:47 Serwer 1 newHost_wsh: klucz %s 192.168.56.106
+08/13/13 20:52:47 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 20:52:47 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 20:52:47 Serwer 1 newHost_wsh: znalazl dopasowanie
+08/13/13 20:52:47 Serwer 1 newHost_wsh: Server odpowiedzial PONG do 192.168.56.106
+08/13/13 20:52:47 Serwer 1 newHost_wsh: proba nawiazania polaczenia z nowododanym serwerem
+08/13/13 20:52:47 Serwer 1 newHost_wsh: nawiazywanie polaczenia z nowododanym serwerem
+08/13/13 20:54:33 Serwer 1 newHost_wsh: Server dostal zgloszenie
+08/13/13 20:54:33 Serwer 1 newHost_wsh: klucz %s 192.168.56.105
+08/13/13 20:54:33 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.103
+08/13/13 20:54:33 Serwer 1 newHost_wsh: addresses[key] %s T
+08/13/13 20:54:33 Serwer 1 newHost_wsh: klucz %s 192.168.56.104
+08/13/13 20:54:33 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.103
+08/13/13 20:54:33 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 20:54:33 Serwer 1 newHost_wsh: klucz %s 192.168.56.106
+08/13/13 20:54:33 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.103
+08/13/13 20:54:33 Serwer 1 newHost_wsh: addresses[key] %s T
+08/13/13 20:54:33 Serwer 1 newHost_wsh: klucz %s 192.168.56.103
+08/13/13 20:54:33 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.103
+08/13/13 20:54:33 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 20:54:33 Serwer 1 newHost_wsh: znalazl dopasowanie
+08/13/13 20:54:33 Serwer 1 newHost_wsh: Server odpowiedzial PONG do 192.168.56.103
+08/13/13 20:54:33 Serwer 1 newHost_wsh: proba nawiazania polaczenia z nowododanym serwerem
+08/13/13 20:54:33 Serwer 1 newHost_wsh: nawiazywanie polaczenia z nowododanym serwerem
+08/13/13 20:54:43 Serwer 1 AppRunner: Podlaczanie do start_wsh
+08/13/13 20:54:59 Serwer 1 broadcastDataVersion_wsh: Server dostal zgloszenie
+08/13/13 20:54:59 Serwer 1 broadcastDataVersion_wsh: Otrzymano nowa wersje klienta 45
+08/13/13 20:54:59 Serwer 1 broadcastDataVersion_wsh: Zapisano nowa wersje
+08/13/13 21:05:41 Serwer 1 AppRunner: Podlaczanie do start_wsh
+08/13/13 21:20:33 Serwer 1 AppRunner: Podlaczanie do start_wsh
+08/13/13 21:22:22 Serwer 5 AppRunner: Podlaczanie do start_wsh
+08/13/13 21:26:42 Serwer 5 AppRunner: Podlaczanie do start_wsh
+08/13/13 21:26:42 Serwer 5 start_wsh: Serwer wczytal moduly
+08/13/13 21:26:42 Serwer 5 Connection: connecting to 192.168.56.105:80/newHost
+08/13/13 21:26:45 Serwer 5 Connection: connecting to 192.168.56.104:80/newHost
+08/13/13 21:26:48 Serwer 5 Connection: connecting to 192.168.56.103:80/newHost
+08/13/13 21:26:51 Serwer 5 Connection: connecting to 192.168.56.102:80/newHost
+08/13/13 21:26:51 Serwer 5 Connection: Nawiazano polaczenie z 192.168.56.102:80
+08/13/13 21:26:51 Serwer 1 newHost_wsh: Server dostal zgloszenie
+08/13/13 21:26:51 Serwer 5 start_wsh: Polaczenie z 192.168.56.102 nawiazane
+08/13/13 21:26:51 Serwer 1 newHost_wsh: klucz %s 192.168.56.105
+08/13/13 21:26:51 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 21:26:51 Serwer 5 start_wsh: Wysylanie pingu z metody startowej
+08/13/13 21:26:51 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 21:26:51 Serwer 1 newHost_wsh: klucz %s 192.168.56.104
+08/13/13 21:26:51 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 21:26:51 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 21:26:51 Serwer 1 newHost_wsh: klucz %s 192.168.56.106
+08/13/13 21:26:51 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 21:26:51 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 21:26:51 Serwer 1 newHost_wsh: znalazl dopasowanie
+08/13/13 21:26:51 Serwer 1 newHost_wsh: Server odpowiedzial PONG do 192.168.56.106
+08/13/13 21:26:51 Serwer 5 start_wsh: Metoda startowa otrzymala odpowiedz, zamykanie polaczenia
+08/13/13 21:26:51 Serwer 1 newHost_wsh: proba nawiazania polaczenia z nowododanym serwerem
+08/13/13 21:26:51 Serwer 1 Connection: connecting to 192.168.56.106:80/newPing
+08/13/13 21:26:51 Serwer 5 start_wsh: ########### polaczenie zakonczone, zapisywanie pliku adresowego
+08/13/13 21:26:51 Serwer 5 start_wsh: Zapisano zmiany do pliku adresowego
+08/13/13 21:26:51 Serwer 5 MakeCoherent: analizuje 192.168.56.105
+08/13/13 21:26:51 Serwer 5 MakeCoherent: analizuje 192.168.56.104
+08/13/13 21:26:51 Serwer 5 MakeCoherent: analizuje 192.168.56.103
+08/13/13 21:26:51 Serwer 5 MakeCoherent: analizuje localhost
+08/13/13 21:26:51 Serwer 5 MakeCoherent: analizuje 192.168.56.102
+08/13/13 21:26:51 Serwer 5 MakeCoherent: Dane na serwerze sa aktualne
+08/13/13 21:26:51 Serwer 5 BroadcastNewDataVersion: wewnatrz modulu rozglaszania nowej wersji 
+08/13/13 21:26:51 Serwer 5 start_wsh: Serwer rozpoczyna czeanie na kolejna ture sprawdzania
+08/13/13 21:26:51 Serwer 1 Connection: Nawiazano polaczenie z 192.168.56.106:80
+08/13/13 21:26:51 Serwer 5 newPing_wsh: Server dostal zgloszenie
+08/13/13 21:26:51 Serwer 5 newPing_wsh: Server otrzymal ping od 192.168.56.102
+08/13/13 21:26:51 Serwer 1 newHost_wsh: nawiazywanie polaczenia z nowododanym serwerem
+08/13/13 21:26:51 Serwer 5 newPing_wsh: Server odpowiedzial do 192.168.56.102
+08/13/13 21:26:51 Serwer 5 newPing_wsh: Serwer wczytal moduly
+08/13/13 21:26:51 Serwer 5 AuthNewConn: Wewnatrz modulu autoryzacji
+08/13/13 21:27:21 Serwer 5 start_wsh: Serwer wznawia sprawdzanie
+08/13/13 21:27:21 Serwer 5 Connection: connecting to 192.168.56.105:80/newHost
+08/13/13 21:27:24 Serwer 5 Connection: connecting to 192.168.56.104:80/newHost
+08/13/13 21:27:27 Serwer 5 Connection: connecting to 192.168.56.103:80/newHost
+08/13/13 21:27:30 Serwer 5 MakeCoherent: analizuje 192.168.56.105
+08/13/13 21:27:30 Serwer 5 MakeCoherent: analizuje 192.168.56.104
+08/13/13 21:27:30 Serwer 5 MakeCoherent: analizuje 192.168.56.103
+08/13/13 21:27:30 Serwer 5 MakeCoherent: analizuje localhost
+08/13/13 21:27:30 Serwer 5 MakeCoherent: analizuje 192.168.56.102
+08/13/13 21:27:30 Serwer 5 MakeCoherent: Dane na serwerze sa aktualne
+08/13/13 21:27:30 Serwer 5 BroadcastNewDataVersion: wewnatrz modulu rozglaszania nowej wersji 
+08/13/13 21:27:30 Serwer 5 start_wsh: Serwer rozpoczyna czeanie na kolejna ture sprawdzania
+08/13/13 21:27:33 Serwer 5 start_wsh: Serwer wznawia sprawdzanie
+08/13/13 21:27:33 Serwer 5 Connection: connecting to 192.168.56.105:80/newHost
+08/13/13 21:27:36 Serwer 5 Connection: connecting to 192.168.56.104:80/newHost
+08/13/13 21:27:39 Serwer 5 Connection: connecting to 192.168.56.103:80/newHost
+08/13/13 21:27:42 Serwer 5 MakeCoherent: analizuje 192.168.56.105
+08/13/13 21:27:42 Serwer 5 MakeCoherent: analizuje 192.168.56.104
+08/13/13 21:27:42 Serwer 5 MakeCoherent: analizuje 192.168.56.103
+08/13/13 21:27:42 Serwer 5 MakeCoherent: analizuje localhost
+08/13/13 21:27:42 Serwer 5 MakeCoherent: analizuje 192.168.56.102
+08/13/13 21:27:42 Serwer 5 MakeCoherent: Dane na serwerze sa aktualne
+08/13/13 21:27:42 Serwer 5 BroadcastNewDataVersion: wewnatrz modulu rozglaszania nowej wersji 
+08/13/13 21:27:42 Serwer 5 start_wsh: Serwer rozpoczyna czeanie na kolejna ture sprawdzania
+08/13/13 21:34:32 Serwer 1 AppRunner: Podlaczanie do start_wsh
+08/13/13 21:34:39 Serwer 5 AppRunner: Podlaczanie do start_wsh
+08/13/13 21:34:39 Serwer 5 start_wsh: Serwer wczytal moduly
+08/13/13 21:34:39 Serwer 5 Connection: connecting to 192.168.56.105:80/newHost
+08/13/13 21:34:42 Serwer 5 Connection: connecting to 192.168.56.104:80/newHost
+08/13/13 21:34:45 Serwer 5 Connection: connecting to 192.168.56.103:80/newHost
+08/13/13 21:34:48 Serwer 5 Connection: connecting to 192.168.56.102:80/newHost
+08/13/13 21:34:48 Serwer 1 newHost_wsh: Server dostal zgloszenie
+08/13/13 21:34:48 Serwer 5 Connection: Nawiazano polaczenie z 192.168.56.102:80
+08/13/13 21:34:48 Serwer 5 start_wsh: Polaczenie z 192.168.56.102 nawiazane
+08/13/13 21:34:48 Serwer 1 newHost_wsh: klucz %s 192.168.56.105
+08/13/13 21:34:48 Serwer 5 start_wsh: Wysylanie pingu z metody startowej
+08/13/13 21:34:48 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 21:34:48 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 21:34:48 Serwer 1 newHost_wsh: klucz %s 192.168.56.104
+08/13/13 21:34:48 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 21:34:48 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 21:34:48 Serwer 1 newHost_wsh: klucz %s 192.168.56.106
+08/13/13 21:34:48 Serwer 1 newHost_wsh: adres zdalnej maszyny %s 192.168.56.106
+08/13/13 21:34:48 Serwer 1 newHost_wsh: addresses[key] %s F
+08/13/13 21:34:48 Serwer 1 newHost_wsh: znalazl dopasowanie
+08/13/13 21:34:48 Serwer 1 newHost_wsh: Server odpowiedzial PONG do 192.168.56.106
+08/13/13 21:34:48 Serwer 5 start_wsh: Metoda startowa otrzymala odpowiedz, zamykanie polaczenia
+08/13/13 21:34:48 Serwer 1 newHost_wsh: proba nawiazania polaczenia z nowododanym serwerem
+08/13/13 21:34:48 Serwer 5 start_wsh: ########### polaczenie zakonczone, zapisywanie pliku adresowego
+08/13/13 21:34:48 Serwer 1 Connection: connecting to 192.168.56.106:80/newPing
+08/13/13 21:34:48 Serwer 5 start_wsh: Zapisano zmiany do pliku adresowego
+08/13/13 21:34:48 Serwer 5 MakeCoherent: analizuje 192.168.56.105
+08/13/13 21:34:48 Serwer 5 MakeCoherent: analizuje 192.168.56.104
+08/13/13 21:34:48 Serwer 5 MakeCoherent: analizuje 192.168.56.103
+08/13/13 21:34:48 Serwer 5 MakeCoherent: analizuje localhost
+08/13/13 21:34:48 Serwer 5 MakeCoherent: analizuje 192.168.56.102
+08/13/13 21:34:48 Serwer 5 MakeCoherent: Dane na serwerze sa aktualne
+08/13/13 21:34:48 Serwer 5 BroadcastNewDataVersion: wewnatrz modulu rozglaszania nowej wersji 
+08/13/13 21:34:48 Serwer 5 start_wsh: Serwer rozpoczyna czeanie na kolejna ture sprawdzania
+08/13/13 21:34:48 Serwer 1 Connection: Nawiazano polaczenie z 192.168.56.106:80
+08/13/13 21:34:48 Serwer 5 newPing_wsh: Server dostal zgloszenie
+08/13/13 21:34:48 Serwer 5 newPing_wsh: Server otrzymal ping od 192.168.56.102
+08/13/13 21:34:48 Serwer 1 newHost_wsh: nawiazywanie polaczenia z nowododanym serwerem
+08/13/13 21:34:48 Serwer 5 newPing_wsh: Serwer wczytal moduly
+08/13/13 21:34:48 Serwer 5 AuthNewConn: Wewnatrz modulu autoryzacji
+08/13/13 21:34:48 Serwer 5 newPing_wsh: Server odpowiedzial do 192.168.56.102
+08/13/13 21:35:18 Serwer 5 start_wsh: Serwer wznawia sprawdzanie
+08/13/13 21:35:18 Serwer 5 Connection: connecting to 192.168.56.105:80/newHost
+08/13/13 21:35:21 Serwer 5 Connection: connecting to 192.168.56.104:80/newHost
+08/13/13 21:35:24 Serwer 5 Connection: connecting to 192.168.56.103:80/newHost
