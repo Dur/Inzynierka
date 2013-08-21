@@ -1,5 +1,5 @@
 __author__ = 'dur'
-
+import logging
 
 from utils.FileProcessors import FileProcessor
 IMPORTANT = "IMP"
@@ -12,7 +12,9 @@ LEVEL_ERROR = 1
 LEVEL_IMPORTANT = 2
 LEVEL_INFO = 3
 LEVEL_DEBUG = 4
-
+LOACL = 1
+EXTERNAL = 2
+WHERE_TO_LOG = LOACL
 
 
 LEVEL = LEVEL_INFO
@@ -20,39 +22,51 @@ LEVEL = LEVEL_INFO
 
 def logError(message):
 	if(LEVEL >= LEVEL_ERROR):
-		connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
-		connection.connect(_getLoggerAddress(), 80, "/log")
-		if connection.isConnected:
-			connection.send_message(message)
-			connection.send_message(ERROR)
-			connection._do_closing_handshake()
+		if(WHERE_TO_LOG == EXTERNAL):
+			connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
+			connection.connect(_getLoggerAddress(), 80, "/log")
+			if connection.isConnected:
+				connection.send_message(message)
+				connection.send_message(ERROR)
+				connection._do_closing_handshake()
+		else:
+			logging.error(message)
 
 def logImportant(message):
 	if(LEVEL >= LEVEL_IMPORTANT):
-		connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
-		connection.connect(_getLoggerAddress(), 80, "/log")
-		if connection.isConnected:
-			connection.send_message(message)
-			connection.send_message(IMPORTANT)
-			connection._do_closing_handshake()
+		if(WHERE_TO_LOG == EXTERNAL):
+			connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
+			connection.connect(_getLoggerAddress(), 80, "/log")
+			if connection.isConnected:
+				connection.send_message(message)
+				connection.send_message(IMPORTANT)
+				connection._do_closing_handshake()
+		else:
+			logging.error(message)
 
 def logInfo(message):
 	if(LEVEL >= LEVEL_INFO):
-		connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
-		connection.connect(_getLoggerAddress(), 80, "/log")
-		if connection.isConnected:
-			connection.send_message(message)
-			connection.send_message(INFO)
-			connection._do_closing_handshake()
+		if(WHERE_TO_LOG == EXTERNAL):
+			connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
+			connection.connect(_getLoggerAddress(), 80, "/log")
+			if connection.isConnected:
+				connection.send_message(message)
+				connection.send_message(INFO)
+				connection._do_closing_handshake()
+		else:
+			logging.error(message)
 
 def logDebug(message):
 	if(LEVEL >= LEVEL_DEBUG):
-		connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
-		connection.connect(_getLoggerAddress(), 80, "/log")
-		if connection.isConnected:
-			connection.send_message(message)
-			connection.send_message(DEBUG)
-			connection._do_closing_handshake()
+		if(WHERE_TO_LOG == EXTERNAL):
+			connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
+			connection.connect(_getLoggerAddress(), 80, "/log")
+			if connection.isConnected:
+				connection.send_message(message)
+				connection.send_message(DEBUG)
+				connection._do_closing_handshake()
+		else:
+			logging.error(message)
 
 def _getLoggerAddress():
 	tempProcessor = FileProcessor(HOME_PATH + "ServerSide/config/tempParams.conf")
