@@ -15,7 +15,7 @@ LEVEL_DEBUG = 4
 
 
 
-LEVEL = LEVEL_IMPORTANT
+LEVEL = LEVEL_INFO
 
 
 def logError(message):
