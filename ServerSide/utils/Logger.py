@@ -8,39 +8,51 @@ INFO = "INFO"
 DEBUG = "DEBUG"
 HOME_PATH = "/home/dur/Projects/"
 LOGGER = "logger"
+LEVEL_ERROR = 1
+LEVEL_IMPORTANT = 2
+LEVEL_INFO = 3
+LEVEL_DEBUG = 4
+
+
+
+LEVEL = LEVEL_IMPORTANT
 
 
 def logError(message):
-	connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
-	connection.connect(_getLoggerAddress(), 80, "/log")
-	if connection.isConnected:
-		connection.send_message(message)
-		connection.send_message(ERROR)
-		connection._do_closing_handshake()
+	if(LEVEL >= LEVEL_ERROR):
+		connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
+		connection.connect(_getLoggerAddress(), 80, "/log")
+		if connection.isConnected:
+			connection.send_message(message)
+			connection.send_message(ERROR)
+			connection._do_closing_handshake()
 
 def logImportant(message):
-	connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
-	connection.connect(_getLoggerAddress(), 80, "/log")
-	if connection.isConnected:
-		connection.send_message(message)
-		connection.send_message(IMPORTANT)
-		connection._do_closing_handshake()
+	if(LEVEL >= LEVEL_IMPORTANT):
+		connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
+		connection.connect(_getLoggerAddress(), 80, "/log")
+		if connection.isConnected:
+			connection.send_message(message)
+			connection.send_message(IMPORTANT)
+			connection._do_closing_handshake()
 
 def logInfo(message):
-	connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
-	connection.connect(_getLoggerAddress(), 80, "/log")
-	if connection.isConnected:
-		connection.send_message(message)
-		connection.send_message(INFO)
-		connection._do_closing_handshake()
+	if(LEVEL >= LEVEL_INFO):
+		connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
+		connection.connect(_getLoggerAddress(), 80, "/log")
+		if connection.isConnected:
+			connection.send_message(message)
+			connection.send_message(INFO)
+			connection._do_closing_handshake()
 
 def logDebug(message):
-	connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
-	connection.connect(_getLoggerAddress(), 80, "/log")
-	if connection.isConnected:
-		connection.send_message(message)
-		connection.send_message(DEBUG)
-		connection._do_closing_handshake()
+	if(LEVEL >= LEVEL_DEBUG):
+		connection = Connection(HOME_PATH + "ServerSide/config/connection_config.conf")
+		connection.connect(_getLoggerAddress(), 80, "/log")
+		if connection.isConnected:
+			connection.send_message(message)
+			connection.send_message(DEBUG)
+			connection._do_closing_handshake()
 
 def _getLoggerAddress():
 	tempProcessor = FileProcessor(HOME_PATH + "ServerSide/config/tempParams.conf")

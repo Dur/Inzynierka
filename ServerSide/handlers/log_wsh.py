@@ -9,7 +9,7 @@ INFO = "INFO"
 DEBUG = "DEBUG"
 map = {ERROR : "ServerSide/log/important.log",
        INFO : "ServerSide/log/important.log",
-       DEBUG : "ServerSide/log/important.log",
+       DEBUG : "ServerSide/log/importantl.log",
        IMPORTANT : "ServerSide/log/important.log"}
 
 addressMap = {"192.168.56.104" : "Serwer 3",
