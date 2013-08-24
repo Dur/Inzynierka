@@ -22,9 +22,9 @@ def authConnectionMode(paramsDictionary):
 	logger.logImportant(NAME + "Uwierzytelnianie podlaczajacego sie serwera " + remoteAddress)
 	socket = paramsDictionary["SOCKET"]
 	homePath = paramsDictionary["HOME_PATH"]
-
+	logger.logImportant(NAME + "przed wyslaniem zapytania o haslo")
 	socket.send_message(GET_PASSWORD)
-
+	logger.logImportant(NAME + "Oczekiwanie na haslo od serwera")
 	password = socket.receive_message()
 
 	logger.logImportant(NAME + "Otrzymano haslo od " + remoteAddress)
