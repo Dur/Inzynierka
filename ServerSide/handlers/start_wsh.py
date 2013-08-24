@@ -56,7 +56,9 @@ def web_socket_transfer_data(request):
 							logger.logInfo(NAME+ "Polaczenie z " + key + " nawiazane")
 							connection.send_message(PING)
 							logger.logInfo(NAME+ "Wysylanie pingu z metody startowej")
-							if connection.get_message() == PONG:
+							expectedPong = connection.get_message()
+							logger.logImportant(NAME + "Oczekiwano PONG, Otrzymano " + expectedPong)
+							if expectedPong == PONG:
 								logger.logInfo(NAME+ "Metoda startowa otrzymala odpowiedz, zamykanie polaczenia")
 								connection._do_closing_handshake()
 								logger.logInfo(NAME + "########### polaczenie zakonczone, zapisywanie pliku adresowego")
