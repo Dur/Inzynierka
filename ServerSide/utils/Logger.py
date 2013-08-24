@@ -8,8 +8,8 @@ INFO = "INFO"
 DEBUG = "DEBUG"
 HOME_PATH = "/home/dur/Projects/"
 LOGGER = "logger"
-LEVEL_ERROR = 1
-LEVEL_IMPORTANT = 2
+LEVEL_ERROR = 2
+LEVEL_IMPORTANT = 1
 LEVEL_INFO = 3
 LEVEL_DEBUG = 4
 LOCACL = 1
@@ -115,7 +115,6 @@ class Connection(object):
 		self.dictionary['resource'] = resource
 		self._socket.settimeout(int(self.dictionary.get('socket_timeout')))
 		try:
-			#logger.logInfo(NAME + "connecting to " + host + ":" + str(port) + resource )
 			self._socket.connect((host, int(port)))
 			self.isConnected = True
 			if self.dictionary.get('use_tls') == 'True':
@@ -127,8 +126,6 @@ class Connection(object):
 				self._socket, self.dictionary)
 
 			self._handshake.handshake()
-
-			#logger.logInfo(NAME + 'Nawiazano polaczenie z ' + host+":"+str(port))
 
 			request = ClientRequest(self._socket)
 
@@ -144,8 +141,6 @@ class Connection(object):
 			return OK_FLAG
 		except Exception, e:
 			self.isConnected = False
-			#logger.logError(NAME+"Wystapil problem")
-			#logger.logError(NAME + e.message)
 			print(e.message)
 			return ERROR_FLAG
 
