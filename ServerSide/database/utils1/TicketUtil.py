@@ -29,7 +29,10 @@ def setNextExpectedTicket(currentTicket):
 	tempProcessor = FileProcessor("/home/dur/Projects/ServerSide/config/tempParams.conf")
 	tempProcessor.lockFile()
 	params = tempProcessor.readFile()
-	skipped = params[SKIP_TICKETS].split(",")
+	if params[SKIP_TICKETS] != '':
+		skipped = params[SKIP_TICKETS].split(",")
+	else:
+		skipped = None
 	logger.logInfo(NAME + "11")
 	newTicket = int(currentTicket) + 1
 	logger.logInfo(NAME + "22")
@@ -91,7 +94,7 @@ def getCurrentExpectedTicket():
 def removeAllSkippedLowerThen(skipped, ticket):
 	ret = []
 	logger.logInfo(NAME + "skipped: " + str(skipped))
-	if len(skipped) > 0:
+	if skipped != None and len(skipped) > 0:
 		for single in skipped:
 			if int(single) >= int(ticket):
 				ret.append(single)

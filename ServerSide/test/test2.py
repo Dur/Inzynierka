@@ -16,8 +16,8 @@
 # print(params)
 # tempProcessor.unlockFile()
 #logger.logError("Error message")
-#TicketUtil.skipTicket(1)
-import utils.Logger as logger
+from database.utils1 import TicketUtil
 
-logger.logError("Error")
+TicketUtil.setNextExpectedTicket(1)
+
 
