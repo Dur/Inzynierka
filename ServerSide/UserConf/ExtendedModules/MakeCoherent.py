@@ -1,5 +1,6 @@
 import MySQLdb
 from connections.Connection import Connection
+from database.utils1 import TicketUtil
 from utils.ConfigurationReader import ConfigurationReader
 from utils.FileProcessors import FileProcessor
 from utils.filelock import FileLock
@@ -101,6 +102,9 @@ def execute(paramsDictionary, message):
 			version = connection.get_message()
 		logger.logInfo(NAME + "zamykanie polaczenia z baza danych")
 		cursor.execute("commit")
+		ticket = connection.get_message()
+		ticket = int(ticket) - 1
+		TicketUtil.setNextExpectedTicket(ticket)
 	except MySQLdb.Error, e:
 		logger.logError("%d %s" % (e.args[0], e.args[1]))
 		cursor.execute("rollback")

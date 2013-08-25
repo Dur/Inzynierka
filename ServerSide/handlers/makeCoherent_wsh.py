@@ -1,4 +1,5 @@
 import MySQLdb
+from database.utils1 import TicketUtil
 import utils.Logger as logger
 from mod_python import apache
 from utils.ConfigurationReader import ConfigurationReader
@@ -48,6 +49,8 @@ def web_socket_transfer_data(request):
 			socket.send_message(command)
 			logger.logInfo(NAME + "Wyslano " + str(version) + " " + command)
 		socket.send_message(END)
+		ticket = TicketUtil.getCurrentExpectedTicket()
+		socket.send_message(str(ticket))
 		logger.logInfo(NAME + "wyslano wiadomosc konczaca")
 		return apache.HTTP_OK
 	except MySQLdb.Error, e:
