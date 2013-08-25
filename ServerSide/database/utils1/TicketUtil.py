@@ -90,7 +90,9 @@ def getCurrentExpectedTicket():
 
 def removeAllSkippedLowerThen(skipped, ticket):
 	ret = []
-	for single in skipped:
-		if int(single) >= int(ticket):
-			ret.append(single)
+	logger.logInfo(NAME + "skipped: " + str(skipped))
+	if len(skipped) > 0:
+		for single in skipped:
+			if int(single) >= int(ticket):
+				ret.append(single)
 	return ret
