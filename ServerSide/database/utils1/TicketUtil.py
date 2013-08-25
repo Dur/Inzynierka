@@ -30,16 +30,22 @@ def setNextExpectedTicket(currentTicket):
 	tempProcessor.lockFile()
 	params = tempProcessor.readFile()
 	skipped = params[SKIP_TICKETS].split(",")
+	logger.logInfo(NAME + "11")
 	newTicket = int(currentTicket) + 1
+	logger.logInfo(NAME + "22")
 	skipped = removeAllSkippedLowerThen(skipped, newTicket)
+	logger.logInfo(NAME + "33")
 	while skipped.__contains__(str(newTicket)):
 		skipped.remove(str(newTicket))
 		newTicket = int(newTicket) + 1
 	toRet = ""
+	logger.logInfo(NAME + "44")
 	for single in skipped:
 		toRet= toRet + str(single) + ","
 	toRet = toRet[:-1]
+	logger.logInfo(NAME + "55")
 	params[EXPECTED_TICKET] = str(newTicket)
+	logger.logInfo(NAME + "66")
 	params[SKIP_TICKETS] = toRet
 	tempProcessor.writeToFile(params)
 	tempProcessor.unlockFile()
