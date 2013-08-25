@@ -19,7 +19,7 @@ def execute(paramsDictionary, message):
 
 def authConnectionMode(paramsDictionary):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
-	logger.logImportant(NAME + "Uwierzytelnianie serwera " + remoteAddress)
+	logger.logInfo(NAME + "Uwierzytelnianie serwera " + remoteAddress)
 	socket = paramsDictionary["SOCKET"]
 	homePath = paramsDictionary["HOME_PATH"]
 	logger.logInfo(NAME + "przed wyslaniem zapytania o haslo")
@@ -64,7 +64,7 @@ def authConnectionMode(paramsDictionary):
 
 def authRequestMode(paramsDictionary):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
-	logger.logImportant(NAME + "Uwierzytelnianie serwera " + remoteAddress)
+	logger.logInfo(NAME + "Uwierzytelnianie serwera " + remoteAddress)
 	socket = paramsDictionary["SOCKET"]
 
 	homePath = paramsDictionary["HOME_PATH"]

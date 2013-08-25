@@ -14,6 +14,7 @@ PING = "PING:PING"
 EXIT = "EXIT"
 RESOURCE = "/newPing"
 ERROR = -1
+PARENT_MACHINE_ADDRESS = "192.168.56.1"
 
 def web_socket_do_extra_handshake(request):
 	pass  # Always accept.
@@ -33,6 +34,11 @@ def web_socket_transfer_data(request):
 	paramsDictionary["CONFIG_PARAMS"] = configReader.readConfigFile()
 
 	paramsDictionary["SOCKET"].receive_message()
+
+	if paramsDictionary["CLIENT_ADDRESS"] == PARENT_MACHINE_ADDRESS:
+		paramsDictionary["SOCKET"].send_message(EXIT)
+		return apache.HTTP_OK
+
 	logger.logImportant(NAME+ "Serwer " + paramsDictionary["CLIENT_ADDRESS"] + " probuje nawiazac polaczenie")
 
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]

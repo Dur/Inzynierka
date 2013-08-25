@@ -60,7 +60,7 @@ def web_socket_transfer_data(request):
 	return apache.HTTP_OK
 
 def prepare(paramsDictionary, db, lock):
-	logger.logImportant(NAME + "Prepare")
+	logger.logInfo(NAME + "Prepare")
 	try:
 		socket = paramsDictionary["SOCKET"]
 		command = socket.receive_message()
@@ -108,7 +108,7 @@ def globalCommit(paramsDictionary, db, lock):
 		if lock.is_locked:
 			lock.release()
 	except Exception, e:
-		logger.logImportant(NAME + e.message)
+		logger.logError(NAME + e.message)
 		if lock.is_locked:
 			lock.release()
 
@@ -159,5 +159,5 @@ def insertNewDataVersions(serversList, paramsDictionary):
 		versionProcessor.writeToFile(versions)
 		versionProcessor.unlockFile()
 	except Exception, e:
-		logger.logImportant(NAME + e.message)
+		logger.logError(NAME + e.message)
 		versionProcessor.unlockFile()

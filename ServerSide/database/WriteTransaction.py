@@ -75,7 +75,7 @@ class WriteTransaction:
 			cursor.execute(command)
 		except MySQLdb.Error, e:
 			cursor.execute("rollback")
-			logger.logImportant(NAME + "Rzucilo wyjatkiem SQL")
+			logger.logInfo(NAME + "Rzucilo wyjatkiem SQL")
 			logger.logImportant(NAME + "%d %s" % (e.args[0], e.args[1]))
 			return "%d %s" % (e.args[0], e.args[1])
 
@@ -216,7 +216,7 @@ class WriteTransaction:
 				available += 1
 		self.addressesProcessor.unlockFile()
 		minVersion = int(math.floor(allServers / 2) + 1)
-		logger.logImportant(NAME + "Aktywne serwery: " + str(self.activeServers))
+		logger.logInfo(NAME + "Aktywne serwery: " + str(self.activeServers))
 		self.serversCount = len(addresses) + 1
 		if available >= minVersion:
 			logger.logImportant(NAME + "Warunek kworum dla zapisu spelniony, mozna przeprowadzic operacje")

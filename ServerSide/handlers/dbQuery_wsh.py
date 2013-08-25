@@ -44,15 +44,15 @@ def web_socket_transfer_data(request):
 	while(True):
 		try:
 			query = request.ws_stream.receive_message()
-			logger.logImportant(NAME + "Klient chce wykonac zapytanie " + query)
 			if query == CLOSING_MESSAGE:
 				db.closeConnection()
 				return apache.HTTP_OK
 			else:
+				logger.logImportant(NAME + "Klient chce wykonac zapytanie " + query)
 				lock.acquire()
 				output = db.executeSQL(query, paramsDictionary)
 				lock.release()
-				logger.logImportant(NAME + "Wynik zapytania " + str(output))
+				logger.logImportant(NAME + str(output))
 				request.ws_stream.send_message(str(output))
 
 		except Exception, e:
