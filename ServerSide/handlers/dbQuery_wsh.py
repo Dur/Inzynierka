@@ -38,13 +38,13 @@ def web_socket_transfer_data(request):
 		request.ws_stream.send_message("Invalid username or password")
 		logger.logError(NAME + "Uzytkownik podal niewlasciwy login lub haslo, zamykanie polaczenia")
 		return apache.HTTP_OK
-	logger.logIinfo(NAME + "polaczenie z baza nawiazane")
+	logger.logInfo(NAME + "polaczenie z baza nawiazane")
 	lockFilePath = paramsDictionary["HOME_PATH"]+"ServerSide/config/database_config/dbLock.dat"
 	lock = FileLock(lockFilePath)
 	while(True):
 		try:
 			query = request.ws_stream.receive_message()
-			logger.logIinfo(NAME + "otrzymal " + query)
+			logger.logInfo(NAME + "otrzymal " + query)
 			if query == CLOSING_MESSAGE:
 				db.closeConnection()
 				return apache.HTTP_OK
