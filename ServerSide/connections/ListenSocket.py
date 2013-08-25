@@ -16,9 +16,9 @@ class ListenSocket( Thread ):
 		try:
 			logger.logInfo(NAME+"wewnatrz watku")
 			while( True ):
-				logger.logInfo(NAME+"Oczekiwanie na wiadomosc")
+				#logger.logInfo(NAME+"Oczekiwanie na wiadomosc")
 				received = self.paramsDictionary["SOCKET"].receive_message()
-				logger.logInfo(NAME+"odebrano " + received)
+				#logger.logInfo(NAME+"odebrano " + received)
 				if received != None:
 					self.dispatch(received)
 				else:
@@ -37,6 +37,6 @@ class ListenSocket( Thread ):
 		else:
 			message = None
 		if( self.modules[module] != None ):
-			logger.logInfo(NAME+"znaleziono modul odpowiadajacy za obsluge")
+			#logger.logInfo(NAME+"znaleziono modul odpowiadajacy za obsluge")
 			for singleModule in self.modules[module]:
 				singleModule.execute(self.paramsDictionary, message)
