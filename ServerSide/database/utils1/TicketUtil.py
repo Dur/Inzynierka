@@ -1,10 +1,12 @@
 from connections.Connection import Connection
 from utils.FileProcessors import FileProcessor
+import utils.Logger as logger
 
 __author__ = 'dur'
 TICKET_PARAM = "ticketServer"
 SKIP_TICKETS = "skipTickets"
 EXPECTED_TICKET = "expectedTicket"
+NAME = "TicketUtil: "
 
 
 def getTicket():
@@ -23,6 +25,7 @@ def readTempVars():
 
 
 def setNextExpectedTicket(currentTicket):
+	logger.logInfo(NAME + "Otrzymalem aktualny bilet " + str(currentTicket))
 	tempProcessor = FileProcessor("/home/dur/Projects/ServerSide/config/tempParams.conf")
 	tempProcessor.lockFile()
 	params = tempProcessor.readFile()
@@ -40,6 +43,7 @@ def setNextExpectedTicket(currentTicket):
 	params[SKIP_TICKETS] = toRet
 	tempProcessor.writeToFile(params)
 	tempProcessor.unlockFile()
+	logger.logInfo(NAME + "Zwracam kolejny oczekiwany bilet: " + str(newTicket))
 	return newTicket
 
 
