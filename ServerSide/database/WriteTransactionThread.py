@@ -50,31 +50,31 @@ class WriteTransactionThread(Thread):
 				while command != STOP_THREAD:
 					methodMapping[command]()
 					command = self.inputQueue.get(True, None)
-					logger.logImportant(NAME + "Odebrano komende " + command)
+					logger.logInfo(NAME + "Odebrano komende " + command)
 				self.connection.send_message(EXIT)
 			else:
-				logger.logImportant(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
+				logger.logError(NAME + "Nie mozna nawiazac polaczenia dla transakcji zapisu")
 				self.outputQueue.put(ABORT)
 				self.connection._do_closing_handshake()
-			logger.logImportant(NAME + "Konice watku transakcji zapisu")
+			logger.logInfo(NAME + "Konice watku transakcji zapisu")
 		except Exception, e:
 			logging.error(NAME + e.message )
 
 	def prepare(self):
-		logger.logImportant(NAME + "PrepareMethod")
+		logger.logInfo(NAME + "PrepareMethod")
 		command = self.inputQueue.get(True, None)
-		logger.logImportant(NAME + "Otrzymalem zapytanie sql do wykonania " + command)
+		logger.logInfo(NAME + "Otrzymalem zapytanie sql do wykonania " + command)
 		self.connection.send_message(PREPARE)
 		self.connection.send_message(command)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
-		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
+		logger.logInfo(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():
 			self.eventVariable.set()
-			logger.logImportant(NAME + "Wybudzanie watku transakcji")
+			logger.logInfo(NAME + "Wybudzanie watku transakcji")
 
 	def globalCommit(self):
-		logger.logImportant(NAME + "GlobalCommitMethod")
+		logger.logInfo(NAME + "GlobalCommitMethod")
 		self.connection.send_message(GLOBAL_COMMIT)
 		command = self.inputQueue.get(True, None)
 		self.connection.send_message(command)
@@ -82,18 +82,18 @@ class WriteTransactionThread(Thread):
 		self.connection.send_message(ticket)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
-		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
+		logger.logInfo(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():
-			logger.logImportant(NAME + "Wybudzanie watku transakcji")
+			logger.logInfo(NAME + "Wybudzanie watku transakcji")
 
 	def globalAbort(self):
-		logger.logImportant(NAME + "GlobalAbortMethod")
+		logger.logInfo(NAME + "GlobalAbortMethod")
 		self.connection.send_message(GLOBAL_ABORT)
 		ticket = self.inputQueue.get(True, None)
 		self.connection.send_message(ticket)
 		answer = self.connection.get_message()
 		self.outputQueue.put(answer)
-		logger.logImportant(NAME + "Zdalny serwer odpowiedzial: " + answer)
+		logger.logInfo(NAME + "Zdalny serwer odpowiedzial: " + answer)
 		if self.outputQueue.full():
-			logger.logImportant(NAME + "Wybudzanie watku transakcji")
+			logger.logInfo(NAME + "Wybudzanie watku transakcji")
 

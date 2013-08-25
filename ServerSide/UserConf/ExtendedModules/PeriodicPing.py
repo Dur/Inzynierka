@@ -11,13 +11,13 @@ def execute(paramsDictionary, message):
 	socket = paramsDictionary["SOCKET"]
 	queue = paramsDictionary["QUEUE"]
 	pingWaitResponseTime = int(paramsDictionary["CONFIG_PARAMS"]["pingWaitResponseTime"])
-	#logger.logInfo(NAME + "Maksymalny czas oczekiwania na odpowiedz = " + str(pingWaitResponseTime))
+	logger.logInfo(NAME + "Maksymalny czas oczekiwania na odpowiedz = " + str(pingWaitResponseTime))
 	wasError = False
 	errorMessage = ""
 
 	try:
 		socket.send_message(PING)
-		#logger.logInfo(NAME+ "Wysylam ping")
+		logger.logInfo(NAME+ "Wysylam ping")
 		queue.get(True, int(pingWaitResponseTime))
 
 	except Queue.Empty:

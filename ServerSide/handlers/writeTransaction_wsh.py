@@ -25,7 +25,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logger.logImportant(NAME+ "Server dostal zgloszenie")
+	logger.logInfo(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	paramsDictionary["SOCKET"] = request.ws_stream
@@ -56,7 +56,7 @@ def web_socket_transfer_data(request):
 		if lock.is_locked:
 			lock.release()
 		return apache.HTTP_OK
-	logger.logImportant(NAME + "Klient zakonczyl transakcje")
+	logger.logInfo(NAME + "Klient zakonczyl transakcje")
 	return apache.HTTP_OK
 
 def prepare(paramsDictionary, db, lock):
@@ -65,7 +65,7 @@ def prepare(paramsDictionary, db, lock):
 		socket = paramsDictionary["SOCKET"]
 		command = socket.receive_message()
 		paramsDictionary["COMMAND"] = command
-		logger.logImportant(NAME + "Wezel otrzymal komende do wykonania " + command)
+		logger.logInfo(NAME + "Wezel otrzymal komende do wykonania " + command)
 		if db.initConnection() == ERROR:
 			logger.logError(NAME + "Nie moge polaczyc sie z baza danych")
 			socket.send_message(ABORT)
@@ -74,16 +74,16 @@ def prepare(paramsDictionary, db, lock):
 			return
 		lock.acquire()
 		if lock.is_locked == False:
-			logger.logImportant(NAME + "Nie moge zalozyc blokady")
+			logger.logError(NAME + "Nie moge zalozyc blokady")
 			socket.send_message(ABORT)
 			lock.release()
 			return
 		if db.executeQueryWithoutTransaction(command) != OK_CODE:
 			socket.send_message(ABORT)
-			logger.logImportant(NAME + "Nie moge wykonac polecenia")
+			logger.logError(NAME + "Nie moge wykonac polecenia")
 			lock.release()
 			return
-		logger.logImportant(NAME + "Wysylanie READY_COMMIT do koordynatora")
+		logger.logImportant(NAME + "Uczestnik jest gotowy do zaakceptowania operacji")
 		socket.send_message(READY_COMMIT)
 		return
 	except Exception, e:
@@ -98,7 +98,7 @@ def globalCommit(paramsDictionary, db, lock):
 		logger.logInfo(NAME + "Mam serwery " + servers)
 		servers = servers.split(':')
 		servers.append(paramsDictionary["CLIENT_ADDRESS"])
-		logger.logImportant(NAME + "Otrzymano polecenie GLOBAL_COMMIT")
+		logger.logImportant(NAME + "Uczestnik zaakceptowal operacje")
 		db.executeQueryWithoutTransaction(generateInsertToDataVersions(paramsDictionary))
 		db.executeQueryWithoutTransaction(COMMIT)
 		insertNewDataVersions(servers, paramsDictionary)

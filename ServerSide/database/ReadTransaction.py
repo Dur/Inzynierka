@@ -7,7 +7,7 @@ __author__ = 'dur'
 
 NAME = "ReadTransaction: "
 LOCALHOST_NAME = "localhost"
-ERROR_MESSAGE = "Sorry, but server is temporary unavailable, please try again later"
+ERROR_MESSAGE = "Serwer jest tymczasowo niedostepny, sprobuj ponownie pozniej"
 
 class ReadTransaction:
 	paramsDictionary = {}
@@ -47,7 +47,7 @@ class ReadTransaction:
 		self.processor.unlockFile()
 		min = int(math.floor(count / 2) + 1)
 		if myVersion >= min:
-			logger.logInfo(NAME + "Mozna czytac")
+			logger.logInfo(NAME + "Warunek kworum dla odczytu spelniony")
 			return True
 		else:
 			logger.logError(NAME + "Nie mozna czytac")
@@ -65,10 +65,10 @@ class ReadTransaction:
 				available = available + 1
 		min = int(math.floor(all / 2) + 1)
 		if available >= min:
-			logger.logImportant(NAME + "Wicej niz polowa serwerow aktywna, mozna wykonac operacje")
+			logger.logInfo(NAME + "Warunek kworum dla odczytu spelniony, mozna wykonac operacje")
 			return True
 		else:
-			logger.logImportant(NAME + "Mniej niz polowa serwerow aktywna, nie mozna wykonac operacji")
+			logger.logInfo(NAME + "Warunek kworum dla odczytu nie jest spelniony, nie mozna wykonac operacji")
 			return False
 
 	def __del__(self):

@@ -39,7 +39,7 @@ class DelayedTransactionThread(Thread):
 
 			self.connection = Connection(self.paramsDictionary["HOME_PATH"]+"ServerSide/config/connection_config.conf")
 			if self.connection.connect(self.clientAddress, 80, RESOURCE) == OK_FLAG:
-				logger.logImportant(NAME + "Polaczenie z uczestnikiem transakcji " + self.clientAddress + " nawiazane" )
+				logger.logInfo(NAME + "Polaczenie z uczestnikiem transakcji " + self.clientAddress + " nawiazane" )
 
 				command = self.inputQueue.get(True, None)
 				while command != STOP_THREAD:
@@ -51,9 +51,9 @@ class DelayedTransactionThread(Thread):
 				logger.logError(NAME + "Nie mozna nawiazac polaczenia z " + self.clientAddress)
 				self.outputQueue.put(ABORT)
 				self.connection._do_closing_handshake()
-			logger.logImportant(NAME + "Koordynator konczy polaczenie z " + self.clientAddress)
+			logger.logInfo(NAME + "Koordynator konczy polaczenie z " + self.clientAddress)
 		except Exception, e:
-			logger.logImportant(NAME + e.message )
+			logger.logError(NAME + e.message )
 
 	def skip(self):
 		logger.logInfo(NAME + "SkipMethod")
@@ -69,7 +69,7 @@ class DelayedTransactionThread(Thread):
 			logger.logError(NAME + e.message )
 			return
 		self.outputQueue.put(answer)
-		logger.logImportant(NAME + "Uczestnik " + self.clientAddress + " odpowiedzial: " + answer)
+		logger.logInfo(NAME + "Uczestnik " + self.clientAddress + " odpowiedzial: " + answer)
 		if self.outputQueue.full():
 			self.eventVariable.set()
 			logger.logInfo(NAME + "Wybudzanie watku transakcji")

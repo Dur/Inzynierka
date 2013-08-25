@@ -19,20 +19,20 @@ def execute(paramsDictionary, message):
 
 def authConnectionMode(paramsDictionary):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
-	logger.logImportant(NAME + "Uwierzytelnianie podlaczajacego sie serwera " + remoteAddress)
+	logger.logImportant(NAME + "Uwierzytelnianie serwera " + remoteAddress)
 	socket = paramsDictionary["SOCKET"]
 	homePath = paramsDictionary["HOME_PATH"]
-	logger.logImportant(NAME + "przed wyslaniem zapytania o haslo")
+	logger.logInfo(NAME + "przed wyslaniem zapytania o haslo")
 	socket.send_message(GET_PASSWORD)
-	logger.logImportant(NAME + "Oczekiwanie na haslo od serwera")
+	logger.logInfo(NAME + "Oczekiwanie na haslo od serwera")
 	password = socket.receive_message()
 
-	logger.logImportant(NAME + "Otrzymano haslo od " + remoteAddress)
+	logger.logInfo(NAME + "Otrzymano haslo od " + remoteAddress)
 	processor = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 	passwords = processor.readFile()
 	logger.logInfo(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + password )
 	if(passwords[remoteAddress] == password ):
-		logger.logImportant(NAME + "Haslo otrzymane od " + remoteAddress + " zgodne")
+		logger.logImportant(NAME + "Serwer " + remoteAddress + " uwierzytelniony")
 
 		socket.send_message(PASSWORD_OK)
 
@@ -43,14 +43,14 @@ def authConnectionMode(paramsDictionary):
 		if  message == GET_PASSWORD:
 			processor = FileProcessor(homePath+"ServerSide/config/pass/me_to_all.pass")
 			passwords = processor.readFile()
-			logger.logImportant(NAME + "Wysylam swoje haslo do " + remoteAddress)
+			logger.logInfo(NAME + "Wysylam swoje haslo do " + remoteAddress)
 
 			socket.send_message(passwords[remoteAddress])
 
 			message = socket.receive_message()
 
 		if message == PASSWORD_OK:
-			logger.logImportant(NAME + "Haslo zaakceptowane przez " + remoteAddress)
+			logger.logInfo(NAME + "Haslo zaakceptowane przez " + remoteAddress)
 			pass
 		else:
 			logger.logError(NAME + "Haslo pzeslane przez " + remoteAddress + " niezgodne, zamykanie polaczenia")
@@ -74,7 +74,7 @@ def authRequestMode(paramsDictionary):
 	if  message == GET_PASSWORD:
 		processor = FileProcessor(homePath+"ServerSide/config/pass/me_to_all.pass")
 		passwords = processor.readFile()
-		logger.logImportant(NAME + "Wysylam swoje haslo do " + remoteAddress)
+		logger.logInfo(NAME + "Wysylam swoje haslo do " + remoteAddress)
 
 		socket.send_message(passwords[remoteAddress])
 
@@ -85,12 +85,12 @@ def authRequestMode(paramsDictionary):
 
 		password = socket.receive_message()
 
-		logger.logImportant(NAME + "Otrzymano haslo od " + remoteAddress)
+		logger.logInfo(NAME + "Otrzymano haslo od " + remoteAddress)
 		processor = FileProcessor(homePath+"ServerSide/config/pass/all_to_me.pass")
 		passwords = processor.readFile()
 		logger.logInfo(NAME + "spodziewane haslo " + passwords[remoteAddress] + " otrzymano " + password )
 		if(passwords[remoteAddress] == password ):
-			logger.logImportant(NAME + "Haslo od " + remoteAddress + " zgodne")
+			logger.logImportant(NAME + "Serwer " + remoteAddress + " uwierzytelniony")
 
 			socket.send_message(PASSWORD_OK)
 		else:

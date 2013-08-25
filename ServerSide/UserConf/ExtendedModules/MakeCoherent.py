@@ -84,10 +84,10 @@ def execute(paramsDictionary, message):
 	try:
 		db = MySQLdb.connect(dbParamsDict["HOST"], login, password, dbParamsDict["DATABASE"])
 		cursor = db.cursor()
-		logger.logInfo(NAME + "polaczenie z baza nawiazane")
+		logger.logImportant(NAME + "Rozpoczynanie uspojniania danych")
 		while version != END_MESSAGE:
 			command = connection.get_message()
-			logger.logInfo(NAME + "Wykonuje: " + command )
+			logger.logImportant(NAME + "Wykonuje: " + command )
 			cursor.execute(command)
 
 			command = command.replace('\'', '\\\'')
@@ -115,7 +115,7 @@ def execute(paramsDictionary, message):
 	dataVersions[LOCALHOST_NAME] = currentVersion
 	versionsFile.writeToFile(dataVersions)
 	versionsFile.unlockFile()
-	logger.logInfo(NAME + "zapisano zmiany do pliku z wersjami")
+	logger.logImportant(NAME + "Dane sa spojne")
 	connection._do_closing_handshake()
 
 

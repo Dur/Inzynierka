@@ -14,7 +14,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logger.logImportant(NAME+ "Server dostal zgloszenie od klienta")
+	logger.logInfo(NAME+ "Server dostal zgloszenie od klienta")
 
 	paramsDictionary = {}
 	paramsDictionary["REQUEST"] = request
@@ -44,7 +44,7 @@ def web_socket_transfer_data(request):
 	while(True):
 		try:
 			query = request.ws_stream.receive_message()
-			logger.logInfo(NAME + "otrzymal " + query)
+			logger.logImportant(NAME + "Klient chce wykonac zapytanie " + query)
 			if query == CLOSING_MESSAGE:
 				db.closeConnection()
 				return apache.HTTP_OK
@@ -52,11 +52,11 @@ def web_socket_transfer_data(request):
 				lock.acquire()
 				output = db.executeSQL(query, paramsDictionary)
 				lock.release()
-				logger.logImportant(NAME + "wynik zapytania " + str(output))
+				logger.logImportant(NAME + "Wynik zapytania " + str(output))
 				request.ws_stream.send_message(str(output))
 
 		except Exception, e:
-			logger.logImportant(NAME + "ERROR w trakcie odbierania wiadomosci " + e.message)
+			logger.logError(NAME + "ERROR w trakcie odbierania wiadomosci " + e.message)
 			db.closeConnection()
 			if lock.is_locked:
 				lock.release()

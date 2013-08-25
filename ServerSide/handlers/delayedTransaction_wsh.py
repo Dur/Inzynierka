@@ -19,7 +19,7 @@ def web_socket_do_extra_handshake(request):
 
 def web_socket_transfer_data(request):
 
-	logger.logImportant(NAME+ "Server dostal zgloszenie")
+	logger.logInfo(NAME+ "Server dostal zgloszenie")
 
 	paramsDictionary = {}
 	paramsDictionary["SOCKET"] = request.ws_stream

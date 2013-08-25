@@ -20,12 +20,12 @@ SKIP_TICKETS = "skipTickets"
 OK = "OK"
 COMMIT = "commit"
 WAIT = "WAIT"
-OK_MESSAGE = "Query executed successfully"
+OK_MESSAGE = "Zapytanie zostalo wykonane prawidlowo"
 STOP_THREAD = "INTERRUPT"
 EXPECTED_TICKET = "expectedTicket"
 TICKET_PARAM = "ticketServer"
 SKIP = "SKIP"
-CONNECTION_PROBLEM_ERROR = "Sorry, but server is temporary unavailable, please try again later"
+CONNECTION_PROBLEM_ERROR = "Serwer jest tymczasowo niedostepny, sprobuj ponownie pozniej"
 START_TRANSACTION = "START"
 
 
@@ -96,7 +96,7 @@ class WriteTransaction:
 		self.eventVariable.clear()
 		logger.logInfo(NAME + "Serwer minal zmienna warunkowa")
 		if not self.responseQueue.full():
-			logger.logImportant(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery odpowiedzialy z zadanym czasie")
+			logger.logImportant(NAME + "Wysylanie GLOBAL_ABORT, nie wszystkie serwery odpowiedzialy w zadanym czasie")
 			for address in self.activeServers:
 				self.connectionsQueues[address].put(GLOBAL_ABORT)
 				self.connectionsQueues[address].put(ticket)
@@ -127,11 +127,12 @@ class WriteTransaction:
 			self.connectionsQueues[address].put(ticket)
 			self.connectionsQueues[address].put(STOP_THREAD)
 		logger.logInfo(NAME + "przygotowanie insertu do tabeli z wersjami")
+		logger.logImportant(NAME + "Uzyskano zgode od wszystkich uczestnikow")
 		cursor.execute(self.generateInsertToDataVersions(command))
 		cursor.execute(COMMIT)
 		self.insertNewDataVersions()
 		TicketUtil.setNextExpectedTicket(ticket)
-		logger.logImportant(NAME + "Transakcja zakonczona powodzeniem")
+		logger.logImportant(NAME + "Operacja zakonczona powodzeniem")
 		return OK_MESSAGE
 
 	def runDelayedTransaction(self, cursor, command, ticket):
@@ -146,7 +147,7 @@ class WriteTransaction:
 		logger.logInfo(NAME + "Czas oczekiwania na zmiennej warunkowej " + str(self.waitForRemoteTime))
 		self.eventVariable.wait(int(self.waitForRemoteTime))
 		self.eventVariable.clear()
-		logger.logImportant(NAME + "Serwer minal zmienna warunkowa")
+		logger.logInfo(NAME + "Serwer minal zmienna warunkowa")
 		if self.responseQueue.full() != True: ########### or TicketUtil.readTempVars()[EXPECTED_TICKET] != ticket:
 			logger.logImportant(NAME + "Wysylanie SKIP, nie wszystkie serwery odpowiedzialy w zadanym czasie")
 			for address in self.activeServers:
@@ -218,10 +219,10 @@ class WriteTransaction:
 		logger.logImportant(NAME + "Aktywne serwery: " + str(self.activeServers))
 		self.serversCount = len(addresses) + 1
 		if available >= minVersion:
-			logger.logImportant(NAME + "Wicej niz polowa serwerow aktywna, mozna przeprowadzic operacje zapisu")
+			logger.logImportant(NAME + "Warunek kworum dla zapisu spelniony, mozna przeprowadzic operacje")
 			return True
 		else:
-			logger.logImportant(NAME + "mniej niz polowa serwerow aktywna, nie mozna przeprowadzic operacji zapisu")
+			logger.logImportant(NAME + "Warunek kworum dla zapisu nie jest spelniony, nie mozna przeprowadzic operacji")
 			return False
 
 	def checkDataVersions(self):

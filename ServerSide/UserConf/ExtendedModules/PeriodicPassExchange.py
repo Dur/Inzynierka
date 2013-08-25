@@ -10,7 +10,7 @@ def execute(paramsDictionary, message):
 	global timer
 	if timer == 0:
 		timer = int(paramsDictionary["CONFIG_PARAMS"]["passExchangePeriod"])
-		#logger.logInfo(NAME + "Wysylam zapytanie o stare haslo do " + paramsDictionary["CLIENT_ADDRESS"])
+		logger.logInfo(NAME + "Wysylam zapytanie o stare haslo do " + paramsDictionary["CLIENT_ADDRESS"])
 		paramsDictionary["SOCKET"].send_message(RES_MODULE+NEW_PASS)
 	else:
 		timer = timer -1

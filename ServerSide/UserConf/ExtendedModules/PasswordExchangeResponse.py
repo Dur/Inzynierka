@@ -17,13 +17,13 @@ def getOldPassword(paramsDictionary, argument):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	#logger.logInfo(NAME + "wyszukuje stare haslo")
+	logger.logInfo(NAME + "wyszukuje stare haslo")
 	processor = FileProcessor(homePath+"ServerSide/config/pass/me_to_all.pass")
 	passwords = processor.readFile()
 	oldPass = passwords[remoteAddress]
 
 	socket.send_message(RES_MODULE+OLD+"%"+oldPass)
-	#logger.logInfo(NAME + "wyslalem stare haslo do " + remoteAddress)
+	logger.logInfo(NAME + "wyslalem stare haslo do " + remoteAddress)
 	global expectedMessage
 	expectedMessage = NEW
 
@@ -32,16 +32,16 @@ def setNewPassword(paramsDictionary, newPass):
 	remoteAddress = paramsDictionary["CLIENT_ADDRESS"]
 	homePath = paramsDictionary["HOME_PATH"]
 
-	#logger.logInfo(NAME + "Otrzymalem nowe haslo")
+	logger.logInfo(NAME + "Otrzymalem nowe haslo")
 	processor = FileProcessor(homePath+"ServerSide/config/pass/me_to_all.pass")
 	processor.lockFile()
 	passwords = processor.readFile()
 	passwords[remoteAddress] = newPass
 	processor.writeToFile(passwords)
 	processor.unlockFile()
-	#logger.logInfo(NAME + "zapisalem nowe haslo")
+	logger.logInfo(NAME + "zapisalem nowe haslo")
 	socket.send_message(RES_MODULE+ACK)
-	#logger.logInfo(NAME + "Wyslalem potwierdzenie do " + remoteAddress)
+	logger.logInfo(NAME + "Wyslalem potwierdzenie do " + remoteAddress)
 	global expectedMessage
 	expectedMessage = NEW_PASS
 
@@ -51,7 +51,7 @@ functions = {NEW_PASS: getOldPassword,
 
 
 def execute(paramsDictionary, message):
-	#logger.logInfo(NAME + "otrzymalem " + message)
+	logger.logInfo(NAME + "otrzymalem " + message)
 	splited = message.split('%')
 	toCall = splited[0]
 	if len(splited) > 1:

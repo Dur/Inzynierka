@@ -43,7 +43,7 @@ class DatabaseConnector:
 			return OK
 
 		except Exception, e:
-			logger.logImportant(NAME + "Nie mozna polaczyc sie z baza danych " + e.message )
+			logger.logError(NAME + "Nie mozna polaczyc sie z baza danych " + e.message )
 			return ERROR
 
 	def executeSQL(self, command, paramsDictionary):
@@ -52,18 +52,18 @@ class DatabaseConnector:
 			operation = splitedLine[0]
 
 			if operation.upper() != SELECT_OPERATION:
-				logger.logImportant(NAME + "Klient wykonuje transakcje zapisu" )
+				logger.logImportant(NAME + "Klient wykonuje zapis danych" )
 				if self.writeTransaction == None:
 					self.writeTransaction = WriteTransaction(paramsDictionary)
 				return self.writeTransaction.executeTransaction(self.cursor, command)
 			else:
-				logger.logImportant(NAME + "Klient wykonuje transakcje odczytu" )
+				logger.logImportant(NAME + "Klient wykonuje odczyt danych" )
 				if self.readTransaction == None:
 					self.readTransaction = ReadTransaction(paramsDictionary)
 				return self.readTransaction.executeTransaction(self.cursor, command)
 
 		except Exception, e:
-			logger.logImportant(NAME + "Error w trakcie wykonywania zapytania SQL " + e.message )
+			logger.logError(NAME + "Error w trakcie wykonywania zapytania SQL " + e.message )
 			return ERROR
 
 	def executeQueryWithoutTransaction(self, command):
